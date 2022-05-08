@@ -5,9 +5,10 @@ from PyQt5.QtWidgets import *
 import sys,random,uuid,json,time
 from concurrent.futures import ThreadPoolExecutor
 try:
-    from configHandler import configHandler
+    from configHandlerFile import configHandler
     from smsAPIListingContainer import *
 except:
+    from .configHandlerFile import configHandler
     from .smsAPIListingContainer import *
     
 def demoSender(data):
@@ -17,6 +18,7 @@ def demoSender(data):
     
 def senderGatewayContainer(log,data):   
     service = data['service']
+    log.emit("Creating data packets for ThreadPoolExecutor")
     data_packets = [
         {
             "receiver_index":receiver_index+1,
@@ -39,7 +41,17 @@ def senderGatewayContainer(log,data):
     
     # print(type(data['credentials']))
          
-    with ThreadPoolExecutor(max_workers=5) as exe: 
+    log.emit("Initiating ThreadPoolExecutor ...")
+    log.emit(f"Target SMS Gateway function name = {targetSMSGateway}")
+    max_workers = int(configHandler().getThreadsThreshold())
+    max_workers = 5
+    try:
+        max_workers = int(configHandler().getThreadsThreshold())
+    except:pass
+    
+    log.emit(f"Max Workers for ThreadPoolExecutor = {max_workers}")
+    
+    with ThreadPoolExecutor(max_workers=max_workers) as exe: 
         exe.map(targetSMSGateway,data_packets) 
     
     
@@ -52,12 +64,9 @@ class workerThread(QThread):
         self.credentials  = credentials
         self.message_title  = message_title
         self.contact_list  = contact_list
-        self.message_bod  = message_body
-
+        self.message_bod  = message_body 
         
-        
-        
-    update_component = pyqtSignal(str)
+    log_input_box_component = pyqtSignal(str)
     def run(self):
         print("->   started")
         data = { 
@@ -68,5 +77,7 @@ class workerThread(QThread):
             "message_body":self.message_bod,
         
         }
-        senderGatewayContainer(log=self.update_component,data=data)
+        self.log_input_box_component.emit("Starting senderGatewayContainer ...")
+        senderGatewayContainer(log=self.log_input_box_component,data=data)
+        self.log_input_box_component.emit("Operation Completed !")
         print("->   ended")

@@ -1,12 +1,12 @@
-import sys,random,uuid,json,requests
+import requests
 import clicksend_client
 from clicksend_client import SmsMessage
 from clicksend_client.rest import ApiException
 
-try:
-    from configHandler import configHandler 
-except:
-    from .configHandler import configHandler 
+# try:
+#     from configHandlerFile import configHandler 
+# except:
+#     from .configHandler import configHandler 
 
 
 
@@ -25,15 +25,17 @@ def sinchApiSMSGateway(data_packet):
     } 
     response = requests.post(url, json=payload, headers=headers)
     response = response.json()
-    data_packet['log'].emit(str(response))
+    data_packet['log'].emit("-"*50+"\n"+str(response))
     print(response)
     if response.get('id') is not None:
         data_packet['log'].emit(str(f"-> Message sent to {data_packet['receiver']}"))
         data_packet['log'].emit(str(response['id']))
         print(f"-> Message sent to {data_packet['receiver']}")
         print(response['id'])
+        data_packet['log'].emit("-"*50+"\n")
         data_packet['log'].emit(f"-> Message sent to {data_packet['receiver']}")
         data_packet['log'].emit(str(response['id']))
+        data_packet['log'].emit("-"*50+"\n")
     # print(data)
  
 
@@ -51,20 +53,23 @@ def clickSendApiSMSGateway(data_packet):
     sms_messages = clicksend_client.SmsMessageCollection(messages=[sms_message])
     try: 
         api_response = api_instance.sms_send_post(sms_messages)
-        print(api_response)
-        data_packet['log'].emit(str(api_response))
+        print(api_response) 
+        data_packet['log'].emit("-"*50+"\n"+str(api_response))
         try:
             api_response = eval(api_response)
             if str(api_response.get('http_code')) == str(200) and str(api_response.get('response_code')) == 'SUCCESS' :
                 print(f"-> Message sent to {data_packet['receiver']}")
+                data_packet['log'].emit("-"*50+"\n")
                 data_packet['log'].emit(f"-> Message sent to {data_packet['receiver']}")
         except:
             print("Exception when while evaluating eval(api_response) from clicksend API")
+            data_packet['log'].emit("-"*50+"\n")
             data_packet['log'].emit("Exception when while evaluating eval(api_response) from clicksend API"  )
                 
             
     except ApiException as e:
         print("Exception when calling SMSApi->sms_send_post: %s\n" % e)
+        data_packet['log'].emit("-"*50+"\n")
         data_packet['log'].emit("Exception when calling SMSApi->sms_send_post: %s\n" % e)
  
     
@@ -81,7 +86,7 @@ def telnyxApiSMSGateway(data_packet):
     }
     
     data_packet['receiver'] = data_packet['receiver'] if str(data_packet['receiver']).startswith("+") else "+"+str(data_packet['receiver'])
-    print(f"-- {data_packet['receiver']}")
+    # print(f"-- {data_packet['receiver']}")
     json_data = {
         'from':data_packet['message_title'], 
         "messaging_profile_id": data_packet['credentials']['messaging_profile_id'],
@@ -90,16 +95,16 @@ def telnyxApiSMSGateway(data_packet):
     } 
 
     response = requests.post('https://api.telnyx.com/v2/messages', headers=headers, json=json_data) 
-    # print(f"-- {response.status_code}")
-    response = response.json()
-    # print("-- telnyxApiSMSGateway")
-    # print(response)
+    response = response.json() 
+    data_packet['log'].emit("-"*50+"\n")
     data_packet['log'].emit(str(response))
     if type(response['data']) is dict and response['data']['id'] not in ['',None]:
         # print(f"-> Message sent to {data_packet['receiver']}")
+        data_packet['log'].emit("-"*50+"\n")
         data_packet['log'].emit(f"-> Message sent to {data_packet['receiver']}")
         # print(response['data']['id']) 
         data_packet['log'].emit(str(response['data']['id'])) 
+        data_packet['log'].emit("-"*50+"\n")
     
     
     

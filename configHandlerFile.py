@@ -1,6 +1,4 @@
-import json
-import pandas as pd,os,csv ,json
-
+import json,os
 
 dir_path = os.path.dirname(__file__)
 config_file_path = os.path.join(dir_path,"config.json") 
@@ -20,17 +18,19 @@ class  configHandler():
     
     # Configuration Tab
     def getThreadsThreshold(self):
+        # threshold = int(self.data['threads_threshold'])
         return int(self.data['threads_threshold'])
+    
     def setThreadsThreshold(self,new_threads_threshold):
         self.data['threads_threshold'] = new_threads_threshold
         self.updateDataFile()
             
             
     def getAllServices(self):
-        return list(self.data['services'].keys())
+        return list(self.data['services'].keys())[:3]
         
     def getServiceCredentialsList(self,service):
-        return list(self.data['services'][service])
+        return list(self.data['services'][service][1:])
     
     def addServiceCredentials(self,service,creds):
         if len(self.data['services'][service])>0:

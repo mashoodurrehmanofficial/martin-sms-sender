@@ -2,14 +2,15 @@
  
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-import sys,random,uuid,json,time
-from PyQt5.QtGui import QTextCursor
+# from PyQt5.QtCore import  
+# from PyQt5.QtWidgets import QWidget,QVBoxLayout,QHBoxLayout
+import sys,random,uuid,json,time 
 try:
-    from configHandler import configHandler
-    from workerThread import workerThread
+    from configHandlerFile import configHandler
+    from workerThreadFile import workerThread
 except:
-    from .configHandler import configHandler
-    from .workerThread import workerThread
+    from configHandlerFile import configHandler
+    from workerThreadFile import workerThread
     
     
 
@@ -173,7 +174,6 @@ class Main(QMainWindow):
         self.home_page_log_panel_layout = QVBoxLayout()
         self.home_page_log_panel.setAlignment(Qt.AlignTop)
         self.home_page_log_panel.setLayout(self.home_page_log_panel_layout)
-        # self.home_page_log_input_box = QTextBrowser()
         self.home_page_log_input_box = QTextEdit()
         self.home_page_log_panel_layout.addWidget(self.home_page_log_input_box,1) 
         self.home_page_log_panel_layout.addStretch()
@@ -182,23 +182,19 @@ class Main(QMainWindow):
         self.home_main_frame_layout.addStretch()
         
      
-    def longRunningTask(self,service,credentials,message_title,contact_list,message_body): 
-        try: 
-            from workerThread import workerThread
-        except: 
-            from .workerThread import workerThread
-        
-        
-        
+    def longRunningTask(self,service,credentials,message_title,contact_list,message_body):     
+        self.appedLogInoutBoxText(str("Starting Main Thread / Parent Thread ..."))
         self.worker = workerThread(service,credentials,message_title,contact_list,message_body)
         self.worker.start()
         self.worker.finished.connect(self.customSlot)
-        self.worker.update_component.connect(self.customSlot2)
-        
-    def customSlot2(self,val): 
+        self.worker.log_input_box_component.connect(self.customSlot2)
+     
+    def appedLogInoutBoxText(self,val):
         self.home_page_log_input_box.textCursor().insertText(str(val)+'\n')
         self.home_page_log_input_box.verticalScrollBar().setValue(self.home_page_log_input_box.verticalScrollBar().maximum())
         
+    def customSlot2(self,val): 
+        self.appedLogInoutBoxText(str(val))
         print("signal - update - ", val)
         
         
@@ -209,7 +205,6 @@ class Main(QMainWindow):
         service = str(self.home_tab_available_service_dropdown.currentText())
         
         contact_list = ['923167 81 5639','923476026649','12057404127']
-        contact_list = ["".join([y for y in str(x) if str(y).isnumeric()])  for x in contact_list ]
 
         self.home_page_message_title.setText("Alert")
         self.home_page_import_receivers_input_box.setText("\n".join(contact_list))
@@ -220,22 +215,34 @@ class Main(QMainWindow):
         message_title = str(self.home_page_message_title.text())[:8]
         contact_list = str(self.home_page_import_receivers_input_box.toPlainText())
         message_body = str(self.home_page_import_message_input_box.toPlainText()) 
-        contact_list = contact_list.replace("\n",',').split(",")
         
-        # if not message_title or  message_title.isspace():
-        #     self.showWarningBox("Please enter a Message Title (Sender ID)")
+        if not message_title or  message_title.isspace():
+            self.showWarningBox("Please enter a Message Title (Sender ID)")
+            return
     
-        # elif not contact_list or contact_list.isspace():
-        #     self.showWarningBox("Please enter valid Contacts / Receivers' phone number list")
+        elif not contact_list or contact_list.isspace():
+            self.showWarningBox("Please enter valid Contacts / Receivers' phone number list")
+            return
         
-        # elif not message_body or message_body.isspace():
-        #     self.showWarningBox("Please enter Message body to be sent")
+        contact_list = contact_list.replace("\n",',').split(",")
+        contact_list = ["".join([y for y in str(x) if str(y).isnumeric()])  for x in contact_list ]
+        if not message_body or message_body.isspace():
+            self.showWarningBox("Please enter Message body to be sent")
+            return
         
-        # credentials = str(credentials).replace("\'", "\"")
-        # credentials = json.loads(credentials)
+        credentials = str(credentials).replace("\'", "\"")
+        credentials = json.loads(credentials)
         # print("Service = ", service)
         # print("credentials = ", (credentials)) 
         self.home_page_log_input_box.setText("")
+        self.appedLogInoutBoxText(str("-"*50))
+        self.appedLogInoutBoxText(str(f"Service = {service}",  ))
+        self.appedLogInoutBoxText(str(f"Credentials = {credentials}",  ))
+        self.appedLogInoutBoxText(str(f"Sederer ID / Message Title = {message_title}",  ))
+        self.appedLogInoutBoxText(str(f"Message Body = {message_body}",  ))
+        self.appedLogInoutBoxText(str(f"Receiver Phone number list = {contact_list}",  ))
+        self.appedLogInoutBoxText(str("-"*50))
+        self.appedLogInoutBoxText(str("SMS Sender is inintiating ..."))
         self.longRunningTask(service,credentials,message_title,contact_list,message_body)
          
         
@@ -378,8 +385,11 @@ class Main(QMainWindow):
         number = self.configuration_thread_input.text()
         try:
             number = int(number)
-            configHandler().setThreadsThreshold(number)
-            self.showWarningBox("Thread threshold update")
+            if number < 1:
+                self.showWarningBox("Threads / sec must be greater than Zero (0)")
+            else:
+                configHandler().setThreadsThreshold(number)
+                self.showWarningBox("Thread threshold updated")
         except Exception:
             self.showWarningBox("Threads / sec can only be a number") 
         pass
