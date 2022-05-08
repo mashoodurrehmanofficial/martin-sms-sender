@@ -2,15 +2,25 @@
  
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+import sys,os,json 
 # from PyQt5.QtCore import  
 # from PyQt5.QtWidgets import QWidget,QVBoxLayout,QHBoxLayout
-import sys,random,uuid,json,time 
+# sys.path.insert(0, os.getcwd())
+
+
 try:
     from configHandlerFile import configHandler
     from workerThreadFile import workerThread
 except:
-    from configHandlerFile import configHandler
-    from workerThreadFile import workerThread
+    try:
+        from configHandlerFile import configHandler
+    except:
+        from .configHandlerFile import configHandler
+    try:
+        from workerThreadFile import workerThread
+    except:
+        from .workerThreadFile import workerThread
+    # from workerThreadFile import workerThread
     
     
 
@@ -204,11 +214,11 @@ class Main(QMainWindow):
     def onClickStartButton(self):
         service = str(self.home_tab_available_service_dropdown.currentText())
         
-        contact_list = ['923167 81 5639','923476026649','12057404127']
+        # contact_list = ['923167 81 5639','923476026649','12057404127']
 
-        self.home_page_message_title.setText("Alert")
-        self.home_page_import_receivers_input_box.setText("\n".join(contact_list))
-        self.home_page_import_message_input_box.setText(f"Hello this is message from {service}")
+        # self.home_page_message_title.setText("Alert")
+        # self.home_page_import_receivers_input_box.setText("\n".join(contact_list))
+        # self.home_page_import_message_input_box.setText(f"Hello this is message from {service}")
 
 
         credentials = eval(self.home_tab_available_service_credentials_dropdown.currentText())

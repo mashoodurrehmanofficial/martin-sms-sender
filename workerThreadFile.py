@@ -2,14 +2,20 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-import sys,random,uuid,json,time
+import uuid
 from concurrent.futures import ThreadPoolExecutor
 try:
     from configHandlerFile import configHandler
     from smsAPIListingContainer import *
 except:
-    from .configHandlerFile import configHandler
-    from .smsAPIListingContainer import *
+    try:
+        from configHandlerFile import configHandler
+    except:
+        from .configHandlerFile import configHandler
+    try:
+        from smsAPIListingContainer import *
+    except:
+        from .smsAPIListingContainer import * 
     
 def demoSender(data):
     # print(data)  
