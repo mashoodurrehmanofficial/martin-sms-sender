@@ -47,6 +47,7 @@ def clickSendApiSMSGateway(data_packet):
     api_instance = clicksend_client.SMSApi(clicksend_client.ApiClient(configuration))
     sms_message = SmsMessage(
         source="php",
+        _from=data_packet['message_title'],
         body=data_packet['message_body'],
         to=data_packet['receiver'],
     )
