@@ -1,5 +1,6 @@
  
  
+from operator import le
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 import sys,os,json 
@@ -42,27 +43,33 @@ class Main(QMainWindow):
         self.home_tab = QWidget()
         self.credentails_tab = QWidget()
         self.configuration_tab = QWidget()
+        self.templates_macros_tab = QWidget()
 
         self.home_tab_layout = QVBoxLayout()    
         self.credentails_tab_layout = QVBoxLayout()   
         self.configuration_tab_layout = QVBoxLayout()
+        self.templates_macros_tab_layout = QVBoxLayout()
 
         self.home_tab.setLayout(self.home_tab_layout)
         self.credentails_tab.setLayout(self.credentails_tab_layout)
         self.configuration_tab.setLayout(self.configuration_tab_layout)
+        self.templates_macros_tab.setLayout(self.templates_macros_tab_layout)
 
         self.home_tab_label = QLabel()
         self.credentails_tab_label = QLabel()
         self.configuration_tab_label = QLabel()
+        self.templates_macros_tab_label = QLabel()
 
  
         self.home_tab_layout.addWidget(self.home_tab_label)
         self.credentails_tab_layout.addWidget(self.credentails_tab_label)
+        self.configuration_tab_layout.addWidget(self.templates_macros_tab_label)
         self.configuration_tab_layout.addWidget(self.configuration_tab_label)
 
         # Add tabs
         self.tab_container.addTab(self.home_tab,"Home")
         self.tab_container.addTab(self.credentails_tab,"Credentials")
+        self.tab_container.addTab(self.templates_macros_tab,"Templates / Macros")     
         self.tab_container.addTab(self.configuration_tab,"Configuration")     
  
 
@@ -74,7 +81,8 @@ class Main(QMainWindow):
         self.prepareHomeTab()
         self.prepareConfigurationTab()
         self.prepareCredentialsTab()
-        self.tab_container.setCurrentIndex(0)
+        self.prepareTemplatesMacrosTabe()
+        # self.tab_container.setCurrentIndex(2)
         
     def showWarningBox(self,text):
         QMessageBox.about(self, 'Error',str(text))
@@ -90,21 +98,32 @@ class Main(QMainWindow):
         file_name = QFileDialog.getOpenFileNames(self, "Select File", "", "*.txt")
         if file_name[0]:
             file_name = file_name[0][0]
-            with open(file_name,'r',encoding="utf-8") as file:
-                contacts = [str(x).strip() for x in file.readlines()]
-                contacts = [x for x in contacts if len(str(x))>1]
-                self.home_page_import_receivers_input_box.setText("\n".join(contacts))
-            print(contacts) 
+            try:
+                with open(file_name,'r',encoding="utf-8") as file:
+                    contacts = [str(x).strip() for x in file.readlines()]
+                    contacts = [x for x in contacts if len(str(x))>1]
+                    self.home_page_import_receivers_input_box.setText("\n".join(contacts))
+                print(contacts) 
+            except  UnicodeDecodeError:
+                self.showWarningBox("Can't read text file due to UnicodeDecodeError")
 
     def onClickMessageBodyLoadButton(self):
         self.home_page_import_message_input_box
         file_name = QFileDialog.getOpenFileNames(self, "Select File", "", "*.txt")
         if file_name[0]:
             file_name = file_name[0][0]
-            with open(file_name,'r',encoding="utf-8") as file:
-                message_body = file.read()
-                self.home_page_import_message_input_box.setText(message_body)
+            try:
+                with open(file_name,'r',encoding="utf-8") as file:
+                    message_body = file.read()
+                    self.home_page_import_message_input_box.setText(message_body)
+            except UnicodeDecodeError:
+                self.showWarningBox("Can't read text file due to UnicodeDecodeError")
                 
+                
+                
+    def onHomeTabImportTemplateComboBoxChange(self,value):
+        if value!='Choose Template':
+            self.home_page_import_message_input_box.setText(str(configHandler().getTemplatesBody(key=value)))
                 
     def prepareHomeTab(self):
         pass
@@ -133,6 +152,7 @@ class Main(QMainWindow):
 
         self.home_page_service_selection_panel_layout.addWidget(self.home_tab_available_service_dropdown,1)  
         self.home_page_message_title = QLineEdit()
+        self.home_page_message_title.setPlaceholderText("Title")
         self.home_page_service_selection_panel_layout.addWidget(self.home_tab_available_service_credentials_dropdown,5)
         self.home_page_service_selection_panel_layout.addWidget(self.home_page_message_title,1)
         self.home_main_frame_layout.addWidget(self.home_page_service_selection_panel,1) 
@@ -165,11 +185,27 @@ class Main(QMainWindow):
         self.home_page_import_message_panel.setLayout(self.home_page_import_message_panel_layout)
         self.home_page_import_message_input_box = QTextEdit()
         self.home_page_import_message_panel_layout.addWidget(self.home_page_import_message_input_box,1)
-        self.home_page_import_message_btn = QPushButton("Load Contact File")
+        
+        
+        self.home_page_import_message_panel_buttons_panel = QGroupBox()
+        self.home_page_import_message_panel_buttons_panel.setAlignment(Qt.AlignTop)
+        self.home_page_import_message_panel_buttons_layout = QHBoxLayout() 
+        self.home_page_import_message_panel_buttons_panel.setLayout(self.home_page_import_message_panel_buttons_layout)
+        
+        self.home_page_import_message_btn = QPushButton("Load Message File")
+        # self.home_page_import_template_dropdown = QPushButton("Import Template")
+        self.home_page_import_template_dropdown = QComboBox()
+        self.home_page_import_template_dropdown.addItems(["Choose Template"]+configHandler().getAvailableTemplates())
+        self.home_page_import_template_dropdown.currentTextChanged.connect(self.onHomeTabImportTemplateComboBoxChange) 
+        
+        self.home_page_import_message_panel_buttons_layout.addWidget(self.home_page_import_message_btn,1)
+        self.home_page_import_message_panel_buttons_layout.addWidget(self.home_page_import_template_dropdown,1)
         self.home_page_import_message_btn.clicked.connect(self.onClickMessageBodyLoadButton) 
         
         
-        self.home_page_import_message_panel_layout.addWidget(self.home_page_import_message_btn,1)
+        self.home_page_import_message_panel_layout.addWidget(self.home_page_import_message_panel_buttons_panel,1) 
+        
+        
         self.home_page_import_message_panel_layout.addStretch()
         self.home_page_data_import_panel_layout.addWidget(self.home_page_import_receivers_panel,1)
         self.home_page_data_import_panel_layout.addWidget(self.home_page_import_message_panel,1)
@@ -215,10 +251,9 @@ class Main(QMainWindow):
         service = str(self.home_tab_available_service_dropdown.currentText())
         
         # contact_list = ['923167 81 5639','923476026649','12057404127']
-
         # self.home_page_message_title.setText("Alert")
         # self.home_page_import_receivers_input_box.setText("\n".join(contact_list))
-        # self.home_page_import_message_input_box.setText(f"Hello this is message from {service}")
+        # self.home_page_import_message_input_box.setText(f"Hello this is message from  ##macro0## ##macro2##")
 
 
         credentials = eval(self.home_tab_available_service_credentials_dropdown.currentText())
@@ -276,46 +311,105 @@ class Main(QMainWindow):
         except:
             self.showWarningBox(text="Invalid JSON struture for new Credentials")
         
-        try:self.populateCrentialsTable()
+        try:self.populateDataTable()
         except:pass
+        
+    def onClickAddNewTemplateMacroButton(self): 
+        key = self.getTemplateMacrosTableKey()
+        title = str(self.template_vs_macro_title_insert_box.toPlainText())
+        if not title or title.isspace():
+            self.showWarningBox(text=f"{key.capitalize()} Title / Short Name cannot be empty ! ")
+            return
+        
+        body = str(self.template_vs_macro_body_insert_box.toPlainText())
+        try:
+            if key=="macros" and '[' in body or ']' in body:
+                body = eval(body)
+                if type(body) is list and len(body)<1:
+                    self.showWarningBox(text=f"Body values cannot be a empty list / array")
+                    return 
+                    
+            
+        except:
+            self.showWarningBox(text=f"{key.capitalize()} Body has invalid layout\nFor multiple values enclose each value in double quotes separated by comma and enclose all inside square brackets []  ")
+            return
+            
+        value = {
+            title:body
+        }
+        configHandler().addNewTemplateMacro(key=key,value=value)
+        
+        self.populateDataTable(key=key)
+        
+        self.template_vs_macro_title_insert_box.setPlainText("")
+        self.template_vs_macro_body_insert_box.setPlainText("")
+    
+        
+        
     
  
-    def populateCrentialsTable(self): 
-        table_data = configHandler().getServiceCredentialsList(service=self.available_service_dropdown.currentText())
+    def populateDataTable(self,key='credentials',cols=[],row=[]): 
+        self.target_table = None
+        self.delete_function = None
+        column_names = []
+        table_data = []
+        self.target_table = self.credentials_table_widget
+        if key=='credentials':
+            self.target_table = self.credentials_table_widget
+            self.delete_function = self.deleteCredentialsRecord
+            column_names = ["Credentials","Operation"]
+            table_data = configHandler().getServiceCredentialsList(service=self.available_service_dropdown.currentText())
+        elif key=='templates':
+            self.target_table = self.template_macro_table_widget
+            self.delete_function = self.deleteTemplateMacroRecord
+            column_names = ["Templates","Operation"]
+            table_data = configHandler().getTemplateMacroList(self.getTemplateMacrosTableKey())
+            
+            
+        elif key=='macros':
+            self.target_table = self.template_macro_table_widget
+            column_names = ["Macros","Operation"]
+            self.delete_function = self.deleteTemplateMacroRecord
+            table_data = configHandler().getTemplateMacroList(self.getTemplateMacrosTableKey())
+        
         
         print(table_data)
-        
-        # self.populateCrentialsTable()
         self.rows = len(table_data)
-        self.tableWidget.setRowCount(self.rows)
-        self.tableWidget.setColumnCount(2)
-        self.tableWidget.horizontalHeader().setSectionResizeMode(0,QHeaderView.Stretch)
-        self.tableWidget.horizontalHeader().setSectionResizeMode(1,QHeaderView.ResizeToContents)
-        self.tableWidget.setHorizontalHeaderItem(0,QTableWidgetItem("Credentials"))
-        self.tableWidget.setHorizontalHeaderItem(1,QTableWidgetItem("Operation"))
-        self.tableWidget.setEditTriggers(QTableWidget.NoEditTriggers)
-        # self.tableWidget.itemClicked.connect(self.deleteCredentialsRecord)
-        
-        for x in range(self.rows): 
-
-            self.tableWidget.setItem(x,0, QTableWidgetItem(  str(table_data[x]) )) 
-            btn = QPushButton(self.tableWidget)
-            btn.setText(f'Delete - {x+1}')
-            btn.clicked.connect(self.deleteCredentialsRecord)
-            self.tableWidget.setCellWidget(x,1, btn) 
-            # self.tableWidget.setItem(x,1, QTableWidgetItem(f"   Cell ({x},2)    ",)) 
-        
+        self.target_table.setRowCount(self.rows)
+        self.target_table.setColumnCount(2)
+        self.target_table.horizontalHeader().setSectionResizeMode(0,QHeaderView.Stretch)
+        self.target_table.horizontalHeader().setSectionResizeMode(1,QHeaderView.ResizeToContents)
+        for column_index,column in enumerate(column_names):
+            self.target_table.setHorizontalHeaderItem(column_index,QTableWidgetItem(column)) 
+        self.target_table.setEditTriggers(QTableWidget.NoEditTriggers) 
+        for x in range(self.rows):  
+            self.target_table.setItem(x,0, QTableWidgetItem(  str(table_data[x]) )) 
+            btn = QPushButton(self.target_table)
+            btn.setText(f'Delete - {key} - {x+1}')
+            btn.clicked.connect(self.delete_function)
+            self.target_table.setCellWidget(x,1, btn)  
+    
+    
+         
+    def deleteTemplateMacroRecord(self):
+        record_index = int(str(self.sender().text()).split(" - ")[-1])-1 
+        key = self.getTemplateMacrosTableKey()
+        self.populateDataTable()
+        configHandler().deleteTemplateMacroRecord( key=key,index= record_index) 
+        self.populateDataTable(key)
+         
+    
         
     def deleteCredentialsRecord(self):
         service=self.available_service_dropdown.currentText()
         record_index = int(str(self.sender().text()).split(" - ")[-1])-1
         print (f"-> Deleting credentials for {service} with index {record_index}")
         configHandler().removeServiceCredentials(service=service,credential_index=int(record_index))
-        self.populateCrentialsTable()
+        self.populateDataTable()
         
     
     def onChangeAvailableService(self,value):
-        try:self.populateCrentialsTable()
+        try:self.populateDataTable()
         except:pass
     
     def prepareCredentialsTab(self):
@@ -336,6 +430,7 @@ class Main(QMainWindow):
             self.available_service_dropdown.addItem(str(service))
         self.service_credentials_insertion_panel_layout.addWidget(self.available_service_dropdown,1)
         self.new_crendetials_insert_box = QPlainTextEdit()
+        self.new_crendetials_insert_box.setFixedHeight(80)
         self.new_crendetials_save_btn = QPushButton("Add new Credentials")
         self.new_crendetials_save_btn.clicked.connect(self.onClickAddNewCredentialsButton)
         self.service_credentials_insertion_panel_layout.addWidget(self.new_crendetials_insert_box,1)
@@ -361,35 +456,88 @@ class Main(QMainWindow):
         self.credentails_listing_table_layout = QHBoxLayout()  
         self.credentails_listing_table.setLayout(self.credentails_listing_table_layout)
         
-        self.tableWidget = QTableWidget()
-        self.populateCrentialsTable()
-        # self.rows =100
-        # self.tableWidget.setRowCount(self.rows)
-        # self.tableWidget.setColumnCount(2)
-        # self.tableWidget.horizontalHeader().setSectionResizeMode(0,QHeaderView.Stretch)
-        # self.tableWidget.horizontalHeader().setSectionResizeMode(1,QHeaderView.ResizeToContents)
-        # self.tableWidget.setHorizontalHeaderItem(0,QTableWidgetItem("Credentials"))
-        # self.tableWidget.setHorizontalHeaderItem(1,QTableWidgetItem("Operation"))
-        # self.tableWidget.setEditTriggers(QTableWidget.NoEditTriggers)
-        # # self.tableWidget.itemClicked.connect(self.deleteCredentialsRecord)
-        
-        # for x in range(self.rows): 
-
-        #     self.tableWidget.setItem(x,0, QTableWidgetItem( str(uuid.uuid4())+str(uuid.uuid4())+str(uuid.uuid4())+str(uuid.uuid4())+str(uuid.uuid4())  )) 
-        #     btn = QPushButton(self.tableWidget)
-        #     btn.setText(f'Delete - {x+1}')
-        #     btn.clicked.connect(self.deleteCredentialsRecord)
-        #     self.tableWidget.setCellWidget(x,1, btn) 
-        #     # self.tableWidget.setItem(x,1, QTableWidgetItem(f"   Cell ({x},2)    ",)) 
-        
-        
-        self.credentails_listing_table_layout.addWidget(self.tableWidget)  
-        self.credentails_tab_layout.addWidget(self.credentails_listing_table,12) 
-
+        self.credentials_table_widget = QTableWidget()
+        self.populateDataTable() 
+        self.credentails_listing_table_layout.addWidget(self.credentials_table_widget)  
+        self.credentails_tab_layout.addWidget(self.credentails_listing_table,12)  
         self.credentails_tab_layout.addStretch()
 
 
-
+    def getTemplateMacrosdDropdownText(self):
+        return self.template_vs_macros_dropdown.currentText()
+    def getTemplateMacrosTableKey(self):
+        current_text = str(self.template_vs_macros_dropdown.currentText())
+        key = "templates" if current_text == 'Templates' else "macros"
+        return key
+    
+    def onChangeTemplateMacrosDropdown(self):
+        current_text = str(self.template_vs_macros_dropdown.currentText()) 
+        self.template_vs_macro_title_insert_box.setPlaceholderText(f"Insert Title / Key / Short Name for {self.getTemplateMacrosdDropdownText()}")
+        self.template_vs_macro_body_insert_box.setPlaceholderText(f"Insert Body / Message for {self.getTemplateMacrosdDropdownText()}")
+        self.templates_macros_listing_table.setTitle ( f"{self.getTemplateMacrosdDropdownText()} Listing")
+        self.new_templates_macros_save_btn.setText(f"Add new {self.getTemplateMacrosdDropdownText()}")
+        self.templates_macros_listing_table_layout = QHBoxLayout()  
+        self.populateDataTable(key = self.getTemplateMacrosTableKey())
+        
+        # print(key)
+        # print(current_text)
+    
+    
+    
+    def prepareTemplatesMacrosTabe(self):
+        self.templates_macros_tab_layout.setAlignment(Qt.AlignTop)
+        self.templates_macros_main_frame = QGroupBox("Manage Templates / Macros")
+        self.templates_macros_main_frame_layout = QHBoxLayout()
+        self.templates_macros_main_frame.setFixedHeight(250)  
+        # LEFT panel - New credentials Insertion panel
+        self.templates_macros_insertion_panel = QGroupBox("Add Templates / Macros")
+        self.templates_macros_insertion_panel_layout = QVBoxLayout()
+        self.templates_macros_insertion_panel_layout.setAlignment(Qt.AlignTop)
+        self.templates_macros_insertion_panel.setLayout(self.templates_macros_insertion_panel_layout)
+        self.template_vs_macros_dropdown = QComboBox()
+        self.template_vs_macros_dropdown.addItem("Templates")
+        self.template_vs_macros_dropdown.addItem("Macros")
+        self.template_vs_macros_dropdown.currentTextChanged.connect(self.onChangeTemplateMacrosDropdown) 
+        # self.available_service_dropdown.currentText.connect(self.on_combobox_changed) 
+ 
+        self.templates_macros_insertion_panel_layout.addWidget(self.template_vs_macros_dropdown,1)
+        self.template_vs_macro_title_insert_box = QPlainTextEdit() 
+        self.template_vs_macro_title_insert_box.setPlaceholderText(f"Insert Title / Key / Short Name for {self.getTemplateMacrosdDropdownText()}")
+        self.template_vs_macro_body_insert_box = QPlainTextEdit()
+        self.template_vs_macro_body_insert_box.setPlaceholderText(f"Insert Body / Message for {self.getTemplateMacrosdDropdownText()}")
+        # self.template_vs_macro_body_insert_box.setFixedHeight(80)
+        
+        self.templates_macros_title_body_insertion_panel = QLabel()
+        self.templates_macros_title_body_insertion_panel_layout = QHBoxLayout()
+        self.templates_macros_title_body_insertion_panel_layout.setAlignment(Qt.AlignTop)
+        self.templates_macros_title_body_insertion_panel_layout.setContentsMargins(0,0,0,0)
+        self.templates_macros_title_body_insertion_panel.setLayout(self.templates_macros_title_body_insertion_panel_layout)
+        self.templates_macros_title_body_insertion_panel_layout.addWidget(self.template_vs_macro_title_insert_box,1)
+        self.templates_macros_title_body_insertion_panel_layout.addWidget(self.template_vs_macro_body_insert_box,3) 
+        self.templates_macros_insertion_panel_layout.addWidget(self.templates_macros_title_body_insertion_panel,1) 
+        
+        self.new_templates_macros_save_btn = QPushButton(f"Add new {self.getTemplateMacrosdDropdownText()}")
+        # self.new_crendetials_save_btn.clicked.connect(self.onClickAddNewCredentialsButton)
+        self.new_templates_macros_save_btn.clicked.connect(self.onClickAddNewTemplateMacroButton)
+        # self.templates_macros_insertion_panel_layout.addWidget(self.new_crendetials_insert_box,1)
+        self.templates_macros_insertion_panel_layout.addWidget(self.new_templates_macros_save_btn,1)
+         
+        
+        
+        
+        self.templates_macros_main_frame_layout.addWidget(self.templates_macros_insertion_panel,3)
+        self.templates_macros_main_frame.setLayout(self.templates_macros_main_frame_layout)
+        self.templates_macros_main_frame.setAlignment(Qt.AlignTop)
+        self.templates_macros_tab_layout.addWidget(self.templates_macros_main_frame,1) 
+        self.templates_macros_listing_table = QGroupBox(f"{self.getTemplateMacrosdDropdownText()} Listing")
+        self.templates_macros_listing_table_layout = QHBoxLayout()  
+        self.templates_macros_listing_table.setLayout(self.templates_macros_listing_table_layout)
+        
+        self.template_macro_table_widget = QTableWidget()
+        self.populateDataTable(key="templates") 
+        self.templates_macros_listing_table_layout.addWidget(self.template_macro_table_widget)  
+        self.templates_macros_tab_layout.addWidget(self.templates_macros_listing_table,12)  
+        self.templates_macros_tab_layout.addStretch()
 
     def save_configuration_thread_threshold(self):
         number = self.configuration_thread_input.text()

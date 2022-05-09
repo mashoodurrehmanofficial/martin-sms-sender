@@ -15,7 +15,7 @@
             {
                 "username": "",
                 "api_key": ""
-            }, 
+            },
             {
                 "username": "Roussisphoto@gmail.com",
                 "api_key": "BB4A01B2-4642-C68E-B665-011955262FD5"
@@ -69,5 +69,37 @@
                 "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
             }
         ]
-    }
+    },
+    "templates": [
+        {
+            "template1": "This is a template1"
+        },
+        {
+            "template2": "This is a template1"
+        }
+    ],
+    "macros": [
+        {
+            "macro0": "James"
+        },
+        {
+            "macro1": [
+                "California"
+            ]
+        },
+        {
+            "macro2": [
+                "google",
+                "facebook",
+                "Microsoft"
+            ]
+        },
+        {
+            "macro3": [
+                "pk",
+                "uk",
+                "usa"
+            ]
+        }
+    ]
 }

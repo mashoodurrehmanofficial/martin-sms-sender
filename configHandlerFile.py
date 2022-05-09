@@ -7,7 +7,9 @@ config_prototype = {
         "sinch.com": [ {  "service_plan_id": "",  "api_token": ""  }],
         "clicksend.com": [  { "username": "", "api_key": "" }  ],
         "telnyx.com": [ { "api_key": "",  "messaging_profile_id": ""  }  ] 
-    }
+    },
+    "templates": [],
+    "macros": []
 }
 
 
@@ -76,13 +78,51 @@ class  configHandler():
         except:
             pass
             
-            
+    def getAvailableTemplates(self):
+        return [list(x.keys())[0] for x in self.data['templates']]
     
+    def getAvailableMacros(self):
+        return [list(x.keys())[0] for x in self.data['macros']]
+    
+    
+    def getTemplatesBody(self,key):
+        for x in self.data['templates']:
+            if list(x.keys())[0]==key:
+                return x[key]
+            
+        return '' 
+    def getMacroBody(self,key):
+        for x in self.data['macros']:
+            if list(x.keys())[0]==key:
+                return x[key]
+            
+        return '' 
+    
+    
+    
+    def getTemplateMacroList(self,key):
+        temp = self.data[key]
+        temp = [
+            f"{list(x.keys())[0]} - {list(x.values())[0]}"    for x in temp
+        ] 
+        return temp
+    
+    def addNewTemplateMacro(self,key,value):
+        self.data[key].append(value)
+        self.updateDataFile()
             
             
+    def deleteTemplateMacroRecord(self,key,index):
+        try:
+            del self.data[key][index]
+            self.updateDataFile()
+        except:
+            pass
+            
+        self.updateDataFile()
             
             
-            
-            
-config = configHandler()
-# print(config.removeServiceCredentials('service_name1',-1))
+
+if __name__ == '__main__':        
+    config = configHandler()
+    print(config.getTemplatesBody(key='Body2'))
