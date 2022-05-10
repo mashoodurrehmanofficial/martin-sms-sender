@@ -72,10 +72,10 @@
     },
     "templates": [
         {
-            "template1": "This is a template1"
+            "template2": "This is a template2"
         },
         {
-            "template2": "This is a template1"
+            "martinTemplate": "this is template designed by martin"
         }
     ],
     "macros": [

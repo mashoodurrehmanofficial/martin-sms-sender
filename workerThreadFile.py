@@ -28,7 +28,8 @@ def getMessagePrototypes(message,total_contacts):
         detected_macros = [x for x in detected_macros if x.replace("#","") in configHandler().getAvailableMacros()]
         iterable_macros = [x for x in detected_macros  if type(configHandler().getMacroBody(key=str(x).replace("#",""))) is list]
         non_iterable_macros = [x for x in detected_macros  if type(configHandler().getMacroBody(key=str(x).replace("#",""))) is not list]
-        for non_iterable_macro in non_iterable_macros:    
+        for non_iterable_macro in non_iterable_macros: 
+               
             message = message.replace(non_iterable_macro,configHandler().getMacroBody(key=str(non_iterable_macro).replace("#","")))
         if len(iterable_macros)>0:
             temp_iterable_macros_dict = [{x: configHandler().getMacroBody(key=str(x).replace("#",""))  } for x in iterable_macros]
@@ -77,9 +78,9 @@ def senderGatewayContainer(log,data):
         for message_text,receiver in zip( message_prototypes ,data['contact_list'])
     ] 
     
-    # log.emit(str(data_packets ))
+    log.emit(str(data_packets ))
     print(data_packets)
-    # return
+    return
     
     targetSMSGateway = demoSender
     if service=='sinch.com':

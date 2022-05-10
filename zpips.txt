@@ -4,3 +4,6 @@ pip install telesign
 pip install CM_Text_sdk_python
 pip install plivo
 pip install messagebird
+
+-   macro separated only comma only
+-   stop / pause button

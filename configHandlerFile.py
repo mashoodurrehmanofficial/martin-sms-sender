@@ -92,6 +92,7 @@ class  configHandler():
             
         return '' 
     def getMacroBody(self,key):
+        print(key)
         for x in self.data['macros']:
             if list(x.keys())[0]==key:
                 return x[key]

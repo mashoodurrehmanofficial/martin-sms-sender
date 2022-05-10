@@ -124,6 +124,10 @@ class Main(QMainWindow):
     def onHomeTabImportTemplateComboBoxChange(self,value):
         if value!='Choose Template':
             self.home_page_import_message_input_box.setText(str(configHandler().getTemplatesBody(key=value)))
+            
+    def loadTemplatesIntoDropdownList(self):
+        self.home_page_import_template_dropdown.clear()
+        self.home_page_import_template_dropdown.addItems(["Choose Template"]+configHandler().getAvailableTemplates())
                 
     def prepareHomeTab(self):
         pass
@@ -194,8 +198,9 @@ class Main(QMainWindow):
         
         self.home_page_import_message_btn = QPushButton("Load Message File")
         # self.home_page_import_template_dropdown = QPushButton("Import Template")
-        self.home_page_import_template_dropdown = QComboBox()
-        self.home_page_import_template_dropdown.addItems(["Choose Template"]+configHandler().getAvailableTemplates())
+        self.home_page_import_template_dropdown = QComboBox() 
+        self.loadTemplatesIntoDropdownList()
+        # self.home_page_import_template_dropdown.addItems(["Choose Template"]+configHandler().getAvailableTemplates())
         self.home_page_import_template_dropdown.currentTextChanged.connect(self.onHomeTabImportTemplateComboBoxChange) 
         
         self.home_page_import_message_panel_buttons_layout.addWidget(self.home_page_import_message_btn,1)
@@ -253,11 +258,11 @@ class Main(QMainWindow):
         # contact_list = ['923167 81 5639','923476026649','12057404127']
         # self.home_page_message_title.setText("Alert")
         # self.home_page_import_receivers_input_box.setText("\n".join(contact_list))
-        # self.home_page_import_message_input_box.setText(f"Hello this is message from  ##macro0## ##macro2##")
+        # self.home_page_import_message_input_box.setText(f"This is a template1 ##martinMacro##")
 
 
         credentials = eval(self.home_tab_available_service_credentials_dropdown.currentText())
-        message_title = str(self.home_page_message_title.text())[:8]
+        message_title = str(self.home_page_message_title.text())
         contact_list = str(self.home_page_import_receivers_input_box.toPlainText())
         message_body = str(self.home_page_import_message_input_box.toPlainText()) 
         
@@ -323,10 +328,10 @@ class Main(QMainWindow):
         
         body = str(self.template_vs_macro_body_insert_box.toPlainText())
         try:
-            if key=="macros" and '[' in body or ']' in body:
-                body = eval(body)
+            if key=="macros" :
+                body = str(body).split(",")
                 if type(body) is list and len(body)<1:
-                    self.showWarningBox(text=f"Body values cannot be a empty list / array")
+                    self.showWarningBox(text=f"Body values cannot be  empty ")
                     return 
                     
             
@@ -338,6 +343,7 @@ class Main(QMainWindow):
             title:body
         }
         configHandler().addNewTemplateMacro(key=key,value=value)
+        self.loadTemplatesIntoDropdownList()
         
         self.populateDataTable(key=key)
         
