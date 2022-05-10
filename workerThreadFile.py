@@ -78,9 +78,9 @@ def senderGatewayContainer(log,data):
         for message_text,receiver in zip( message_prototypes ,data['contact_list'])
     ] 
     
-    log.emit(str(data_packets ))
-    print(data_packets)
-    return
+    # log.emit(str(data_packets ))
+    # print(data_packets)
+    # return
     
     targetSMSGateway = demoSender
     if service=='sinch.com':
