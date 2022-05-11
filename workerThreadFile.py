@@ -1,8 +1,6 @@
  
-# from PyQt5.QtCore import *
-# from PyQt5.QtGui import *
-# from PyQt5.QtWidgets import *
-import uuid
+from PyQt5.QtCore import QThread,pyqtSignal  
+# import uuid
 from concurrent.futures import ThreadPoolExecutor
 try:
     from configHandlerFile import configHandler
@@ -56,10 +54,10 @@ def getMessagePrototypes(message,total_contacts):
     
     
     
-def demoSender(data):
-    # print(data)  
-    print(f"-"*10)  
-    data['log'].emit((str(uuid.uuid4()))) 
+# def demoSender(data):
+#     # print(data)  
+#     print(f"-"*10)  
+#     data['log'].emit((str(uuid.uuid4()))) 
     
 def senderGatewayContainer(log,data):  
     message_prototypes = getMessagePrototypes(data['message_body'], len(data['contact_list']) ) 
@@ -82,7 +80,7 @@ def senderGatewayContainer(log,data):
     # print(data_packets)
     return
     
-    targetSMSGateway = demoSender
+    targetSMSGateway = None
     if service=='sinch.com':
         targetSMSGateway = sinchApiSMSGateway
     elif service=='clicksend.com':
