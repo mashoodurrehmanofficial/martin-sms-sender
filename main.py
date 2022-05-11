@@ -23,7 +23,14 @@ except:
         from .workerThreadFile import workerThread
     # from workerThreadFile import workerThread
     
+if hasattr(Qt, 'AA_EnableHighDpiScaling'):
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+
+if hasattr(Qt, 'AA_UseHighDpiPixmaps'):
+    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
     
+os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "2"
+
 
 class Main(QMainWindow): 
     def __init__(self):
