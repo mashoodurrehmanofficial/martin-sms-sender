@@ -1,13 +1,13 @@
  
- 
-from operator import le
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-import sys,os,json 
-# from PyQt5.QtCore import  
-# from PyQt5.QtWidgets import QWidget,QVBoxLayout,QHBoxLayout
+import os,json 
+from time import sleep
+from sys import argv as sys_argv,exit
+from os import environ as os_environ
+from PyQt5.QtCore import  Qt,QDateTime
+from PyQt5.QtWidgets import QMainWindow,QApplication,QWidget,QVBoxLayout,QHBoxLayout,QTabWidget,QLabel,QMessageBox,QFileDialog,QGroupBox,QComboBox,QDateTimeEdit,QLineEdit,QTextEdit,QPushButton,QHeaderView,QTableWidget,QTableWidgetItem,QPlainTextEdit                                                                                      
 # sys.path.insert(0, os.getcwd())
 
+from datetime import datetime,timedelta
 
 try:
     from configHandlerFile import configHandler
@@ -29,7 +29,7 @@ if hasattr(Qt, 'AA_EnableHighDpiScaling'):
 if hasattr(Qt, 'AA_UseHighDpiPixmaps'):
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
     
-os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "2"
+os_environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "2"
 
 
 class Main(QMainWindow): 
@@ -162,9 +162,21 @@ class Main(QMainWindow):
 
 
         self.home_page_service_selection_panel_layout.addWidget(self.home_tab_available_service_dropdown,1)  
+        
+        currentTime = QDateTime.currentDateTime()
+        self.home_page_timer_input_box = QDateTimeEdit()
+        self.home_page_timer_input_box.setDateTime(currentTime)
+        # self.home_page_timer_input_box.setDateTime(currentTime.addSecs(7))
+
+        # self.home_page_message_title.setPlaceholderText("Title")
+        
         self.home_page_message_title = QLineEdit()
         self.home_page_message_title.setPlaceholderText("Title")
+        
+        
+        
         self.home_page_service_selection_panel_layout.addWidget(self.home_tab_available_service_credentials_dropdown,5)
+        self.home_page_service_selection_panel_layout.addWidget(self.home_page_timer_input_box,1)
         self.home_page_service_selection_panel_layout.addWidget(self.home_page_message_title,1)
         self.home_main_frame_layout.addWidget(self.home_page_service_selection_panel,1) 
         # Horizontal -> Vertical  bar for input
@@ -262,10 +274,10 @@ class Main(QMainWindow):
     def onClickStartButton(self):
         service = str(self.home_tab_available_service_dropdown.currentText())
         
-        # contact_list = ['923167 81 5639','923476026649','12057404127']
-        # self.home_page_message_title.setText("Alert")
-        # self.home_page_import_receivers_input_box.setText("\n".join(contact_list))
-        # self.home_page_import_message_input_box.setText(f"This is a template1 ##martinMacro##")
+        contact_list = ['923167 81 5639','923476026649','12057404127']
+        self.home_page_message_title.setText("Alert")
+        self.home_page_import_receivers_input_box.setText("\n".join(contact_list))
+        self.home_page_import_message_input_box.setText(f"This is a template1 ##martinMacro##")
 
 
         credentials = eval(self.home_tab_available_service_credentials_dropdown.currentText())
@@ -286,6 +298,21 @@ class Main(QMainWindow):
         if not message_body or message_body.isspace():
             self.showWarningBox("Please enter Message body to be sent")
             return
+        
+        
+        
+        timer_value = self.home_page_timer_input_box.dateTime().toPyDateTime().replace(second=0, microsecond=0)
+        current_time = datetime.today().replace(second=0, microsecond=0)
+        if current_time >  timer_value:
+            self.showWarningBox("Timer value cannot be less that current time of your machine")
+            return
+        else:
+            difference = timer_value - current_time.total_seconds()
+            # sleep(difference)
+            print(f"-> Waiting for {difference} seconds")
+        
+        
+        
         
         credentials = str(credentials).replace("\'", "\"")
         credentials = json.loads(credentials)
@@ -591,6 +618,6 @@ class Main(QMainWindow):
         self.move(frameGm.topLeft())
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    app = QApplication(sys_argv)
     main = Main()
-    sys.exit(app.exec_()) 
+    exit(app.exec_()) 

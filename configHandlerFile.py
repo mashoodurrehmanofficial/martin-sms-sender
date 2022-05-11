@@ -1,5 +1,7 @@
-import json
-import os
+# import json
+# import os
+from os import path,getcwd 
+from json import dump
 
 config_prototype = {
     "threads_threshold": 5,
@@ -15,10 +17,10 @@ config_prototype = {
 
 
 
-dir_path = os.path.dirname(__file__)
-config_file_path = os.path.join(dir_path,"config.json") 
-if not os.path.exists(config_file_path):
-    config_file_path = os.path.join(os.getcwd(),"config.json") 
+dir_path = path.dirname(__file__)
+config_file_path = path.join(dir_path,"config.json") 
+if not path.exists(config_file_path):
+    config_file_path = path.join(getcwd(),"config.json") 
 
 
 
@@ -28,7 +30,7 @@ class  configHandler():
         self.data = self.readDataFile(file_name=self.config_file_path) 
         
     def makeSureConfigFileExists(self):
-        if not os.path.exists(self.config_file_path):
+        if not path.exists(self.config_file_path):
             self.data = config_prototype
             self.updateDataFile()
             
@@ -42,7 +44,7 @@ class  configHandler():
  
     def updateDataFile(self,):
         with open(self.config_file_path, 'w') as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=4)
+            dump(self.data, f, ensure_ascii=False, indent=4)
     
     # Configuration Tab
     def getThreadsThreshold(self):

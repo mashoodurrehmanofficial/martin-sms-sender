@@ -1,7 +1,7 @@
  
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+# from PyQt5.QtCore import *
+# from PyQt5.QtGui import *
+# from PyQt5.QtWidgets import *
 import uuid
 from concurrent.futures import ThreadPoolExecutor
 try:
@@ -80,7 +80,7 @@ def senderGatewayContainer(log,data):
     
     # log.emit(str(data_packets ))
     # print(data_packets)
-    # return
+    return
     
     targetSMSGateway = demoSender
     if service=='sinch.com':
