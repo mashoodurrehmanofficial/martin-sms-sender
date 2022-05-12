@@ -321,7 +321,8 @@ class Main(QMainWindow):
         else:
             # mktime
             timer_difference = (timer_value - current_time).total_seconds()
-            self.showWarningBox(f"Quick SMS would start sending messages after {int(timer_difference/60)} minutes")
+            if timer_difference>0:
+                self.showWarningBox(f"Quick SMS would start sending messages after {int(timer_difference/60)} minutes")
             # time.sleep(difference)
             
             print(f"-> Waiting for {timer_difference} seconds")
