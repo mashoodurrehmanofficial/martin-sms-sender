@@ -1,0 +1,25 @@
+{
+    "threads_threshold": 5,
+    "services": {
+        "sinch.com": [
+            {
+                "service_plan_id": "",
+                "api_token": ""
+            }
+        ],
+        "clicksend.com": [
+            {
+                "username": "",
+                "api_key": ""
+            }
+        ],
+        "telnyx.com": [
+            {
+                "api_key": "",
+                "messaging_profile_id": ""
+            }
+        ]
+    },
+    "templates": [],
+    "macros": []
+}

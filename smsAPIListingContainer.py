@@ -25,7 +25,7 @@ def sinchApiSMSGateway(data_packet):
     } 
     
     
-    response = requests.post(url, json=payload, headers=headers)
+    response = requests.post(url, json=payload, headers=headers,timeout=60)
     response = response.json()
     data_packet['log'].emit("-"*50+"\n"+str(response))
     print(response)
@@ -97,7 +97,7 @@ def telnyxApiSMSGateway(data_packet):
         'text': data_packet['message_body'], 
     } 
 
-    response = requests.post('https://api.telnyx.com/v2/messages', headers=headers, json=json_data) 
+    response = requests.post('https://api.telnyx.com/v2/messages', headers=headers, json=json_data,timeout=60) 
     response = response.json() 
     data_packet['log'].emit("-"*50+"\n")
     data_packet['log'].emit(str(response))

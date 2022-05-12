@@ -1,0 +1,112 @@
+{
+    "threads_threshold": 5,
+    "services": {
+        "sinch.com": [
+            {
+                "service_plan_id": "",
+                "api_token": ""
+            },
+            {
+                "service_plan_id": "e1ec53130cdc4de7a74267c8e8b21631",
+                "api_token": "6cee3e8b6f6247c7bb57a37a5212dc55"
+            }
+        ],
+        "clicksend.com": [
+            {
+                "username": "",
+                "api_key": ""
+            },
+            {
+                "username": "Roussisphoto@gmail.com",
+                "api_key": "BB4A01B2-4642-C68E-B665-011955262FD5"
+            }
+        ],
+        "telnyx.com": [
+            {
+                "api_key": "",
+                "messaging_profile_id": ""
+            },
+            {
+                "api_key": "KEY0180852AF869A127E29B39149467E0B2_l5RS68ODYZtpzwuAQnbl8G",
+                "messaging_profile_id": "40018085-20e2-45bd-9a75-e78a912c93bb"
+            }
+        ],
+        "tyntec.com": [
+            {
+                "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
+            },
+            {
+                "key": "543534"
+            }
+        ],
+        "vonage.co.uk": [
+            {
+                "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
+            }
+        ],
+        "telesign.com": [
+            {
+                "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
+            }
+        ],
+        "clickatell.com": [
+            {
+                "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
+            }
+        ],
+        "cm.com": [
+            {
+                "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
+            }
+        ],
+        "plivo.com": [
+            {
+                "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
+            }
+        ],
+        "messagebird.com": [
+            {
+                "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
+            }
+        ]
+    },
+    "templates": [
+        {
+            "template2": "This is a template2"
+        },
+        {
+            "martinTemplate": "this is template designed by martin"
+        }
+    ],
+    "macros": [
+        {
+            "macro0": "James"
+        },
+        {
+            "macro1": [
+                "California"
+            ]
+        },
+        {
+            "macro2": [
+                "google",
+                "facebook",
+                "Microsoft"
+            ]
+        },
+        {
+            "macro3": [
+                "pk",
+                "uk",
+                "usa"
+            ]
+        },
+        {
+            "NHS": [
+                "NHS",
+                "HSN",
+                "N HS"
+            ]
+        }
+    ]
+}

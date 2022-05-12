@@ -34,7 +34,9 @@ if hasattr(Qt, 'AA_UseHighDpiPixmaps'):
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
     
 os_environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "2"
-
+import ctypes
+myappid = 'mycompany.myproduct.subproduct.version' # arbitrary string
+ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 class Main(QMainWindow): 
     def __init__(self):
@@ -45,8 +47,11 @@ class Main(QMainWindow):
         self.width = 800
         self.height = 600
         self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)       
-        self.setWindowIcon(QIcon(configHandler().getIconFilePath()))
+        self.setGeometry(self.left, self.top, self.width, self.height)      
+         
+        # self.setWindowIcon(QIcon(configHandler().getIconFilePath()))
+        self.setWindowIcon( QIcon(QApplication.style().standardIcon(QStyle.SP_DesktopIcon))  )
+ 
 
         # self.showMaximized()
         # Initialize tab screen
@@ -96,8 +101,8 @@ class Main(QMainWindow):
         self.prepareTemplatesMacrosTabe()
         # self.tab_container.setCurrentIndex(2)
         
-    def showWarningBox(self,text):
-        QMessageBox.about(self, 'Error',str(text))
+    def showWarningBox(self,text,title='Error'):
+        QMessageBox.about(self, title,str(text))
         
     def onHomeTabServiceComboBoxChange(self, value):
         self.home_tab_available_service_credentials_dropdown.clear()    
@@ -155,9 +160,7 @@ class Main(QMainWindow):
         self.home_page_service_selection_panel_layout.setAlignment(Qt.AlignTop)
         self.home_page_service_selection_panel.setLayout(self.home_page_service_selection_panel_layout)
         self.home_page_service_selection_panel.setFixedHeight(70) 
-        self.home_tab_available_service_credentials_dropdown = QComboBox()
-        # self.home_tab_available_service_credentials_dropdown.currentTextChanged.connect(self.on_combobox_changed)
-        # self.home_tab_available_service_credentials_dropdown.addItem(str(uuid.uuid4())+str(uuid.uuid4())+str(uuid.uuid4())) 
+        self.home_tab_available_service_credentials_dropdown = QComboBox() 
         
         self.home_tab_available_service_dropdown = QComboBox()
         self.home_tab_available_service_dropdown.currentTextChanged.connect(self.onHomeTabServiceComboBoxChange)
@@ -170,13 +173,10 @@ class Main(QMainWindow):
         
         currentTime = QDateTime.currentDateTime()
         self.home_page_timer_input_box = QDateTimeEdit()
-        self.home_page_timer_input_box.setDateTime(currentTime)
-        # self.home_page_timer_input_box.setDateTime(currentTime.addSecs(7))
-
-        # self.home_page_message_title.setPlaceholderText("Title")
+        self.home_page_timer_input_box.setDateTime(currentTime) 
         
         self.home_page_message_title = QLineEdit()
-        self.home_page_message_title.setPlaceholderText("Title")
+        self.home_page_message_title.setPlaceholderText("Sender ID")
         
         
         
@@ -269,16 +269,23 @@ class Main(QMainWindow):
         self.home_page_log_input_box.verticalScrollBar().setValue(self.home_page_log_input_box.verticalScrollBar().maximum())
         
     def customSlot2(self,val): 
+        
+        
+        if 'Message sent to' in str(val):
+             
+            self.messages_sent_index 
+            val = f"{self.messages_sent_index}/{self.total_numbers_in_contact_list}" + str(val)
+            self.messages_sent_index = self.messages_sent_index + 1
         self.appedLogInoutBoxText(str(val)) 
         print("signal - update - ", val)
         
         
     def threadFinishedSlot(self): 
-        log_plain_text = str(self.home_page_log_input_box.toPlainText())
-        total_messages_sent = len(list(set([x for x in log_plain_text.split('\n') if "Message sent to" in  str(x)])))
+        log_plain_text = str(self.home_page_log_input_box.toPlainText()) 
+        total_messages_sent = max([int(x.split("->")[0].split("/")[0]) for x in log_plain_text.split('\n') if "Message sent to" in  str(x)]+[0])
         self.appedLogInoutBoxText(str("-"*50))
         self.appedLogInoutBoxText(f"\nTotal messages sent =  {total_messages_sent}")
-        self.showWarningBox(f"Total messages sent = {total_messages_sent}")
+        self.showWarningBox(text=f"Total messages sent = {total_messages_sent}", title="Message")
     
     def onClickStartButton(self):
         service = str(self.home_tab_available_service_dropdown.currentText())
@@ -287,9 +294,11 @@ class Main(QMainWindow):
         # contact_list = ['923167 81 5639','923476026649','12057404127']
         # self.home_page_message_title.setText("Alert")
         # self.home_page_import_receivers_input_box.setText("\n".join(contact_list))
-        # self.home_page_import_message_input_box.setText(f"This is a template1 ##martinMacro##")
+        # self.home_page_import_message_input_box.setText(f"##NHS## : Hello")
         # END - set dummy data
 
+        self.total_numbers_in_contact_list = len(contact_list)
+        self.messages_sent_index = 0
 
         credentials = eval(self.home_tab_available_service_credentials_dropdown.currentText())
         message_title = str(self.home_page_message_title.text())
@@ -361,7 +370,7 @@ class Main(QMainWindow):
             if type(res) is dict:
                 self.showWarningBox(text=f"Wrong credentials Layout.\nMake sure credentials have layout like follpwing\n{str(res)}")
             else:
-                self.showWarningBox(text="Successfully added new credentials ")
+                self.showWarningBox(text="Successfully added new credentials ",title="Message")
                 self.new_crendetials_insert_box.setPlainText("")
         except:
             self.showWarningBox(text="Invalid JSON struture for new Credentials")
@@ -488,6 +497,7 @@ class Main(QMainWindow):
         self.new_crendetials_insert_box = QPlainTextEdit()
         self.new_crendetials_insert_box.setFixedHeight(80)
         self.new_crendetials_save_btn = QPushButton("Add new Credentials")
+        self.new_crendetials_save_btn.setFont(QFont('Times', 9))
         self.new_crendetials_save_btn.clicked.connect(self.onClickAddNewCredentialsButton)
         self.service_credentials_insertion_panel_layout.addWidget(self.new_crendetials_insert_box,1)
         self.service_credentials_insertion_panel_layout.addWidget(self.new_crendetials_save_btn,1)
@@ -532,6 +542,7 @@ class Main(QMainWindow):
         self.template_vs_macro_body_insert_box.setPlaceholderText(f"Insert Body / Message for {self.getTemplateMacrosdDropdownText()}")
         self.templates_macros_listing_table.setTitle ( f"{self.getTemplateMacrosdDropdownText()} Listing")
         self.new_templates_macros_save_btn.setText(f"Add new {self.getTemplateMacrosdDropdownText()}")
+        
         self.templates_macros_listing_table_layout = QHBoxLayout()  
         self.populateDataTable(key = self.getTemplateMacrosTableKey())
         
@@ -573,6 +584,7 @@ class Main(QMainWindow):
         self.templates_macros_insertion_panel_layout.addWidget(self.templates_macros_title_body_insertion_panel,1) 
         
         self.new_templates_macros_save_btn = QPushButton(f"Add new {self.getTemplateMacrosdDropdownText()}")
+        self.new_templates_macros_save_btn.setFont(QFont('Times', 9))
         # self.new_crendetials_save_btn.clicked.connect(self.onClickAddNewCredentialsButton)
         self.new_templates_macros_save_btn.clicked.connect(self.onClickAddNewTemplateMacroButton)
         # self.templates_macros_insertion_panel_layout.addWidget(self.new_crendetials_insert_box,1)

@@ -18,10 +18,10 @@ config_prototype = {
 
 
 dir_path = path.dirname(__file__)
-config_file_path = path.join(dir_path,"data","config.json") 
+config_file_path = path.join(dir_path,"config.json") 
 icon_file_path = path.join(dir_path,"data","icon.png") 
 if not path.exists(config_file_path):
-    config_file_path = path.join(getcwd(),"data","config.json") 
+    config_file_path = path.join(getcwd(),"config.json") 
     icon_file_path = path.join(getcwd(),"data","icon.png") 
 
 
