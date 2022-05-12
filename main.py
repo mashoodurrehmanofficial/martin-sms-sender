@@ -1,11 +1,15 @@
  
 import os,json 
-from time import sleep
+# from time import sleep
+import time
 from sys import argv as sys_argv,exit
 from os import environ as os_environ
-from PyQt5.QtCore import  Qt,QDateTime
-from PyQt5.QtWidgets import QMainWindow,QApplication,QWidget,QVBoxLayout,QHBoxLayout,QTabWidget,QLabel,QMessageBox,QFileDialog,QGroupBox,QComboBox,QDateTimeEdit,QLineEdit,QTextEdit,QPushButton,QHeaderView,QTableWidget,QTableWidgetItem,QPlainTextEdit                                                                                      
+# from PyQt5.QtCore import  Qt,QDateTime
+# from PyQt5.QtWidgets import QMainWindow,QApplication,QWidget,QVBoxLayout,QHBoxLayout,QTabWidget,QLabel,QMessageBox,QFileDialog,QGroupBox,QComboBox,QDateTimeEdit,QLineEdit,QTextEdit,QPushButton,QHeaderView,QTableWidget,QTableWidgetItem,QPlainTextEdit                                                                                      
 # sys.path.insert(0, os.getcwd())
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 from datetime import datetime,timedelta
 
@@ -35,14 +39,15 @@ os_environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "2"
 class Main(QMainWindow): 
     def __init__(self):
         super().__init__()
-        self.title = 'SMS Sender'
+        self.title = 'Quick SMS'
         self.left = 0
         self.top = 0
         self.width = 800
         self.height = 600
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)       
-          
+        self.setWindowIcon(QIcon(configHandler().getIconFilePath()))
+
         # self.showMaximized()
         # Initialize tab screen
         self.tab_container = QTabWidget()
@@ -252,11 +257,11 @@ class Main(QMainWindow):
         self.home_main_frame_layout.addStretch()
         
      
-    def longRunningTask(self,service,credentials,message_title,contact_list,message_body):     
+    def longRunningTask(self,service,credentials,message_title,contact_list,message_body,timer_difference):     
         self.appedLogInoutBoxText(str("Starting Main Thread / Parent Thread ..."))
-        self.worker = workerThread(service,credentials,message_title,contact_list,message_body)
+        self.worker = workerThread(service,credentials,message_title,contact_list,message_body,timer_difference)
         self.worker.start()
-        self.worker.finished.connect(self.customSlot)
+        self.worker.finished.connect(self.threadFinishedSlot)
         self.worker.log_input_box_component.connect(self.customSlot2)
      
     def appedLogInoutBoxText(self,val):
@@ -264,20 +269,26 @@ class Main(QMainWindow):
         self.home_page_log_input_box.verticalScrollBar().setValue(self.home_page_log_input_box.verticalScrollBar().maximum())
         
     def customSlot2(self,val): 
-        self.appedLogInoutBoxText(str(val))
+        self.appedLogInoutBoxText(str(val)) 
         print("signal - update - ", val)
         
         
-    def customSlot(self):
-        pass
+    def threadFinishedSlot(self): 
+        log_plain_text = str(self.home_page_log_input_box.toPlainText())
+        total_messages_sent = len(list(set([x for x in log_plain_text.split('\n') if "Message sent to" in  str(x)])))
+        self.appedLogInoutBoxText(str("-"*50))
+        self.appedLogInoutBoxText(f"\nTotal messages sent =  {total_messages_sent}")
+        self.showWarningBox(f"Total messages sent = {total_messages_sent}")
     
     def onClickStartButton(self):
         service = str(self.home_tab_available_service_dropdown.currentText())
         
-        contact_list = ['923167 81 5639','923476026649','12057404127']
-        self.home_page_message_title.setText("Alert")
-        self.home_page_import_receivers_input_box.setText("\n".join(contact_list))
-        self.home_page_import_message_input_box.setText(f"This is a template1 ##martinMacro##")
+        # Start - set dummy data
+        # contact_list = ['923167 81 5639','923476026649','12057404127']
+        # self.home_page_message_title.setText("Alert")
+        # self.home_page_import_receivers_input_box.setText("\n".join(contact_list))
+        # self.home_page_import_message_input_box.setText(f"This is a template1 ##martinMacro##")
+        # END - set dummy data
 
 
         credentials = eval(self.home_tab_available_service_credentials_dropdown.currentText())
@@ -303,13 +314,17 @@ class Main(QMainWindow):
         
         timer_value = self.home_page_timer_input_box.dateTime().toPyDateTime().replace(second=0, microsecond=0)
         current_time = datetime.today().replace(second=0, microsecond=0)
+        timer_difference = 0
         if current_time >  timer_value:
             self.showWarningBox("Timer value cannot be less that current time of your machine")
             return
         else:
-            difference = timer_value - current_time.total_seconds()
-            # sleep(difference)
-            print(f"-> Waiting for {difference} seconds")
+            # mktime
+            timer_difference = (timer_value - current_time).total_seconds()
+            self.showWarningBox(f"Quick SMS would start sending messages after {int(timer_difference/60)} minutes")
+            # time.sleep(difference)
+            
+            print(f"-> Waiting for {timer_difference} seconds")
         
         
         
@@ -327,7 +342,7 @@ class Main(QMainWindow):
         self.appedLogInoutBoxText(str(f"Receiver Phone number list = {contact_list}",  ))
         self.appedLogInoutBoxText(str("-"*50))
         self.appedLogInoutBoxText(str("SMS Sender is inintiating ..."))
-        self.longRunningTask(service,credentials,message_title,contact_list,message_body)
+        self.longRunningTask(service,credentials,message_title,contact_list,message_body,timer_difference)
          
         
         

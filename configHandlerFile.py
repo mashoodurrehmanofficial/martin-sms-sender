@@ -18,9 +18,11 @@ config_prototype = {
 
 
 dir_path = path.dirname(__file__)
-config_file_path = path.join(dir_path,"config.json") 
+config_file_path = path.join(dir_path,"data","config.json") 
+icon_file_path = path.join(dir_path,"data","icon.png") 
 if not path.exists(config_file_path):
-    config_file_path = path.join(getcwd(),"config.json") 
+    config_file_path = path.join(getcwd(),"data","config.json") 
+    icon_file_path = path.join(getcwd(),"data","icon.png") 
 
 
 
@@ -28,6 +30,7 @@ class  configHandler():
     def __init__(self):
         self.config_file_path = config_file_path 
         self.data = self.readDataFile(file_name=self.config_file_path) 
+        self.icon_file_path = icon_file_path 
         
     def makeSureConfigFileExists(self):
         if not path.exists(self.config_file_path):
@@ -35,7 +38,8 @@ class  configHandler():
             self.updateDataFile()
             
             
-            
+    def getIconFilePath(self):
+        return self.icon_file_path
             
             
     def readDataFile(self,file_name):

@@ -16,6 +16,7 @@ except:
         from .smsAPIListingContainer import * 
     
     
+import time
     
 def getMessagePrototypes(message,total_contacts):
     message_prototypes = [] 
@@ -78,7 +79,7 @@ def senderGatewayContainer(log,data):
     
     # log.emit(str(data_packets ))
     # print(data_packets)
-    return
+    # return
     
     targetSMSGateway = None
     if service=='sinch.com':
@@ -107,16 +108,20 @@ def senderGatewayContainer(log,data):
     
     
 class workerThread(QThread): 
-    def __init__(self,service,credentials,message_title,contact_list,message_body):
+    def __init__(self,service,credentials,message_title,contact_list,message_body,timer_difference):
         super().__init__()
         self.service  = service
         self.credentials  = credentials
         self.message_title  = message_title
         self.contact_list  = contact_list
         self.message_bod  = message_body 
+        self.timer_difference  = timer_difference 
+    
         
     log_input_box_component = pyqtSignal(str)
     def run(self):
+        print(f"-> Waiting for {self.timer_difference} seconds")
+        time.sleep(self.timer_difference)
         print("->   started")
         data = { 
             "service":self.service,

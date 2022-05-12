@@ -23,6 +23,8 @@ def sinchApiSMSGateway(data_packet):
         "Content-Type": "application/json",
         "Authorization": f"Bearer {data_packet['credentials']['api_token']}"
     } 
+    
+    
     response = requests.post(url, json=payload, headers=headers)
     response = response.json()
     data_packet['log'].emit("-"*50+"\n"+str(response))
