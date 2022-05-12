@@ -297,13 +297,13 @@ class Main(QMainWindow):
         # self.home_page_import_message_input_box.setText(f"##NHS## : Hello")
         # END - set dummy data
 
-        self.total_numbers_in_contact_list = len(contact_list)
-        self.messages_sent_index = 0
 
         credentials = eval(self.home_tab_available_service_credentials_dropdown.currentText())
         message_title = str(self.home_page_message_title.text())
         contact_list = str(self.home_page_import_receivers_input_box.toPlainText())
         message_body = str(self.home_page_import_message_input_box.toPlainText()) 
+        self.total_numbers_in_contact_list = len(contact_list) 
+        self.messages_sent_index = 0
         
         if not message_title or  message_title.isspace():
             self.showWarningBox("Please enter a Message Title (Sender ID)")
@@ -319,7 +319,8 @@ class Main(QMainWindow):
             self.showWarningBox("Please enter Message body to be sent")
             return
         
-        
+        self.total_numbers_in_contact_list = len(contact_list) 
+        self.messages_sent_index = 0
         
         timer_value = self.home_page_timer_input_box.dateTime().toPyDateTime().replace(second=0, microsecond=0)
         current_time = datetime.today().replace(second=0, microsecond=0)

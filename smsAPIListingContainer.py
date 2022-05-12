@@ -88,6 +88,8 @@ def telnyxApiSMSGateway(data_packet):
         'Authorization': f"Bearer {data_packet['credentials']['api_key']}",
     }
     
+    # data_packet['receiver'] = str(data_packet['receiver']).strip().replace
+    
     data_packet['receiver'] = data_packet['receiver'] if str(data_packet['receiver']).startswith("+") else "+"+str(data_packet['receiver'])
     # print(f"-- {data_packet['receiver']}")
     json_data = {
