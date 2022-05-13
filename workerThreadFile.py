@@ -22,18 +22,31 @@ def getMessagePrototypes(message,total_contacts):
     message_prototypes = [] 
     if '##' not in message: 
         message_prototypes.append(message) 
+        
     else:
-        detected_macros = [x for x in message.split() if x.startswith("##") and x.endswith("##")]
+        detected_macros = [x for x in message.split() if "#" in str(x) ]
+        # detected_macros = [x for x in message.split() if x.startswith("##") and x.endswith("##")]
+        detected_macros = ["##"+x.split("##")[1]+"##" for x in detected_macros]
+        # print("detected_macros = ",detected_macros)
+        
         detected_macros = [x for x in detected_macros if x.replace("#","") in configHandler().getAvailableMacros()]
         iterable_macros = [x for x in detected_macros  if type(configHandler().getMacroBody(key=str(x).replace("#",""))) is list]
         non_iterable_macros = [x for x in detected_macros  if type(configHandler().getMacroBody(key=str(x).replace("#",""))) is not list]
-        for non_iterable_macro in non_iterable_macros: 
-               
+        # print("all = ", configHandler().getAvailableMacros())
+        # print("detected_macros = ",detected_macros)
+        # print("iterable_macros = ",iterable_macros)
+        # print("non_iterable_macros = ",non_iterable_macros)
+        
+        
+        for non_iterable_macro in non_iterable_macros:    
             message = message.replace(non_iterable_macro,configHandler().getMacroBody(key=str(non_iterable_macro).replace("#","")))
         if len(iterable_macros)>0:
             temp_iterable_macros_dict = [{x: configHandler().getMacroBody(key=str(x).replace("#",""))  } for x in iterable_macros]
             iterable_macros_dict = {}
             [iterable_macros_dict.update(x) for x in temp_iterable_macros_dict]
+            
+            # print(iterable_macros_dict)
+            
             max_counter = max([len(x) for x in list(iterable_macros_dict.values())]) 
             for counter in range(max_counter):
                 temp_message = message
@@ -46,8 +59,7 @@ def getMessagePrototypes(message,total_contacts):
             message_prototypes.append(message)
     message_prototypes = message_prototypes * (total_contacts - len(message_prototypes) + 1)
     message_prototypes = message_prototypes[:total_contacts]
-    return message_prototypes      
-            
+    return message_prototypes     
     
     
     

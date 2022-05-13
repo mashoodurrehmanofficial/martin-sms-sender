@@ -273,9 +273,9 @@ class Main(QMainWindow):
         
         if 'Message sent to' in str(val):
              
+            self.messages_sent_index = self.messages_sent_index + 1
             self.messages_sent_index 
             val = f"{self.messages_sent_index}/{self.total_numbers_in_contact_list}" + str(val)
-            self.messages_sent_index = self.messages_sent_index + 1
         self.appedLogInoutBoxText(str(val)) 
         print("signal - update - ", val)
         
@@ -294,7 +294,8 @@ class Main(QMainWindow):
         # contact_list = ['923167 81 5639','923476026649','12057404127']
         # self.home_page_message_title.setText("Alert")
         # self.home_page_import_receivers_input_box.setText("\n".join(contact_list))
-        # self.home_page_import_message_input_box.setText(f"##NHS## : Hello")
+        # self.home_page_import_message_input_box.setText(f"I'm writing Hello ##LINK##")
+        # self.home_page_import_message_input_box.setText(f"I’m writing Hello ##LINK##")
         # END - set dummy data
 
 

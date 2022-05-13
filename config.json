@@ -107,6 +107,13 @@
                 "HSN",
                 "N HS"
             ]
+        },
+        {
+            "LINK": [
+                "Google.com",
+                "facebook.com",
+                "amazon.com"
+            ]
         }
     ]
 }
