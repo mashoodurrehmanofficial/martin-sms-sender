@@ -41,7 +41,7 @@ ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 class Main(QMainWindow): 
     def __init__(self):
         super().__init__()
-        self.title = 'Quick SMS'
+        self.title = 'QuickSMS'
         self.left = 0
         self.top = 0
         self.width = 800
