@@ -1,6 +1,5 @@
-# import json
-# import os
-from os import path,getcwd 
+
+import os
 from json import dump
 
 config_prototype = {
@@ -16,14 +15,14 @@ config_prototype = {
 }
 
 
+activation_file_path = os.path.join(os.environ['WINDIR'] , "DFHOU-439U4ROHRWE-37493OJREW.txt")
 
-
-dir_path = path.dirname(__file__)
-config_file_path = path.join(dir_path,"config.json") 
-icon_file_path = path.join(dir_path,"data","icon.png") 
-if not path.exists(config_file_path):
-    config_file_path = path.join(getcwd(),"config.json") 
-    icon_file_path = path.join(getcwd(),"data","icon.png") 
+dir_path = os.path.dirname(__file__)
+config_file_path = os.path.join(dir_path,"config.json") 
+icon_file_path = os.path.join(dir_path,"data","icon.png") 
+if not os.path.exists(config_file_path):
+    config_file_path = os.path.join(os.getcwd(),"config.json") 
+    icon_file_path = os.path.join(os.getcwd(),"data","icon.png") 
 
 
 
@@ -34,17 +33,17 @@ class  configHandler():
         self.icon_file_path = icon_file_path 
         
     def makeSureConfigFileExists(self):
-        if not path.exists(self.config_file_path):
+        if not os.path.exists(self.config_file_path):
             self.data = config_prototype
             self.updateDataFile()
             
     
     def getProductKey(self):
-        return str(self.data['prodcut_key'])
+        return os.path.exists(activation_file_path)
     
     def setproductKey(self,new_key):
-        self.data['prodcut_key'] = str(new_key)
-        self.updateDataFile()
+        with open(activation_file_path,"w",encoding="utf-8")as file:
+            file.write(str(new_key))
           
     def getIconFilePath(self):
         return self.icon_file_path

@@ -114,7 +114,7 @@ class Main(QMainWindow):
         self.prepareTemplatesMacrosTabe()
     
     def checkProductKey(self):
-        if len(configHandler().getProductKey())<30:   
+        if not configHandler().getProductKey():   
             print("show product key tab")
         else:
             self.manageVisibleTabs()
@@ -695,7 +695,7 @@ class Main(QMainWindow):
         key = str(self.activation_key_input.text())
         self.activation_tab_request_status.setText("")
         val = eval(val)
-        if val['is_valid'] is False and val.get("used") is True:
+        if val['is_valid'] is False and val.get("used") is not None:
             return self.showWarningBox(title="Server Response",text=f"Product key {key} is already used on another machine")
             
         elif val['is_valid'] is False:
