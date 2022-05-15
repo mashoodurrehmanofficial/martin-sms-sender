@@ -33,6 +33,7 @@ class serverThread(QThread):
     def run(self):
         print("calling request")
         url = f'http://localhost:8000/api/verifyProductKey/{self.key}'
+        url = f'https://martin12345.pythonanywhere.com/api/verifyProductKey/{self.key}'
         response = requests.get(url).json()
         self.activation_request_status.emit(str(response))
         
