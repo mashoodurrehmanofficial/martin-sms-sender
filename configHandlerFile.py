@@ -5,6 +5,7 @@ from json import dump
 
 config_prototype = {
     "threads_threshold": 5,
+    "prodcut_key":"",
     "services": {
         "sinch.com": [ {  "service_plan_id": "",  "api_token": ""  }],
         "clicksend.com": [  { "username": "", "api_key": "" }  ],
@@ -37,7 +38,14 @@ class  configHandler():
             self.data = config_prototype
             self.updateDataFile()
             
-            
+    
+    def getProductKey(self):
+        return str(self.data['prodcut_key'])
+    
+    def setproductKey(self,new_key):
+        self.data['prodcut_key'] = str(new_key)
+        self.updateDataFile()
+          
     def getIconFilePath(self):
         return self.icon_file_path
             

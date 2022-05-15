@@ -1,5 +1,6 @@
 {
     "threads_threshold": 5,
+    "prodcut_key": "7689c474-0275-4a68-94f4-ac0f4652f7fd",
     "services": {
         "sinch.com": [
             {

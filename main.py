@@ -16,6 +16,7 @@ from datetime import datetime,timedelta
 try:
     from configHandlerFile import configHandler
     from workerThreadFile import workerThread
+    from workerActivationThread import serverThread
 except:
     try:
         from configHandlerFile import configHandler
@@ -23,9 +24,12 @@ except:
         from .configHandlerFile import configHandler
     try:
         from workerThreadFile import workerThread
+        from workerActivationThread import serverThread
     except:
-        from .workerThreadFile import workerThread
+        from .workerActivationThread import serverThread
     # from workerThreadFile import workerThread
+    
+    
     
 if hasattr(Qt, 'AA_EnableHighDpiScaling'):
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
@@ -60,47 +64,63 @@ class Main(QMainWindow):
         self.home_tab = QWidget()
         self.credentails_tab = QWidget()
         self.configuration_tab = QWidget()
+        self.activation_tab = QWidget()
         self.templates_macros_tab = QWidget()
 
         self.home_tab_layout = QVBoxLayout()    
         self.credentails_tab_layout = QVBoxLayout()   
         self.configuration_tab_layout = QVBoxLayout()
+        self.activation_tab_layout = QVBoxLayout()
         self.templates_macros_tab_layout = QVBoxLayout()
 
         self.home_tab.setLayout(self.home_tab_layout)
         self.credentails_tab.setLayout(self.credentails_tab_layout)
+        self.activation_tab.setLayout(self.activation_tab_layout)
         self.configuration_tab.setLayout(self.configuration_tab_layout)
         self.templates_macros_tab.setLayout(self.templates_macros_tab_layout)
 
         self.home_tab_label = QLabel()
         self.credentails_tab_label = QLabel()
         self.configuration_tab_label = QLabel()
+        self.activation_tab_label = QLabel()
         self.templates_macros_tab_label = QLabel()
 
  
         self.home_tab_layout.addWidget(self.home_tab_label)
         self.credentails_tab_layout.addWidget(self.credentails_tab_label)
         self.configuration_tab_layout.addWidget(self.templates_macros_tab_label)
-        self.configuration_tab_layout.addWidget(self.configuration_tab_label)
+        self.activation_tab_layout.addWidget(self.configuration_tab_label)
 
-        # Add tabs
+        # Add tabs 
+        self.tab_container.addTab(self.activation_tab,"Activation")     
+ 
+        self.checkProductKey()
+
+        self.setCentralWidget(self.tab_container)
+        # self.center()
+        self.show() 
+        self.prepareActivationTab()
+        self.tab_container.setCurrentIndex(0)
+    
+    def manageVisibleTabs(self):
+        self.tab_container.removeTab(0)
         self.tab_container.addTab(self.home_tab,"Home")
         self.tab_container.addTab(self.credentails_tab,"Credentials")
         self.tab_container.addTab(self.templates_macros_tab,"Templates / Macros")     
         self.tab_container.addTab(self.configuration_tab,"Configuration")     
- 
-
-
-        self.setCentralWidget(self.tab_container)
-        # self.center()
-        self.show()
-        
         self.prepareHomeTab()
         self.prepareConfigurationTab()
         self.prepareCredentialsTab()
         self.prepareTemplatesMacrosTabe()
-        # self.tab_container.setCurrentIndex(2)
-        
+    
+    def checkProductKey(self):
+        if len(configHandler().getProductKey())<30:   
+            print("show product key tab")
+        else:
+            self.manageVisibleTabs()
+            print("verified !")
+            
+      
     def showWarningBox(self,text,title='Error'):
         QMessageBox.about(self, title,str(text))
         
@@ -262,13 +282,13 @@ class Main(QMainWindow):
         self.worker = workerThread(service,credentials,message_title,contact_list,message_body,timer_difference)
         self.worker.start()
         self.worker.finished.connect(self.threadFinishedSlot)
-        self.worker.log_input_box_component.connect(self.customSlot2)
+        self.worker.log_input_box_component.connect(self.logUpdateSlot)
      
     def appedLogInoutBoxText(self,val):
         self.home_page_log_input_box.textCursor().insertText(str(val)+'\n')
         self.home_page_log_input_box.verticalScrollBar().setValue(self.home_page_log_input_box.verticalScrollBar().maximum())
         
-    def customSlot2(self,val): 
+    def logUpdateSlot(self,val): 
         
         
         if 'Message sent to' in str(val):
@@ -635,6 +655,60 @@ class Main(QMainWindow):
         self.configuration_frame.setLayout(self.group_box_layout)
         self.configuration_frame.setAlignment(Qt.AlignTop)
         self.configuration_tab_layout.addWidget(self.configuration_frame) 
+
+    def prepareActivationTab(self):
+        self.activation_tab_layout.setAlignment(Qt.AlignTop)
+        self.activation_frame = QGroupBox("Product Key")
+        self.group_box_layout = QHBoxLayout()
+        self.activation_save_btn = QPushButton("Verify",)
+        self.activation_save_btn.clicked.connect(self.verifyProductKeyFromServer)
+        self.activation_key_input = QLineEdit()
+        # self.activation_thread_input.setText(str(configHandler().getThreadsThreshold()))
+        self.group_box_layout.addWidget(self.activation_key_input,11)
+        self.group_box_layout.addWidget(self.activation_save_btn,1)
+        self.activation_frame.setLayout(self.group_box_layout)
+        self.activation_frame.setAlignment(Qt.AlignTop)
+        
+        self.activation_tab_request_status = QLabel("")
+        self.activation_tab_layout.addWidget(self.activation_frame) 
+        self.activation_tab_layout.addWidget(self.activation_tab_request_status) 
+
+
+    def verifyProductKeyFromServer(self):
+        key = str(self.activation_key_input.text())
+        print(key)
+        if not key or str(key).isspace():
+            self.showWarningBox("Product key can't be empty")
+            return 
+        self.activation_tab_request_status.setText("Status: Verifying Product Key from server ... ")
+        self.activation_worker = serverThread(key)
+        self.activation_worker.start()
+        # self.worker.finished.connect(self.activationKeyServerFinishedSlot)
+        self.activation_worker.activation_request_status.connect(self.activationKeyServerResponseSlot)
+ 
+
+
+ 
+     
+  
+    def activationKeyServerResponseSlot(self,val):  
+        key = str(self.activation_key_input.text())
+        self.activation_tab_request_status.setText("")
+        val = eval(val)
+        if val['is_valid'] is False:
+            return self.showWarningBox(title="Server Response",text="Given Product key is Invalid")
+        else:
+            self.showWarningBox(title="Server Response",text="Software Activated :) ")
+            configHandler().setproductKey(new_key=key)
+            self.manageVisibleTabs()
+            return 
+        
+    def activationKeyServerFinishedSlot(self,val):  
+        pass
+        print()
+        
+        
+ 
 
 
 

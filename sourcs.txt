@@ -17,3 +17,6 @@
 9 - plivo.com
 8:24 PM
 10 - messagebird.com
+
+
+pyinstaller --onefile  .\main.py -p ./ --noconsole --windowed --i='./icon.png' --name="QuickSMS"
