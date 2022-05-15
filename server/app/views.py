@@ -13,7 +13,13 @@ except:
 def verifyProductKey(request,key):
     required_key = ProductKeyTable.objects.filter(key=str(key))
     if required_key.exists():
-        return JsonResponse({"is_valid":True})
+        required_key = required_key.first()
+        if required_key.used is True:
+            return JsonResponse({"is_valid":False,"used":True})
+        else:
+            required_key.used = True
+            required_key.save()
+            return JsonResponse({"is_valid":True})
         
     return JsonResponse({"is_valid":False}) 
     

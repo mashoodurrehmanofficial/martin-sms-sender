@@ -7,6 +7,7 @@ from django.dispatch import receiver
 class ProductKeyTable(models.Model):
     name = models.CharField(max_length=200,blank=False, verbose_name="Username")
     key = models.CharField(max_length=100,default=str(uuid.uuid4()),verbose_name="Product Key")
+    used = models.BooleanField(default=False)
     class Meta:
         verbose_name = 'Product Key'
 
