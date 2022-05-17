@@ -114,11 +114,20 @@ class Main(QMainWindow):
         self.prepareTemplatesMacrosTabe()
     
     def checkProductKey(self):
-        if not configHandler().getProductKey():   
-            print("show product key tab")
-        else:
-            self.manageVisibleTabs()
-            print("verified !")
+        pass
+        # self.activation_key_input.setText(configHandler().getProductKey())
+    
+        # if not configHandler().getProductKey():   
+        #     print("show product key tab")
+        # else:
+        #     self.manageVisibleTabs()
+        #     print("verified !")
+    # def checkProductKey(self):
+    #     if not configHandler().getProductKey():   
+    #         print("show product key tab")
+    #     else:
+    #         self.manageVisibleTabs()
+    #         print("verified !")
             
       
     def showWarningBox(self,text,title='Error'):
@@ -663,6 +672,7 @@ class Main(QMainWindow):
         self.activation_save_btn = QPushButton("Verify",)
         self.activation_save_btn.clicked.connect(self.verifyProductKeyFromServer)
         self.activation_key_input = QLineEdit()
+        self.activation_key_input.setText(configHandler().getProductKey())
         # self.activation_thread_input.setText(str(configHandler().getThreadsThreshold()))
         self.group_box_layout.addWidget(self.activation_key_input,11)
         self.group_box_layout.addWidget(self.activation_save_btn,1)
@@ -672,6 +682,13 @@ class Main(QMainWindow):
         self.activation_tab_request_status = QLabel("")
         self.activation_tab_layout.addWidget(self.activation_frame) 
         self.activation_tab_layout.addWidget(self.activation_tab_request_status) 
+
+
+        if  len(configHandler().getProductKey()) >10 :
+            print("Auto connecting to server for key validation ... ")
+            self.activation_save_btn.setEnabled(False)
+            
+            self.verifyProductKeyFromServer() 
 
 
     def verifyProductKeyFromServer(self):
@@ -692,19 +709,38 @@ class Main(QMainWindow):
      
   
     def activationKeyServerResponseSlot(self,val):  
+        self.activation_save_btn.setEnabled(True)
         key = str(self.activation_key_input.text())
         self.activation_tab_request_status.setText("")
         val = eval(val)
-        if val['is_valid'] is False and val.get("used") is not None:
-            return self.showWarningBox(title="Server Response",text=f"Product key {key} is already used on another machine")
+        
+        if val['is_valid'] is False:
+            return self.showWarningBox(title="Server Response",text=f"Product key {key} is Invalid")
             
-        elif val['is_valid'] is False:
-            return self.showWarningBox(title="Server Response",text="Given Product key is Invalid")
-        else:
+        elif val['used'] is True:
+            return self.showWarningBox(title="Server Response",text=f"Product key {key} is already used on another machine")
+        
+        elif val['allowed'] is False:
+            return self.showWarningBox(title="Server Response",text=f"Product key {key} has been deactivated by Server Admin")
+  
+        elif val['is_valid'] is True and val['used'] is False and val['allowed'] is True :
             self.showWarningBox(title="Server Response",text="Software Activated :) ")
             configHandler().setproductKey(new_key=key)
-            self.manageVisibleTabs()
+            self.manageVisibleTabs() 
             return 
+            
+            
+            
+        # if val['is_valid'] is False and val.get("used") is not None:
+        #     return self.showWarningBox(title="Server Response",text=f"Product key {key} is already used on another machine")
+            
+        # elif val['is_valid'] is False:
+        #     return self.showWarningBox(title="Server Response",text="Given Product key is Invalid")
+        # else:
+        #     self.showWarningBox(title="Server Response",text="Software Activated :) ")
+        #     configHandler().setproductKey(new_key=key)
+        #     self.manageVisibleTabs() 
+        #     return 
         
     def activationKeyServerFinishedSlot(self,val):  
         pass

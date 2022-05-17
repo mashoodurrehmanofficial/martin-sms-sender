@@ -14,12 +14,16 @@ def verifyProductKey(request,key):
     required_key = ProductKeyTable.objects.filter(key=str(key))
     if required_key.exists():
         required_key = required_key.first()
-        if required_key.used is True:
-            return JsonResponse({"is_valid":False,"used":True})
-        else:
-            required_key.used = True
-            required_key.save()
-            return JsonResponse({"is_valid":True})
+        return {
+            "is_valid":True,
+            "used":required_key.used,
+            "allowed":required_key.allowed, 
+        }
+    
         
-    return JsonResponse({"is_valid":False}) 
+    return JsonResponse({
+            "is_valid":False,
+            "used":None,
+            "allowed":None, 
+        }) 
     

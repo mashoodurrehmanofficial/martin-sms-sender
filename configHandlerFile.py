@@ -39,11 +39,11 @@ class  configHandler():
             
     
     def getProductKey(self):
-        return os.path.exists(activation_file_path)
+        return str(self.data['prodcut_key'])
     
     def setproductKey(self,new_key):
-        with open(activation_file_path,"w",encoding="utf-8")as file:
-            file.write(str(new_key))
+        self.data['prodcut_key'] = str(new_key)
+        self.updateDataFile()
           
     def getIconFilePath(self):
         return self.icon_file_path
