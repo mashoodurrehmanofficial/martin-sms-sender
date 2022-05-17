@@ -1,5 +1,5 @@
 
-import os
+import os,uuid
 from json import dump
 
 config_prototype = {
@@ -15,7 +15,7 @@ config_prototype = {
 }
 
 
-activation_file_path = os.path.join(os.environ['WINDIR'] , "DFHOU-439U4ROHRWE-37493OJREW.txt")
+activation_file_path = os.path.join(os.environ['WINDIR'] , "custom-machine-id-quicksms.txt")
 
 dir_path = os.path.dirname(__file__)
 config_file_path = os.path.join(dir_path,"config.json") 
@@ -37,6 +37,26 @@ class  configHandler():
             self.data = config_prototype
             self.updateDataFile()
             
+    
+    def setMachineId(self):
+        if not os.path.exists(activation_file_path):
+            with open(activation_file_path,"w",encoding="utf-8") as file:
+                file.write(str(uuid.uuid4())+str(uuid.uuid4()))
+            
+            
+    def getMachineId(self):
+        with open(activation_file_path,"r",encoding="utf-8") as file:
+            machine_id =  str(file.read()).replace("\n","")
+            if len(machine_id)>10:
+                return machine_id
+            return None
+            
+    # def tempActivationFileExists(self):
+    #     return os.path.exists(activation_file_path)
+    
+    # def genearteTempActivationFile(self):
+    #     with open(activation_file_path,"w",encoding="utf-8") as file:
+    #         file.write("")
     
     def getProductKey(self):
         return str(self.data['prodcut_key'])

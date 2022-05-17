@@ -692,13 +692,16 @@ class Main(QMainWindow):
 
 
     def verifyProductKeyFromServer(self):
+        configHandler().setMachineId()
+        machine_id = configHandler().getMachineId()
+        
         key = str(self.activation_key_input.text())
         print(key)
         if not key or str(key).isspace():
             self.showWarningBox("Product key can't be empty")
             return 
         self.activation_tab_request_status.setText("Status: Verifying Product Key from server ... ")
-        self.activation_worker = serverThread(key)
+        self.activation_worker = serverThread(key,machine_id)
         self.activation_worker.start()
         # self.worker.finished.connect(self.activationKeyServerFinishedSlot)
         self.activation_worker.activation_request_status.connect(self.activationKeyServerResponseSlot)
@@ -708,7 +711,9 @@ class Main(QMainWindow):
  
      
   
-    def activationKeyServerResponseSlot(self,val):  
+    def activationKeyServerResponseSlot(self,val): 
+
+         
         self.activation_save_btn.setEnabled(True)
         key = str(self.activation_key_input.text())
         self.activation_tab_request_status.setText("")
@@ -724,7 +729,7 @@ class Main(QMainWindow):
             return self.showWarningBox(title="Server Response",text=f"Product key {key} has been deactivated by Server Admin")
   
         elif val['is_valid'] is True and val['used'] is False and val['allowed'] is True :
-            self.showWarningBox(title="Server Response",text="Software Activated :) ")
+            # self.showWarningBox(title="Server Response",text="Software Activated :) ")
             configHandler().setproductKey(new_key=key)
             self.manageVisibleTabs() 
             return 

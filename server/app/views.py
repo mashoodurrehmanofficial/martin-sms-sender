@@ -10,20 +10,30 @@ except:
 # Create your views here.
 
 
-def verifyProductKey(request,key):
+def verifyProductKey(request,key,machine_id):
+    
+    response = {
+        "is_valid":False,
+        "used":False,
+        "allowed":True, 
+    }
+    
     required_key = ProductKeyTable.objects.filter(key=str(key))
     if required_key.exists():
         required_key = required_key.first()
-        return JsonResponse({
-            "is_valid":True,
-            "used":required_key.used,
-            "allowed":required_key.allowed, 
-        })
+        response['is_valid'] = True
+        response['allowed'] = required_key.allowed
+        if required_key.machine_id == '':
+            # set machine id
+            required_key.machine_id = str(machine_id)
+            required_key.save()
+        
+        elif machine_id != required_key.machine_id:    
+            response['used'] = True        
+        
+        
+        
     
         
-    return JsonResponse({
-            "is_valid":False,
-            "used":None,
-            "allowed":None, 
-        }) 
+    return JsonResponse(response) 
     
