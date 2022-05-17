@@ -723,7 +723,7 @@ class Main(QMainWindow):
             return self.showWarningBox(title="Server Response",text=f"Product key {key} is Invalid")
             
         elif val['used'] is True:
-            return self.showWarningBox(title="Server Response",text=f"Product key {key} is already used on another machine")
+            return self.showWarningBox(title="Server Response",text=f"Product key {key} is already being used on another machine")
         
         elif val['allowed'] is False:
             return self.showWarningBox(title="Server Response",text=f"Product key {key} has been deactivated by Server Admin")
