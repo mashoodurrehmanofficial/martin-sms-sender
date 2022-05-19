@@ -4,10 +4,7 @@ try:
     from .models import  *
 except:
     from models import  *
-    
-
-
-# Create your views here.
+     
 
 
 def verifyProductKey(request,key,machine_id):

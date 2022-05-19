@@ -688,11 +688,11 @@ class Main(QMainWindow):
         self.activation_tab_layout.addWidget(self.activation_tab_request_status) 
 
         # Auto - Activation Checking 
-        if  len(configHandler().getProductKey()) >10 :
-            print("Auto connecting to server for key validation ... ")
-            self.activation_save_btn.setEnabled(False)
-            self.verifyProductKeyFromServer() 
-        # self.manageVisibleTabs()
+        # if  len(configHandler().getProductKey()) >10 :
+        #     print("Auto connecting to server for key validation ... ")
+        #     self.activation_save_btn.setEnabled(False)
+        #     self.verifyProductKeyFromServer() 
+        self.manageVisibleTabs()
         
         
 

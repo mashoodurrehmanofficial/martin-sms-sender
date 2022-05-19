@@ -111,20 +111,5 @@ def telnyxApiSMSGateway(data_packet):
     
     
     
-if __name__=="__main__":
-    # credentials = { 
-    #     "service_plan_id":"2dd5491550484034b60bd042df14d851" ,
-    #     "api_token":"6f6197107b384b2c8c8cc72a872ae0ae" ,
-    # }
-    # credentials = { 
-    #     "service_plan_id":"e1ec53130cdc4de7a74267c8e8b21631" ,
-    #     "api_token":"6cee3e8b6f6247c7bb57a37a5212dc55" ,
-    # }
-    # data_packet = {
-    #     "credentials":credentials,
-    #     "receiver":"923167815639",
-    #     "message_body":"This is message from Bot",
-    #     "message_title":"Alert",
-    # }
-    # res = sinchApiSMSGateway(data_packet=data_packet)
+if __name__=="__main__": 
     pass
