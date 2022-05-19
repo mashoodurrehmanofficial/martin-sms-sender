@@ -1,3 +1,5 @@
+OLD Sources
+
 1 - sinch.com
 8:18 PM
 2 - clicksend.com
@@ -18,6 +20,20 @@
 8:24 PM
 10 - messagebird.com
 
+NEW Sources
+- tyntec.com                (done)
+- twilio.com                (done)
+- cm.com                    (done)
+- messagebird.com           (done)
+- plivo.com                 (done)
+- vonage.co.uk              (done)
+- d7networks.com            (done) - recheck - false code for post request
+- textanywhere.com          - java.long erro
+- clickatell.com            (done)
+- routee.net                (done)
+
+
+
 
 pyinstaller --onefile  .\main.py -p ./ --noconsole --windowed --i='./icon.png' --name="QuickSMS"
-    pyinstaller scriptname.py --onefile --uac-admin
+pyinstaller scriptname.py --onefile --uac-admin

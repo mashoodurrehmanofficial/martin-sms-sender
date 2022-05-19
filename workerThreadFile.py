@@ -73,6 +73,11 @@ def getMessagePrototypes(message,total_contacts):
 #     data['log'].emit((str(uuid.uuid4()))) 
     
 def senderGatewayContainer(log,data):  
+    log.emit("-"*50+"\n")
+    log.emit("-> data in raw form ")
+    log.emit(str(data))
+    log.emit("-"*50+"\n")
+    
     message_prototypes = getMessagePrototypes(data['message_body'], len(data['contact_list']) ) 
     service = data['service']
     log.emit("Creating data packets for ThreadPoolExecutor")
@@ -88,7 +93,10 @@ def senderGatewayContainer(log,data):
         }
         for message_text,receiver in zip( message_prototypes ,data['contact_list'])
     ] 
-    
+    log.emit("-"*50+"\n")
+    log.emit("-> Data Packets ")
+    log.emit(str(data_packets))
+    log.emit("-"*50+"\n")
     # log.emit(str(data_packets ))
     # print(data_packets)
     # return
@@ -126,7 +134,7 @@ class workerThread(QThread):
         self.credentials  = credentials
         self.message_title  = message_title
         self.contact_list  = contact_list
-        self.message_bod  = message_body 
+        self.message_body  = message_body 
         self.timer_difference  = timer_difference 
     
         
@@ -140,7 +148,7 @@ class workerThread(QThread):
             "credentials":self.credentials,
             "contact_list":self.contact_list,
             "message_title":self.message_title,
-            "message_body":self.message_bod,
+            "message_body":self.message_body,
         
         }
         self.log_input_box_component.emit("Starting senderGatewayContainer ...")

@@ -125,7 +125,7 @@ class  configHandler():
             
         return '' 
     def getMacroBody(self,key):
-        print(key)
+        # print(key)
         for x in self.data['macros']:
             if list(x.keys())[0]==key:
                 return x[key]
@@ -142,6 +142,11 @@ class  configHandler():
         return temp
     
     def addNewTemplateMacro(self,key,value):
+        available_keys = sum([list(x.keys()) for x  in self.data[key]],[])
+        incoming_key = list(value.keys())[0]
+        if incoming_key in available_keys:
+            return "duplicate"
+        
         self.data[key].append(value)
         self.updateDataFile()
             

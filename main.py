@@ -426,13 +426,17 @@ class Main(QMainWindow):
                     
             
         except:
-            self.showWarningBox(text=f"{key.capitalize()} Body has invalid layout\nFor multiple values enclose each value in double quotes separated by comma and enclose all inside square brackets []  ")
+            self.showWarningBox(text=f"{key.capitalize()} Body has invalid layout  ")
             return
             
         value = {
             title:body
         }
-        configHandler().addNewTemplateMacro(key=key,value=value)
+        res = configHandler().addNewTemplateMacro(key=key,value=value)
+        if  res=='duplicate':
+            return self.showWarningBox(text=f"{key.capitalize()} has already a record with this title {title}   ")
+            
+            
         self.loadTemplatesIntoDropdownList()
         
         self.populateDataTable(key=key)
@@ -469,7 +473,7 @@ class Main(QMainWindow):
             table_data = configHandler().getTemplateMacroList(self.getTemplateMacrosTableKey())
         
         
-        print(table_data)
+        # print(table_data)
         self.rows = len(table_data)
         self.target_table.setRowCount(self.rows)
         self.target_table.setColumnCount(2)
@@ -683,12 +687,14 @@ class Main(QMainWindow):
         self.activation_tab_layout.addWidget(self.activation_frame) 
         self.activation_tab_layout.addWidget(self.activation_tab_request_status) 
 
-
+        # Auto - Activation Checking 
         if  len(configHandler().getProductKey()) >10 :
             print("Auto connecting to server for key validation ... ")
             self.activation_save_btn.setEnabled(False)
-            
             self.verifyProductKeyFromServer() 
+        # self.manageVisibleTabs()
+        
+        
 
 
     def verifyProductKeyFromServer(self):
@@ -696,7 +702,7 @@ class Main(QMainWindow):
         machine_id = configHandler().getMachineId()
         
         key = str(self.activation_key_input.text())
-        print(key)
+        # print(key)
         if not key or str(key).isspace():
             self.showWarningBox("Product key can't be empty")
             return 

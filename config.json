@@ -73,28 +73,10 @@
     },
     "templates": [
         {
-            "template2": "This is a template2"
-        },
-        {
             "martinTemplate": "this is template designed by martin"
         }
     ],
     "macros": [
-        {
-            "macro0": "James"
-        },
-        {
-            "macro1": [
-                "California"
-            ]
-        },
-        {
-            "macro2": [
-                "google",
-                "facebook",
-                "Microsoft"
-            ]
-        },
         {
             "macro3": [
                 "pk",

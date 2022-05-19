@@ -29,9 +29,7 @@ def sinchApiSMSGateway(data_packet):
     response = response.json()
     data_packet['log'].emit("-"*50+"\n"+str(response))
     print(response)
-    if response.get('id') is not None:
-        data_packet['log'].emit(str(f"-> Message sent to {data_packet['receiver']}"))
-        data_packet['log'].emit(str(response['id']))
+    if response.get('id') is not None:  
         print(f"-> Message sent to {data_packet['receiver']}")
         print(response['id'])
         data_packet['log'].emit("-"*50+"\n")
