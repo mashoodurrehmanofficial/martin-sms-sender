@@ -1,4 +1,5 @@
  
+import ctypes
 import os,json 
 # from time import sleep
 import time
@@ -33,14 +34,12 @@ except:
     
 if hasattr(Qt, 'AA_EnableHighDpiScaling'):
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-
 if hasattr(Qt, 'AA_UseHighDpiPixmaps'):
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
-    
 os_environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "2"
-import ctypes
 myappid = 'mycompany.myproduct.subproduct.version' # arbitrary string
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+
 
 class Main(QMainWindow): 
     def __init__(self):
@@ -52,8 +51,6 @@ class Main(QMainWindow):
         self.height = 600
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)      
-         
-        # self.setWindowIcon(QIcon(configHandler().getIconFilePath()))
         self.setWindowIcon( QIcon(QApplication.style().standardIcon(QStyle.SP_DesktopIcon))  )
  
 
@@ -94,8 +91,6 @@ class Main(QMainWindow):
         # Add tabs 
         self.tab_container.addTab(self.activation_tab,"Activation")     
  
-        self.checkProductKey()
-
         self.setCentralWidget(self.tab_container)
         # self.center()
         self.show() 
@@ -113,21 +108,7 @@ class Main(QMainWindow):
         self.prepareCredentialsTab()
         self.prepareTemplatesMacrosTabe()
     
-    def checkProductKey(self):
-        pass
-        # self.activation_key_input.setText(configHandler().getProductKey())
-    
-        # if not configHandler().getProductKey():   
-        #     print("show product key tab")
-        # else:
-        #     self.manageVisibleTabs()
-        #     print("verified !")
-    # def checkProductKey(self):
-    #     if not configHandler().getProductKey():   
-    #         print("show product key tab")
-    #     else:
-    #         self.manageVisibleTabs()
-    #         print("verified !")
+
             
       
     def showWarningBox(self,text,title='Error'):
@@ -189,8 +170,7 @@ class Main(QMainWindow):
         self.home_page_service_selection_panel_layout.setAlignment(Qt.AlignTop)
         self.home_page_service_selection_panel.setLayout(self.home_page_service_selection_panel_layout)
         self.home_page_service_selection_panel.setFixedHeight(70) 
-        self.home_tab_available_service_credentials_dropdown = QComboBox() 
-        
+        self.home_tab_available_service_credentials_dropdown = QComboBox()   
         self.home_tab_available_service_dropdown = QComboBox()
         self.home_tab_available_service_dropdown.currentTextChanged.connect(self.onHomeTabServiceComboBoxChange)
         self.availavle_services_list = configHandler().getAllServices()
@@ -203,12 +183,8 @@ class Main(QMainWindow):
         currentTime = QDateTime.currentDateTime()
         self.home_page_timer_input_box = QDateTimeEdit()
         self.home_page_timer_input_box.setDateTime(currentTime) 
-        
         self.home_page_message_title = QLineEdit()
         self.home_page_message_title.setPlaceholderText("Sender ID")
-        
-        
-        
         self.home_page_service_selection_panel_layout.addWidget(self.home_tab_available_service_credentials_dropdown,5)
         self.home_page_service_selection_panel_layout.addWidget(self.home_page_timer_input_box,1)
         self.home_page_service_selection_panel_layout.addWidget(self.home_page_message_title,1)
@@ -227,12 +203,10 @@ class Main(QMainWindow):
         self.home_page_import_receivers_input_box = QTextEdit()
         self.home_page_import_receivers_panel_layout.addWidget(self.home_page_import_receivers_input_box,1)
         
-        
         self.home_page_import_receivers_list_btn = QPushButton("Load Contact File")
         self.home_page_import_receivers_list_btn.clicked.connect(self.onClickContactListImportButton) 
         self.home_page_import_receivers_panel_layout.addWidget(self.home_page_import_receivers_list_btn,1)
-        
-        
+
         # self.home_page_import_receivers_panel_layout.addWidget(QPushButton("Load Contact File"),1)
         self.home_page_import_receivers_panel_layout.addStretch()
         # Load message
@@ -242,33 +216,21 @@ class Main(QMainWindow):
         self.home_page_import_message_panel.setLayout(self.home_page_import_message_panel_layout)
         self.home_page_import_message_input_box = QTextEdit()
         self.home_page_import_message_panel_layout.addWidget(self.home_page_import_message_input_box,1)
-        
-        
         self.home_page_import_message_panel_buttons_panel = QGroupBox()
         self.home_page_import_message_panel_buttons_panel.setAlignment(Qt.AlignTop)
         self.home_page_import_message_panel_buttons_layout = QHBoxLayout() 
         self.home_page_import_message_panel_buttons_panel.setLayout(self.home_page_import_message_panel_buttons_layout)
-        
-        self.home_page_import_message_btn = QPushButton("Load Message File")
-        # self.home_page_import_template_dropdown = QPushButton("Import Template")
+        self.home_page_import_message_btn = QPushButton("Load Message File") 
         self.home_page_import_template_dropdown = QComboBox() 
-        self.loadTemplatesIntoDropdownList()
-        # self.home_page_import_template_dropdown.addItems(["Choose Template"]+configHandler().getAvailableTemplates())
+        self.loadTemplatesIntoDropdownList() 
         self.home_page_import_template_dropdown.currentTextChanged.connect(self.onHomeTabImportTemplateComboBoxChange) 
-        
         self.home_page_import_message_panel_buttons_layout.addWidget(self.home_page_import_message_btn,1)
         self.home_page_import_message_panel_buttons_layout.addWidget(self.home_page_import_template_dropdown,1)
-        self.home_page_import_message_btn.clicked.connect(self.onClickMessageBodyLoadButton) 
-        
-        
-        self.home_page_import_message_panel_layout.addWidget(self.home_page_import_message_panel_buttons_panel,1) 
-        
-        
+        self.home_page_import_message_btn.clicked.connect(self.onClickMessageBodyLoadButton)  
+        self.home_page_import_message_panel_layout.addWidget(self.home_page_import_message_panel_buttons_panel,1)  
         self.home_page_import_message_panel_layout.addStretch()
         self.home_page_data_import_panel_layout.addWidget(self.home_page_import_receivers_panel,1)
-        self.home_page_data_import_panel_layout.addWidget(self.home_page_import_message_panel,1)
-        # self.home_page_message_title = QLineEdit()
-        # self.home_main_frame_layout.addWidget(self.home_page_message_title,1)
+        self.home_page_data_import_panel_layout.addWidget(self.home_page_import_message_panel,1) 
         self.home_main_frame_layout.addWidget(self.home_page_data_import_panel,1)
         self.home_main_frame_start_btn  =QPushButton("Start sending Messages")
         self.home_main_frame_start_btn.clicked.connect(self.onClickStartButton)
@@ -293,15 +255,14 @@ class Main(QMainWindow):
         self.worker.finished.connect(self.threadFinishedSlot)
         self.worker.log_input_box_component.connect(self.logUpdateSlot)
      
+     
+     
     def appedLogInoutBoxText(self,val):
         self.home_page_log_input_box.textCursor().insertText(str(val)+'\n')
         self.home_page_log_input_box.verticalScrollBar().setValue(self.home_page_log_input_box.verticalScrollBar().maximum())
         
-    def logUpdateSlot(self,val): 
-        
-        
+    def logUpdateSlot(self,val):  
         if 'Message sent to' in str(val):
-             
             self.messages_sent_index = self.messages_sent_index + 1
             self.messages_sent_index 
             val = f"{self.messages_sent_index}/{self.total_numbers_in_contact_list}" + str(val)
@@ -358,22 +319,18 @@ class Main(QMainWindow):
         if current_time >  timer_value:
             self.showWarningBox("Timer value cannot be less that current time of your machine")
             return
-        else:
-            # mktime
+        else: 
             timer_difference = (timer_value - current_time).total_seconds()
             if timer_difference>0:
                 self.showWarningBox(f"Quick SMS would start sending messages after {int(timer_difference/60)} minutes")
-            # time.sleep(difference)
-            
+            # time.sleep(difference) 
             print(f"-> Waiting for {timer_difference} seconds")
         
         
         
         
         credentials = str(credentials).replace("\'", "\"")
-        credentials = json.loads(credentials)
-        # print("Service = ", service)
-        # print("credentials = ", (credentials)) 
+        credentials = json.loads(credentials) 
         self.home_page_log_input_box.setText("")
         self.appedLogInoutBoxText(str("-"*50))
         self.appedLogInoutBoxText(str(f"Service = {service}",  ))
@@ -428,19 +385,14 @@ class Main(QMainWindow):
         except:
             self.showWarningBox(text=f"{key.capitalize()} Body has invalid layout  ")
             return
-            
         value = {
             title:body
         }
         res = configHandler().addNewTemplateMacro(key=key,value=value)
         if  res=='duplicate':
             return self.showWarningBox(text=f"{key.capitalize()} has already a record with this title {title}   ")
-            
-            
         self.loadTemplatesIntoDropdownList()
-        
-        self.populateDataTable(key=key)
-        
+        self.populateDataTable(key=key) 
         self.template_vs_macro_title_insert_box.setPlainText("")
         self.template_vs_macro_body_insert_box.setPlainText("")
     
@@ -536,27 +488,13 @@ class Main(QMainWindow):
         self.new_crendetials_save_btn.clicked.connect(self.onClickAddNewCredentialsButton)
         self.service_credentials_insertion_panel_layout.addWidget(self.new_crendetials_insert_box,1)
         self.service_credentials_insertion_panel_layout.addWidget(self.new_crendetials_save_btn,1)
-        self.credentails_main_frame_layout.addWidget(self.service_credentials_insertion_panel,3)
-        # Right panel - New service Insertion panel
-        # self.service_insertion_panel = QGroupBox("Add service")
-        # self.service_insertion_panel_layout = QVBoxLayout()
-        # self.service_insertion_panel_layout.setAlignment(Qt.AlignTop) 
-        # self.new_crendetials_insert_box = QLineEdit() 
-        # self.new_crendetials_save_btn = QPushButton("Add new Credentials")
-        # self.service_insertion_panel_layout.addWidget(self.new_crendetials_insert_box,1)
-        # self.service_insertion_panel_layout.addWidget(self.new_crendetials_save_btn,1)
-        # self.service_insertion_panel.setLayout(self.service_insertion_panel_layout)
-        # self.credentails_main_frame_layout.addWidget(self.service_insertion_panel,1)
-
+        self.credentails_main_frame_layout.addWidget(self.service_credentials_insertion_panel,3) 
         self.credentails_main_frame.setLayout(self.credentails_main_frame_layout)
         self.credentails_main_frame.setAlignment(Qt.AlignTop)
         self.credentails_tab_layout.addWidget(self.credentails_main_frame,1) 
-        
-        
         self.credentails_listing_table = QGroupBox("Credentials Listing")
         self.credentails_listing_table_layout = QHBoxLayout()  
         self.credentails_listing_table.setLayout(self.credentails_listing_table_layout)
-        
         self.credentials_table_widget = QTableWidget()
         self.populateDataTable() 
         self.credentails_listing_table_layout.addWidget(self.credentials_table_widget)  
@@ -577,13 +515,9 @@ class Main(QMainWindow):
         self.template_vs_macro_body_insert_box.setPlaceholderText(f"Insert Body / Message for {self.getTemplateMacrosdDropdownText()}")
         self.templates_macros_listing_table.setTitle ( f"{self.getTemplateMacrosdDropdownText()} Listing")
         self.new_templates_macros_save_btn.setText(f"Add new {self.getTemplateMacrosdDropdownText()}")
-        
         self.templates_macros_listing_table_layout = QHBoxLayout()  
         self.populateDataTable(key = self.getTemplateMacrosTableKey())
-        
-        # print(key)
-        # print(current_text)
-    
+  
     
     
     def prepareTemplatesMacrosTabe(self):
@@ -601,14 +535,12 @@ class Main(QMainWindow):
         self.template_vs_macros_dropdown.addItem("Macros")
         self.template_vs_macros_dropdown.currentTextChanged.connect(self.onChangeTemplateMacrosDropdown) 
         # self.available_service_dropdown.currentText.connect(self.on_combobox_changed) 
- 
         self.templates_macros_insertion_panel_layout.addWidget(self.template_vs_macros_dropdown,1)
         self.template_vs_macro_title_insert_box = QPlainTextEdit() 
         self.template_vs_macro_title_insert_box.setPlaceholderText(f"Insert Title / Key / Short Name for {self.getTemplateMacrosdDropdownText()}")
         self.template_vs_macro_body_insert_box = QPlainTextEdit()
         self.template_vs_macro_body_insert_box.setPlaceholderText(f"Insert Body / Message for {self.getTemplateMacrosdDropdownText()}")
         # self.template_vs_macro_body_insert_box.setFixedHeight(80)
-        
         self.templates_macros_title_body_insertion_panel = QLabel()
         self.templates_macros_title_body_insertion_panel_layout = QHBoxLayout()
         self.templates_macros_title_body_insertion_panel_layout.setAlignment(Qt.AlignTop)
@@ -617,16 +549,12 @@ class Main(QMainWindow):
         self.templates_macros_title_body_insertion_panel_layout.addWidget(self.template_vs_macro_title_insert_box,1)
         self.templates_macros_title_body_insertion_panel_layout.addWidget(self.template_vs_macro_body_insert_box,3) 
         self.templates_macros_insertion_panel_layout.addWidget(self.templates_macros_title_body_insertion_panel,1) 
-        
         self.new_templates_macros_save_btn = QPushButton(f"Add new {self.getTemplateMacrosdDropdownText()}")
         self.new_templates_macros_save_btn.setFont(QFont('Times', 9))
         # self.new_crendetials_save_btn.clicked.connect(self.onClickAddNewCredentialsButton)
         self.new_templates_macros_save_btn.clicked.connect(self.onClickAddNewTemplateMacroButton)
         # self.templates_macros_insertion_panel_layout.addWidget(self.new_crendetials_insert_box,1)
         self.templates_macros_insertion_panel_layout.addWidget(self.new_templates_macros_save_btn,1)
-         
-        
-        
         
         self.templates_macros_main_frame_layout.addWidget(self.templates_macros_insertion_panel,3)
         self.templates_macros_main_frame.setLayout(self.templates_macros_main_frame_layout)
@@ -682,7 +610,6 @@ class Main(QMainWindow):
         self.group_box_layout.addWidget(self.activation_save_btn,1)
         self.activation_frame.setLayout(self.group_box_layout)
         self.activation_frame.setAlignment(Qt.AlignTop)
-        
         self.activation_tab_request_status = QLabel("")
         self.activation_tab_layout.addWidget(self.activation_frame) 
         self.activation_tab_layout.addWidget(self.activation_tab_request_status) 
@@ -700,7 +627,6 @@ class Main(QMainWindow):
     def verifyProductKeyFromServer(self):
         configHandler().setMachineId()
         machine_id = configHandler().getMachineId()
-        
         key = str(self.activation_key_input.text())
         # print(key)
         if not key or str(key).isspace():
@@ -717,14 +643,11 @@ class Main(QMainWindow):
  
      
   
-    def activationKeyServerResponseSlot(self,val): 
-
-         
+    def activationKeyServerResponseSlot(self,val):  
         self.activation_save_btn.setEnabled(True)
         key = str(self.activation_key_input.text())
         self.activation_tab_request_status.setText("")
         val = eval(val)
-        
         if val['is_valid'] is False:
             return self.showWarningBox(title="Server Response",text=f"Product key {key} is Invalid")
             
@@ -740,29 +663,9 @@ class Main(QMainWindow):
             self.manageVisibleTabs() 
             return 
             
-            
-            
-        # if val['is_valid'] is False and val.get("used") is not None:
-        #     return self.showWarningBox(title="Server Response",text=f"Product key {key} is already used on another machine")
-            
-        # elif val['is_valid'] is False:
-        #     return self.showWarningBox(title="Server Response",text="Given Product key is Invalid")
-        # else:
-        #     self.showWarningBox(title="Server Response",text="Software Activated :) ")
-        #     configHandler().setproductKey(new_key=key)
-        #     self.manageVisibleTabs() 
-        #     return 
         
     def activationKeyServerFinishedSlot(self,val):  
-        pass
-        print()
-        
-        
- 
-
-
-
-
+        pass  
 
     def center(self):
         frameGm = self.frameGeometry()
