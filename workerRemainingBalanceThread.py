@@ -50,6 +50,8 @@ class remainingBalanceThread(QThread):
             targetBalanceGateway = twilioApiBalanceGateway
         elif service=='d7networks':
             targetBalanceGateway = d7networksApiBalanceGateway
+        elif service=='vonage':
+            targetBalanceGateway = vonageApiBalanceGateway
         
         
         

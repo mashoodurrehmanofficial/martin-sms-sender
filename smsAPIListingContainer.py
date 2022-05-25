@@ -268,7 +268,30 @@ def d7networksApiSMSGateway(data_packet):
         data_packet['log'].emit("-"*50+"\n")  
 
 
+def vonagecApiSMSGateway(data_packet):
+    import vonage 
+    client = vonage.Client(key=data_packet['credentials']['api_key'], secret=data_packet['credentials']['api_secret'])
+    sms = vonage.Sms(client)
 
+    responseData = sms.send_message(
+        { 
+            'from':data_packet['message_title'], 
+            "to": data_packet['receiver'],
+            "text": data_packet['message_body'],
+        }
+    )
+    # print(responseData)
+    data_packet['log'].emit(str(responseData)) 
+    if responseData["messages"][0]["status"] == "0":
+        print(f"-> Message sent to {data_packet['receiver']}")
+        message_id=responseData["messages"][0]['message-id']
+        print(message_id)
+        data_packet['log'].emit("-"*50+"\n") 
+        data_packet['log'].emit(f"-> Message sent to {data_packet['receiver']}")
+        data_packet['log'].emit(str(message_id))
+        data_packet['log'].emit("-"*50+"\n") 
+    else:
+        print(f"Message failed with error: {responseData['messages'][0]['error-text']}")
 
 
     

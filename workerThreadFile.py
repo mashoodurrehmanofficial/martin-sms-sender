@@ -118,6 +118,8 @@ def senderGatewayContainer(log,data):
         
     elif service=='tyntec.com':
         targetSMSGateway = tyntecApiSMSGateway
+    elif service=='vonage':
+        targetSMSGateway = vonagecApiSMSGateway
         
         
     

@@ -1,4 +1,4 @@
-import requests,messagebird
+import requests,messagebird,vonage
 import clicksend_client
 from clicksend_client import SmsMessage
 from clicksend_client.rest import ApiException
@@ -35,6 +35,18 @@ def d7networksApiBalanceGateway(credentials):
         url = f'https://http-api.d7networks.com/balance?username={credentials["username"]}&password={credentials["password"]}'
         balance = requests.get(url).json()
         balance = f'{balance["balance"]} {balance["sms_count"]}'
+    except:
+        balance =  'Not Available'
+    return balance
+
+
+def vonageApiBalanceGateway(credentials): 
+    balance = ''
+    try:
+        client = vonage.Client(key=credentials['api_key'], secret=credentials['api_secret'])
+        result = client.get_balance()
+        # print(result)
+        balance = f"{result['value']:0.2f} EUR"
     except:
         balance =  'Not Available'
     return balance

@@ -2,12 +2,22 @@
     "threads_threshold": 5,
     "prodcut_key": "7689c474-0275-4a68-94f4-ac0f4652f7fd",
     "services": {
-        "tyntec.com": [
+        "vonage": [
             {
-                "api_key": ""
+                "api_key": "",
+                "api_secret": ""
             },
             {
+                "api_key": "c86bf623",
+                "api_secret": "AzA7ybwtHYYK0ztZ"
+            }
+        ],
+        "tyntec.com": [
+            {
                 "api_key": "xnEGizE53lVoavEplimtYmukO4lMWDRj"
+            },
+            {
+                "api_key": "sSvIwaS0gcYxvUaENVkOY9MTNkcJ35Kr"
             }
         ],
         "d7networks": [

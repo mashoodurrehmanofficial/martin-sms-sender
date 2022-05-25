@@ -7,6 +7,7 @@ config_prototype = {
     "threads_threshold": 5,
     "prodcut_key":"",
     "services": {
+        "vonage":[{       "api_key": "",    "api_secret": "",}],
         "tyntec.com":[{  "api_key": "",}],
         "d7networks":[{    "username": "",   "password": "",  "auth_token": "", }],
         "twilio":[{     "account_sid" : "",  "auth_token" : ""  }],
