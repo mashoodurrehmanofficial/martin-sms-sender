@@ -2,6 +2,44 @@
     "threads_threshold": 5,
     "prodcut_key": "7689c474-0275-4a68-94f4-ac0f4652f7fd",
     "services": {
+        "tyntec.com": [
+            {
+                "api_key": ""
+            },
+            {
+                "api_key": "xnEGizE53lVoavEplimtYmukO4lMWDRj"
+            }
+        ],
+        "d7networks": [
+            {
+                "username": "",
+                "password": "",
+                "auth_token": ""
+            },
+            {
+                "username": "zitn9760",
+                "password": "Fg4qHo6B",
+                "auth_token": "eml0bjk3NjA6Rmc0cUhvNkI="
+            }
+        ],
+        "twilio": [
+            {
+                "account_sid": "AC08fa13cb834fc96435a00fc30f291b95",
+                "auth_token": "e17d71411e5945e63a4a9bcc0f98a514"
+            },
+            {
+                "account_sid": "AC08fa13cb834fc96435a00fc30f291b95",
+                "auth_token": "e17d71411e5945e63a4a9bcc0f98a514"
+            }
+        ],
+        "messagebird": [
+            {
+                "access_key": ""
+            },
+            {
+                "access_key": "IYtZQQnrRGNcuK3jMqsnW7Dq8"
+            }
+        ],
         "sinch.com": [
             {
                 "service_plan_id": "",
@@ -30,14 +68,6 @@
             {
                 "api_key": "KEY0180852AF869A127E29B39149467E0B2_l5RS68ODYZtpzwuAQnbl8G",
                 "messaging_profile_id": "40018085-20e2-45bd-9a75-e78a912c93bb"
-            }
-        ],
-        "tyntec.com": [
-            {
-                "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
-            },
-            {
-                "key": "543534"
             }
         ],
         "vonage.co.uk": [
@@ -73,28 +103,10 @@
     },
     "templates": [
         {
-            "template2": "This is a template2"
-        },
-        {
             "martinTemplate": "this is template designed by martin"
         }
     ],
     "macros": [
-        {
-            "macro0": "James"
-        },
-        {
-            "macro1": [
-                "California"
-            ]
-        },
-        {
-            "macro2": [
-                "google",
-                "facebook",
-                "Microsoft"
-            ]
-        },
         {
             "macro3": [
                 "pk",

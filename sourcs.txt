@@ -35,5 +35,39 @@ NEW Sources
 
 
 
-pyinstaller --onefile  .\main.py -p ./ --noconsole --windowed --i='./icon.png' --name="QuickSMS"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+done - d7networks.com - zitn9760:Fg4qHo6B:eml0bjk3NjA6Rmc0cUhvNkI=
+routee.net - 628be8212d985400016d1d7c:FzuEe11ZTj
+done - tyntec.com - sSvIwaS0gcYxvUaENVkOY9MTNkcJ35Kr
+done - twilio.com - AC08fa13cb834fc96435a00fc30f291b95:e17d71411e5945e63a4a9bcc0f98a514
+done - messagebird.com - IYtZQQnrRGNcuK3jMqsnW7Dq8:580f6bc8-8d7c-4392-8285-5cf06dd14b4c
+
+
+
+
+
+
+
+
+
+pyinstaller --onefile  .\main.py -p ./ --noconsole --windowed --i='./icon.png' --name="QuickSMS" --uac-admin
 pyinstaller scriptname.py --onefile --uac-admin
+
+pyinstaller --onefile  .\main.py -p ./  --windowed --i='./icon.png' --name="QuickSMS"  --uac-admin --noconsole

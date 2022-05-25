@@ -1,7 +1,6 @@
  
 import ctypes
-import os,json 
-# from time import sleep
+import os,json  
 import time
 from sys import argv as sys_argv,exit
 from os import environ as os_environ
@@ -14,10 +13,13 @@ from PyQt5.QtWidgets import *
 
 from datetime import datetime,timedelta
 
+from grpc import services
+
 try:
     from configHandlerFile import configHandler
     from workerThreadFile import workerThread
     from workerActivationThread import serverThread
+    from workerRemainingBalanceThread  import remainingBalanceThread
 except:
     try:
         from configHandlerFile import configHandler
@@ -26,8 +28,10 @@ except:
     try:
         from workerThreadFile import workerThread
         from workerActivationThread import serverThread
+        from workerRemainingBalanceThread  import remainingBalanceThread
     except:
         from .workerActivationThread import serverThread
+        from .workerRemainingBalanceThread  import remainingBalanceThread
     # from workerThreadFile import workerThread
     
     
@@ -152,9 +156,36 @@ class Main(QMainWindow):
         if value!='Choose Template':
             self.home_page_import_message_input_box.setText(str(configHandler().getTemplatesBody(key=value)))
             
+            
+            
     def loadTemplatesIntoDropdownList(self):
         self.home_page_import_template_dropdown.clear()
         self.home_page_import_template_dropdown.addItems(["Choose Template"]+configHandler().getAvailableTemplates())
+       
+    
+    def onClickCheckBalanceButton(self):
+        service = self.home_tab_available_service_dropdown.currentText()
+        credentials = self.home_tab_available_service_credentials_dropdown.currentText()
+        try:
+            eval(str(credentials))
+        except :
+            return self.showWarningBox(text="Credentials not selected !")
+        self.home_page_balance_check_btn.setText("Checking ... ")
+        print(service, " - ",credentials) 
+        
+        self.remaining_balance_worker = remainingBalanceThread(service=service,credentials=credentials)
+        self.remaining_balance_worker.start()
+        # self.remaining_balance_worker.finished.connect(self.threadFinishedSlot)
+        self.remaining_balance_worker.balance_request_status.connect(self.displayRemainingBalance)
+        
+    
+    def displayRemainingBalance(self, val):
+        service = self.home_tab_available_service_dropdown.currentText().capitalize()
+        print(f"-> {val}")
+        self.home_page_balance_check_btn.setText("Check Balance")
+        return self.showWarningBox(title="Message", text=f"{service} Cuurent Balance = {val}")
+        
+       
                 
     def prepareHomeTab(self):
         pass
@@ -185,9 +216,18 @@ class Main(QMainWindow):
         self.home_page_timer_input_box.setDateTime(currentTime) 
         self.home_page_message_title = QLineEdit()
         self.home_page_message_title.setPlaceholderText("Sender ID")
+        
+        
+        self.home_page_balance_check_btn = QPushButton()
+        self.home_page_balance_check_btn.setText("Check Balance")
+        self.home_page_balance_check_btn.clicked.connect(self.onClickCheckBalanceButton) 
+        
+        
+        
         self.home_page_service_selection_panel_layout.addWidget(self.home_tab_available_service_credentials_dropdown,5)
         self.home_page_service_selection_panel_layout.addWidget(self.home_page_timer_input_box,1)
         self.home_page_service_selection_panel_layout.addWidget(self.home_page_message_title,1)
+        self.home_page_service_selection_panel_layout.addWidget(self.home_page_balance_check_btn,1)
         self.home_main_frame_layout.addWidget(self.home_page_service_selection_panel,1) 
         # Horizontal -> Vertical  bar for input
         self.home_page_data_import_panel = QGroupBox("Import Data")
@@ -267,7 +307,7 @@ class Main(QMainWindow):
             self.messages_sent_index 
             val = f"{self.messages_sent_index}/{self.total_numbers_in_contact_list}" + str(val)
         self.appedLogInoutBoxText(str(val)) 
-        print("signal - update - ", val)
+        # print("signal - update - ", val)
         
         
     def threadFinishedSlot(self): 
@@ -281,15 +321,19 @@ class Main(QMainWindow):
         service = str(self.home_tab_available_service_dropdown.currentText())
         
         # Start - set dummy data
-        # contact_list = ['923167 81 5639','923476026649','12057404127']
-        # self.home_page_message_title.setText("Alert")
-        # self.home_page_import_receivers_input_box.setText("\n".join(contact_list))
-        # self.home_page_import_message_input_box.setText(f"I'm writing Hello ##LINK##")
-        # self.home_page_import_message_input_box.setText(f"I’m writing Hello ##LINK##")
+        # contact_list = ['447748347521',923167815639,923476026649,923167815639,923476026649][-1:]
+        # contact_list = [str(x) for x in contact_list]
+        # self.home_page_message_title.setText("Stock Alert")
+        # self.home_page_import_receivers_input_box.setText("\n".join(contact_list)) 
+        # self.home_page_import_message_input_box.setText(f"I'm writing Hello") 
         # END - set dummy data
 
-
-        credentials = eval(self.home_tab_available_service_credentials_dropdown.currentText())
+        credentials = self.home_tab_available_service_credentials_dropdown.currentText()
+        try:
+            eval(str(credentials))
+        except :
+            return self.showWarningBox(text="Credentials not selected !")
+        credentials = eval(credentials)
         message_title = str(self.home_page_message_title.text())
         contact_list = str(self.home_page_import_receivers_input_box.toPlainText())
         message_body = str(self.home_page_import_message_input_box.toPlainText()) 
@@ -461,7 +505,16 @@ class Main(QMainWindow):
         
     
     def onChangeAvailableService(self,value):
-        try:self.populateDataTable()
+        
+        credential_prototype = configHandler().getCredentialsPrototype(service=value)
+        credential_prototype = json.dumps(credential_prototype)
+        self.new_crendetials_insert_box.setPlainText(credential_prototype)
+        # print(value)
+        # print(credential_prototype)
+        
+        
+        try:
+            self.populateDataTable()
         except:pass
     
     def prepareCredentialsTab(self):
@@ -475,13 +528,13 @@ class Main(QMainWindow):
         self.service_credentials_insertion_panel_layout = QVBoxLayout()
         self.service_credentials_insertion_panel_layout.setAlignment(Qt.AlignTop)
         self.service_credentials_insertion_panel.setLayout(self.service_credentials_insertion_panel_layout)
+        self.new_crendetials_insert_box = QPlainTextEdit()
         self.available_service_dropdown = QComboBox()
         self.available_service_dropdown.currentTextChanged.connect(self.onChangeAvailableService) 
         # self.available_service_dropdown.currentText.connect(self.on_combobox_changed) 
         for service in self.availavle_services_list:
             self.available_service_dropdown.addItem(str(service))
         self.service_credentials_insertion_panel_layout.addWidget(self.available_service_dropdown,1)
-        self.new_crendetials_insert_box = QPlainTextEdit()
         self.new_crendetials_insert_box.setFixedHeight(80)
         self.new_crendetials_save_btn = QPushButton("Add new Credentials")
         self.new_crendetials_save_btn.setFont(QFont('Times', 9))
@@ -615,10 +668,12 @@ class Main(QMainWindow):
         self.activation_tab_layout.addWidget(self.activation_tab_request_status) 
 
         # Auto - Activation Checking 
+        
         # if  len(configHandler().getProductKey()) >10 :
         #     print("Auto connecting to server for key validation ... ")
         #     self.activation_save_btn.setEnabled(False)
         #     self.verifyProductKeyFromServer() 
+        
         self.manageVisibleTabs()
         
         

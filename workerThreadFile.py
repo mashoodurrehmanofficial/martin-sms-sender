@@ -109,6 +109,18 @@ def senderGatewayContainer(log,data):
     elif service=='telnyx.com':
         targetSMSGateway = telnyxApiSMSGateway
     
+    elif service=='messagebird':
+        targetSMSGateway = messageBirdApiSMSGateway
+    elif service=='twilio': 
+        targetSMSGateway = twilioApiSMSGateway
+    elif service=='d7networks':
+        targetSMSGateway = d7networksApiSMSGateway
+        
+    elif service=='tyntec.com':
+        targetSMSGateway = tyntecApiSMSGateway
+        
+        
+    
     # print(type(data['credentials']))
          
     log.emit("Initiating ThreadPoolExecutor ...")

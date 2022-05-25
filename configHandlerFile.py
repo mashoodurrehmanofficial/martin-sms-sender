@@ -1,11 +1,16 @@
 
 import os,uuid
 from json import dump
+ 
 
 config_prototype = {
     "threads_threshold": 5,
     "prodcut_key":"",
     "services": {
+        "tyntec.com":[{  "api_key": "",}],
+        "d7networks":[{    "username": "",   "password": "",  "auth_token": "", }],
+        "twilio":[{     "account_sid" : "",  "auth_token" : ""  }],
+        "messagebird":[ {   "access_key": ""   }  ],
         "sinch.com": [ {  "service_plan_id": "",  "api_token": ""  }],
         "clicksend.com": [  { "username": "", "api_key": "" }  ],
         "telnyx.com": [ { "api_key": "",  "messaging_profile_id": ""  }  ] 
@@ -50,7 +55,10 @@ class  configHandler():
             if len(machine_id)>10:
                 return machine_id
             return None
-            
+     
+     
+    def getCredentialsPrototype(self,service):
+        return self.data['services'][service][0]
     # def tempActivationFileExists(self):
     #     return os.path.exists(activation_file_path)
     
@@ -88,7 +96,8 @@ class  configHandler():
             
             
     def getAllServices(self):
-        return list(self.data['services'].keys())[:3]
+        return sorted(list(self.data['services'].keys())[:len(config_prototype['services'])])
+        # return sorted(list(self.data['services'].keys())[:5])
         
     def getServiceCredentialsList(self,service):
         return list(self.data['services'][service][1:])
