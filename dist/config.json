@@ -2,15 +2,25 @@
     "threads_threshold": 5,
     "prodcut_key": "7689c474-0275-4a68-94f4-ac0f4652f7fd",
     "services": {
-        "tyntec.com": [
+        "vonage.co.uk": [
             {
-                "api_key": ""
+                "api_key": "",
+                "api_secret": ""
             },
             {
-                "api_key": "xnEGizE53lVoavEplimtYmukO4lMWDRj"
+                "api_key": "c86bf623",
+                "api_secret": "AzA7ybwtHYYK0ztZ"
             }
         ],
-        "d7networks": [
+        "tyntec.com": [
+            {
+                "api_key": "xnEGizE53lVoavEplimtYmukO4lMWDRj"
+            },
+            {
+                "api_key": "sSvIwaS0gcYxvUaENVkOY9MTNkcJ35Kr"
+            }
+        ],
+        "d7networks.com": [
             {
                 "username": "",
                 "password": "",
@@ -22,7 +32,7 @@
                 "auth_token": "eml0bjk3NjA6Rmc0cUhvNkI="
             }
         ],
-        "twilio": [
+        "twilio.com": [
             {
                 "account_sid": "AC08fa13cb834fc96435a00fc30f291b95",
                 "auth_token": "e17d71411e5945e63a4a9bcc0f98a514"
@@ -32,7 +42,7 @@
                 "auth_token": "e17d71411e5945e63a4a9bcc0f98a514"
             }
         ],
-        "messagebird": [
+        "messagebird.com": [
             {
                 "access_key": ""
             },
@@ -70,11 +80,6 @@
                 "messaging_profile_id": "40018085-20e2-45bd-9a75-e78a912c93bb"
             }
         ],
-        "vonage.co.uk": [
-            {
-                "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
-            }
-        ],
         "telesign.com": [
             {
                 "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
@@ -91,11 +96,6 @@
             }
         ],
         "plivo.com": [
-            {
-                "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
-            }
-        ],
-        "messagebird.com": [
             {
                 "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
             }
