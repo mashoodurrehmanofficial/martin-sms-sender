@@ -1,8 +1,7 @@
  
 from PyQt5.QtCore import QThread,pyqtSignal  
 # import uuid
-import requests
-from concurrent.futures import ThreadPoolExecutor
+import requests 
 try:
     from configHandlerFile import configHandler
     from smsAPIListingContainer import *

@@ -1,18 +1,21 @@
-import requests,json
+import requests,json,traceback
 import messagebird
 import clicksend_client
 from clicksend_client import SmsMessage
 from twilio.rest import Client 
 from clicksend_client.rest import ApiException
 
-# try:
-#     from configHandlerFile import configHandler 
-# except:
-#     from .configHandler import configHandler 
+def generalSmsAPIExceptionHandler(smsAPIGatewayCaller):
+    def innerDecorator(data_packet):
+        try:
+            smsAPIGatewayCaller(data_packet)
+        except:
+            data_packet['log'].emit(str(traceback.format_exc()))
+        
+    return innerDecorator
+    
 
-
-
-
+@generalSmsAPIExceptionHandler
 def sinchApiSMSGateway(data_packet):
     service_plan_id = data_packet['credentials']['service_plan_id']
     url = "https://us.sms.api.sinch.com/xms/v1/" + service_plan_id + "/batches"
@@ -41,7 +44,7 @@ def sinchApiSMSGateway(data_packet):
     # print(data)
  
 
-
+@generalSmsAPIExceptionHandler
 def clickSendApiSMSGateway(data_packet): 
     configuration = clicksend_client.Configuration()
     configuration.username = data_packet['credentials']['username']
@@ -80,18 +83,14 @@ def clickSendApiSMSGateway(data_packet):
     
     
     
-    
+@generalSmsAPIExceptionHandler  
 def telnyxApiSMSGateway(data_packet):
     headers = { 
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': f"Bearer {data_packet['credentials']['api_key']}",
     }
-    
-    # data_packet['receiver'] = str(data_packet['receiver']).strip().replace
-    
     data_packet['receiver'] = data_packet['receiver'] if str(data_packet['receiver']).startswith("+") else "+"+str(data_packet['receiver'])
-    # print(f"-- {data_packet['receiver']}")
     json_data = {
         'from':data_packet['message_title'], 
         "messaging_profile_id": data_packet['credentials']['messaging_profile_id'],
@@ -104,7 +103,7 @@ def telnyxApiSMSGateway(data_packet):
     data_packet['log'].emit("-"*50+"\n")
     data_packet['log'].emit(str(response))
     if type(response['data']) is dict and response['data']['id'] not in ['',None]:
-        # print(f"-> Message sent to {data_packet['receiver']}")
+        print(f"-> Message sent to {data_packet['receiver']}")
         data_packet['log'].emit("-"*50+"\n")
         data_packet['log'].emit(f"-> Message sent to {data_packet['receiver']}")
         # print(response['data']['id']) 
@@ -115,51 +114,34 @@ def telnyxApiSMSGateway(data_packet):
  
  
  
-
+@generalSmsAPIExceptionHandler
 def tyntecApiSMSGateway(data_packet):
- 
     headers = {
-        # Already added when you pass json= but not when you pass data=
         'Content-Type': 'application/json',
         'apikey': data_packet['credentials']['api_key'],
     }
-
     json_data = {
         'from':data_packet['message_title'],
         'to': data_packet['receiver'],
         'message': data_packet['message_body'],
     }
-    
-    
-    
-    
     response = requests.post('https://api.tyntec.com/messaging/v1/sms', headers=headers, json=json_data).json()
     data_packet['log'].emit(str(response))
-    # print("/"*20)
-    # print(response)
-    # print("/"*20)
-    # response = response.json()
-    # print(response)
     if response.get('requestId') is not None:
         message_id = response.get('requestId')
         print(f"-> Message sent to {data_packet['receiver']}")
         print(message_id)
-        
         data_packet['log'].emit("-"*50+"\n")
         data_packet['log'].emit(f"-> Message sent to {data_packet['receiver']}")
         data_packet['log'].emit(str(message_id))
         data_packet['log'].emit("-"*50+"\n")
         
         
-        
+@generalSmsAPIExceptionHandler   
 def twilioApiSMSGateway(data_packet):   
     account_sid =  data_packet['credentials']['account_sid']
     auth_token =  data_packet['credentials']['auth_token']
-     
-    
-    client = Client(account_sid, auth_token)
-    # print(f"------------3rd -  {client}")
-    
+    client = Client(account_sid, auth_token)    
     try:
         message = client.messages.create(
                     from_=data_packet['message_title'],
@@ -168,20 +150,13 @@ def twilioApiSMSGateway(data_packet):
                 )
     
     except Exception as e:
-        print(e)
-    
-    
-    
-    data_packet['log'].emit(str(message))
-    print(f"------------4th -  {message}")
-    # print("------------------------- 3rd")
+        print(e) 
+    data_packet['log'].emit(str(message))  
     try:
-        # print(message.sid)
         message_sid = str(message.sid)
         if len(message_sid)>5:
             print(f"-> Message sent to {data_packet['receiver']}")
-            print(message_sid)
-            
+            print(message_sid) 
             data_packet['log'].emit("-"*50+"\n")
             data_packet['log'].emit(f"-> Message sent to {data_packet['receiver']}")
             data_packet['log'].emit(str(message_sid))
@@ -189,39 +164,9 @@ def twilioApiSMSGateway(data_packet):
     except:
         pass
     
-# def messageBirdApiSMSGateway(data_packet):
-    # client = messagebird.Client(data_packet['credentials']['access_key'])
-    # print("------------client = ", client)
-    # message = client.message_create(data_packet['message_title'], data_packet['receiver'],data_packet["message_body"],{ 'reference' : 'Foobar' })
     
-    # print("------------message = ", message)
-    
-    
-    # # data_packet['log'].emit(str(message.id))
-    # try:
-    #     message_id = message.id
-    #     print(f"-> Message sent to {data_packet['receiver']}")
-    #     print(message_id)
-    #     data_packet['log'].emit("-"*50+"\n") 
-    #     data_packet['log'].emit(f"-> Message sent to {data_packet['receiver']}")
-    #     data_packet['log'].emit(str(message_id))
-    #     data_packet['log'].emit("-"*50+"\n")  
-    # except:pass
-
+@generalSmsAPIExceptionHandler
 def messageBirdApiSMSGateway(data_packet):
-    credentials = {   
-        "access_key": "IYtZQQnrRGNcuK3jMqsnW7Dq8",  
-    }
-    # +13167815639 
-    # data_packet = {
-    #     "credentials":data_packet['credentials'],
-    #     "receiver":"923167815639",
-    #     "message_title":"Stick alert",
-    #     "message_body":"I'm writing Hello",
-    
-
-    # }
-    print("----------- here1")
     client = messagebird.Client(data_packet['credentials']['access_key'])
     message = client.message_create(data_packet['message_title'], data_packet['receiver'],data_packet["message_body"],{ 'reference' : 'Foobar' })
     try: 
@@ -236,10 +181,9 @@ def messageBirdApiSMSGateway(data_packet):
         print("error = ", e)
 
 
-# IYtZQQnrRGNcuK3jMqsnW7Dq8:580f6bc8-8d7c-4392-8285-5cf06dd14b4c
 
 
-
+@generalSmsAPIExceptionHandler
 def d7networksApiSMSGateway(data_packet):   
     headers = {
         'Authorization': f'Basic {data_packet["credentials"]["auth_token"]}',
@@ -254,9 +198,7 @@ def d7networksApiSMSGateway(data_packet):
         "dlr-level":3, 
     }  
     response = requests.post('https://rest-api.d7networks.com/secure/sendbatch', headers=headers, data=json.dumps(data))
-    
     data_packet['log'].emit(str(response.json())) 
-    
     if response:
         response = response.json()
         message_id = response['data']
@@ -268,11 +210,12 @@ def d7networksApiSMSGateway(data_packet):
         data_packet['log'].emit("-"*50+"\n")  
 
 
+
+@generalSmsAPIExceptionHandler
 def vonagecApiSMSGateway(data_packet):
     import vonage 
     client = vonage.Client(key=data_packet['credentials']['api_key'], secret=data_packet['credentials']['api_secret'])
     sms = vonage.Sms(client)
-
     responseData = sms.send_message(
         { 
             'from':data_packet['message_title'], 
@@ -280,7 +223,6 @@ def vonagecApiSMSGateway(data_packet):
             "text": data_packet['message_body'],
         }
     )
-    # print(responseData)
     data_packet['log'].emit(str(responseData)) 
     if responseData["messages"][0]["status"] == "0":
         print(f"-> Message sent to {data_packet['receiver']}")

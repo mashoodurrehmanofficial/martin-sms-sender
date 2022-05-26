@@ -7,11 +7,11 @@ config_prototype = {
     "threads_threshold": 5,
     "prodcut_key":"",
     "services": {
-        "vonage":[{       "api_key": "",    "api_secret": "",}],
+        "vonage.co.uk":[{       "api_key": "",    "api_secret": "",}],
         "tyntec.com":[{  "api_key": "",}],
-        "d7networks":[{    "username": "",   "password": "",  "auth_token": "", }],
-        "twilio":[{     "account_sid" : "",  "auth_token" : ""  }],
-        "messagebird":[ {   "access_key": ""   }  ],
+        "d7networks.com":[{    "username": "",   "password": "",  "auth_token": "", }],
+        "twilio.com":[{     "account_sid" : "",  "auth_token" : ""  }],
+        "messagebird.com":[ {   "access_key": ""   }  ],
         "sinch.com": [ {  "service_plan_id": "",  "api_token": ""  }],
         "clicksend.com": [  { "username": "", "api_key": "" }  ],
         "telnyx.com": [ { "api_key": "",  "messaging_profile_id": ""  }  ] 
@@ -60,12 +60,6 @@ class  configHandler():
      
     def getCredentialsPrototype(self,service):
         return self.data['services'][service][0]
-    # def tempActivationFileExists(self):
-    #     return os.path.exists(activation_file_path)
-    
-    # def genearteTempActivationFile(self):
-    #     with open(activation_file_path,"w",encoding="utf-8") as file:
-    #         file.write("")
     
     def getProductKey(self):
         return str(self.data['prodcut_key'])
@@ -88,7 +82,6 @@ class  configHandler():
     
     # Configuration Tab
     def getThreadsThreshold(self):
-        # threshold = int(self.data['threads_threshold'])
         return int(self.data['threads_threshold'])
     
     def setThreadsThreshold(self,new_threads_threshold):
@@ -98,7 +91,7 @@ class  configHandler():
             
     def getAllServices(self):
         return sorted(list(self.data['services'].keys())[:len(config_prototype['services'])])
-        # return sorted(list(self.data['services'].keys())[:5])
+
         
     def getServiceCredentialsList(self,service):
         return list(self.data['services'][service][1:])
@@ -132,14 +125,13 @@ class  configHandler():
         for x in self.data['templates']:
             if list(x.keys())[0]==key:
                 return x[key]
-            
         return '' 
+    
+    
     def getMacroBody(self,key):
-        # print(key)
         for x in self.data['macros']:
             if list(x.keys())[0]==key:
-                return x[key]
-            
+                return x[key]        
         return '' 
     
     

@@ -669,12 +669,12 @@ class Main(QMainWindow):
 
         # Auto - Activation Checking 
         
-        # if  len(configHandler().getProductKey()) >10 :
-        #     print("Auto connecting to server for key validation ... ")
-        #     self.activation_save_btn.setEnabled(False)
-        #     self.verifyProductKeyFromServer() 
+        if  len(configHandler().getProductKey()) >10 :
+            print("Auto connecting to server for key validation ... ")
+            self.activation_save_btn.setEnabled(False)
+            self.verifyProductKeyFromServer() 
         
-        self.manageVisibleTabs()
+        # self.manageVisibleTabs()
         
         
 

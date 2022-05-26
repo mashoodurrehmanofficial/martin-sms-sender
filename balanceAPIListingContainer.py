@@ -22,6 +22,8 @@ def twilioApiBalanceGateway(credentials):
         account_sid =  credentials['account_sid']
         auth_token =  credentials['auth_token']
         balance = Client(account_sid, auth_token).balance.fetch()
+        print("-- ",balance)
+        
         balance = f'{balance.balance} {balance.currency}'
         print(balance)
     except:

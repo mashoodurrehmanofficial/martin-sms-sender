@@ -1,9 +1,5 @@
  
-import time
-from PyQt5.QtCore import QThread,pyqtSignal  
-# import uuid
-import requests
-from concurrent.futures import ThreadPoolExecutor
+from PyQt5.QtCore import QThread,pyqtSignal   
 
 try:
     from configHandlerFile import configHandler
@@ -33,24 +29,16 @@ class remainingBalanceThread(QThread):
     
         
     balance_request_status = pyqtSignal(str)
-    def run(self): 
-        pass 
+    def run(self):  
         service = self.service
-        targetBalanceGateway = None
-        # if service=='sinch.com':
-        #     targetBalanceGateway = sinchApiSMSGateway
-        # elif service=='clicksend.com':
-        #     targetBalanceGateway = clickSendApiSMSGateway
-        # elif service=='telnyx.com':
-        #     targetBalanceGateway = telnyxApiSMSGateway
-            
-        if service=='messagebird':
+        targetBalanceGateway = None 
+        if service=='messagebird.com':
             targetBalanceGateway = messageBirdApiBalanceGateway
-        elif service=='twilio':
+        elif service=='twilio.com':
             targetBalanceGateway = twilioApiBalanceGateway
-        elif service=='d7networks':
+        elif service=='d7networks.com':
             targetBalanceGateway = d7networksApiBalanceGateway
-        elif service=='vonage':
+        elif service=='vonage.co.uk':
             targetBalanceGateway = vonageApiBalanceGateway
         
         

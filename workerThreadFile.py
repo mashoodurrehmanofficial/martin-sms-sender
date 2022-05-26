@@ -28,7 +28,6 @@ def getMessagePrototypes(message,total_contacts):
         # detected_macros = [x for x in message.split() if x.startswith("##") and x.endswith("##")]
         detected_macros = ["##"+x.split("##")[1]+"##" for x in detected_macros]
         # print("detected_macros = ",detected_macros)
-        
         detected_macros = [x for x in detected_macros if x.replace("#","") in configHandler().getAvailableMacros()]
         iterable_macros = [x for x in detected_macros  if type(configHandler().getMacroBody(key=str(x).replace("#",""))) is list]
         non_iterable_macros = [x for x in detected_macros  if type(configHandler().getMacroBody(key=str(x).replace("#",""))) is not list]
@@ -36,17 +35,13 @@ def getMessagePrototypes(message,total_contacts):
         # print("detected_macros = ",detected_macros)
         # print("iterable_macros = ",iterable_macros)
         # print("non_iterable_macros = ",non_iterable_macros)
-        
-        
         for non_iterable_macro in non_iterable_macros:    
             message = message.replace(non_iterable_macro,configHandler().getMacroBody(key=str(non_iterable_macro).replace("#","")))
         if len(iterable_macros)>0:
             temp_iterable_macros_dict = [{x: configHandler().getMacroBody(key=str(x).replace("#",""))  } for x in iterable_macros]
             iterable_macros_dict = {}
             [iterable_macros_dict.update(x) for x in temp_iterable_macros_dict]
-            
             # print(iterable_macros_dict)
-            
             max_counter = max([len(x) for x in list(iterable_macros_dict.values())]) 
             for counter in range(max_counter):
                 temp_message = message
@@ -64,26 +59,16 @@ def getMessagePrototypes(message,total_contacts):
     
     
     
-    
-    
-    
-# def demoSender(data):
-#     # print(data)  
-#     print(f"-"*10)  
-#     data['log'].emit((str(uuid.uuid4()))) 
-    
 def senderGatewayContainer(log,data):  
     log.emit("-"*50+"\n")
     log.emit("-> data in raw form ")
     log.emit(str(data))
     log.emit("-"*50+"\n")
-    
     message_prototypes = getMessagePrototypes(data['message_body'], len(data['contact_list']) ) 
     service = data['service']
     log.emit("Creating data packets for ThreadPoolExecutor")
     data_packets = [
-        {
-            # "receiver_index":receiver_index+1,
+        { 
             "service":data['service'],
             "credentials":data['credentials'],
             "receiver":receiver,
@@ -96,10 +81,7 @@ def senderGatewayContainer(log,data):
     log.emit("-"*50+"\n")
     log.emit("-> Data Packets ")
     log.emit(str(data_packets))
-    log.emit("-"*50+"\n")
-    # log.emit(str(data_packets ))
-    # print(data_packets)
-    # return
+    log.emit("-"*50+"\n") 
     
     targetSMSGateway = None
     if service=='sinch.com':
@@ -109,21 +91,18 @@ def senderGatewayContainer(log,data):
     elif service=='telnyx.com':
         targetSMSGateway = telnyxApiSMSGateway
     
-    elif service=='messagebird':
+    elif service=='messagebird.com':
         targetSMSGateway = messageBirdApiSMSGateway
-    elif service=='twilio': 
+    elif service=='twilio.com': 
         targetSMSGateway = twilioApiSMSGateway
-    elif service=='d7networks':
+    elif service=='d7networks.com':
         targetSMSGateway = d7networksApiSMSGateway
         
     elif service=='tyntec.com':
         targetSMSGateway = tyntecApiSMSGateway
-    elif service=='vonage':
+    elif service=='vonage.co.uk':
         targetSMSGateway = vonagecApiSMSGateway
         
-        
-    
-    # print(type(data['credentials']))
          
     log.emit("Initiating ThreadPoolExecutor ...")
     log.emit(f"Target SMS Gateway function name = {targetSMSGateway}")
@@ -134,7 +113,6 @@ def senderGatewayContainer(log,data):
     except:pass
     
     log.emit(f"Max Workers for ThreadPoolExecutor = {max_workers}")
-    
     with ThreadPoolExecutor(max_workers=max_workers) as exe: 
         exe.map(targetSMSGateway,data_packets) 
     
@@ -163,7 +141,6 @@ class workerThread(QThread):
             "contact_list":self.contact_list,
             "message_title":self.message_title,
             "message_body":self.message_body,
-        
         }
         self.log_input_box_component.emit("Starting senderGatewayContainer ...")
         senderGatewayContainer(log=self.log_input_box_component,data=data)
