@@ -52,12 +52,12 @@
         ],
         "sinch.com": [
             {
-                "service_plan_id": "",
-                "api_token": ""
-            },
-            {
                 "service_plan_id": "e1ec53130cdc4de7a74267c8e8b21631",
                 "api_token": "6cee3e8b6f6247c7bb57a37a5212dc55"
+            },
+            {
+                "service_plan_id": "5847fcfa76194721a2b5064ca4c8b5bb",
+                "api_token": "7f2ad26b388440d3982ee9ddce6f56b1"
             }
         ],
         "clicksend.com": [
