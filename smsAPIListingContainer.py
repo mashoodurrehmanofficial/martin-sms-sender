@@ -150,7 +150,8 @@ def twilioApiSMSGateway(data_packet):
                 )
     
     except Exception as e:
-        print(e) 
+        message=traceback.print_exc()
+        print(message) 
     data_packet['log'].emit(str(message))  
     try:
         message_sid = str(message.sid)

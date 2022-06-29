@@ -321,11 +321,11 @@ class Main(QMainWindow):
         service = str(self.home_tab_available_service_dropdown.currentText())
         
         # Start - set dummy data
-        # contact_list = ['447748347521',923167815639,923476026649,923167815639,923476026649][-1:]
+        # contact_list = ['+44 7748347521',923167815639][:1]
         # contact_list = [str(x) for x in contact_list]
         # self.home_page_message_title.setText("Stock Msg")
         # self.home_page_import_receivers_input_box.setText("\n".join(contact_list)) 
-        # self.home_page_import_message_input_box.setText(f"I'm writing Hello") 
+        # self.home_page_import_message_input_box.setText(f"Hello from twilio") 
         # END - set dummy data
 
         credentials = self.home_tab_available_service_credentials_dropdown.currentText()
