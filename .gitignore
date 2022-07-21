@@ -10,6 +10,8 @@ env
 # Distribution / packaging
 .Python
 build/
+server/
+/server/
 develop-eggs/
 # dist/
 downloads/
@@ -55,6 +57,7 @@ coverage.xml
 # Translations
 *.mo
 *.pot
+ 
 
 # Django stuff:
 *.log
