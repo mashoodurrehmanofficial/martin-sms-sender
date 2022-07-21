@@ -27,7 +27,7 @@ credentials = {
 # +13167815639 
 data_packet = {
     "credentials":credentials,
-    "receiver": ["+923167815639","+923476026649"] ,
+    "receiver": ["+923167815639",] ,
     "message_title":"alert",
     "message_body":"cmTextApiSMSGateway Message Alert",
 }

@@ -149,6 +149,17 @@ class Main(QMainWindow):
         QMessageBox.about(self, title,str(text))
         
     def onHomeTabServiceComboBoxChange(self, value):
+        self.home_tab_request_mode_dropdown.clear()
+        api_service_configuration = configHandler().getServiceConfiguration(service=value)
+        api_service_configuration = eval(str(api_service_configuration))
+        
+        self.home_tab_request_mode_dropdown.addItem("Singleton")
+        if api_service_configuration['allow_bulk'] in [True,"True"] : 
+            self.home_tab_request_mode_dropdown.addItem("Bulk")
+            
+        
+        
+        
         self.home_tab_available_service_credentials_dropdown.clear()    
         available_credentials = configHandler().getServiceCredentialsList(service=value)      
         for credentials in available_credentials:
@@ -227,6 +238,7 @@ class Main(QMainWindow):
         self.home_main_frame.setLayout(self.home_main_frame_layout)
         self.home_main_frame.setAlignment(Qt.AlignTop)
         # Horizontal bar for comboxes
+        self.home_tab_request_mode_dropdown = QComboBox()
         self.home_page_service_selection_panel = QGroupBox("Select Credentials")
         self.home_page_service_selection_panel_layout = QHBoxLayout()
         self.home_page_service_selection_panel_layout.setAlignment(Qt.AlignTop)
@@ -239,8 +251,15 @@ class Main(QMainWindow):
         for service in self.availavle_services_list:
             self.home_tab_available_service_dropdown.addItem(str(service))
 
+        
 
         self.home_page_service_selection_panel_layout.addWidget(self.home_tab_available_service_dropdown,1)  
+        
+        
+
+        
+        
+        
         
         currentTime = QDateTime.currentDateTime()
         self.home_page_timer_input_box = QDateTimeEdit()
@@ -256,6 +275,7 @@ class Main(QMainWindow):
         
         
         self.home_page_service_selection_panel_layout.addWidget(self.home_tab_available_service_credentials_dropdown,5)
+        self.home_page_service_selection_panel_layout.addWidget(self.home_tab_request_mode_dropdown,1)  
         self.home_page_service_selection_panel_layout.addWidget(self.home_page_timer_input_box,1)
         self.home_page_service_selection_panel_layout.addWidget(self.home_page_message_title,1)
         self.home_page_service_selection_panel_layout.addWidget(self.home_page_balance_check_btn,1)
@@ -337,9 +357,9 @@ class Main(QMainWindow):
     
     
     
-    def longRunningTask(self,service,credentials,message_title,contact_list,message_body,timer_difference):     
+    def longRunningTask(self,service,credentials,request_mode,message_title,contact_list,message_body,timer_difference):     
         self.appedLogInoutBoxText(str("Starting Main Thread / Parent Thread ..."))
-        self.worker = workerThread(service,credentials,message_title,contact_list,message_body,timer_difference)
+        self.worker = workerThread(service,credentials,request_mode,message_title,contact_list,message_body,timer_difference)
         self.worker.start()
         self.worker.finished.connect(self.threadFinishedSlot)
         self.worker.log_input_box_component.connect(self.logUpdateSlot)
@@ -409,13 +429,13 @@ class Main(QMainWindow):
         
         service = str(self.home_tab_available_service_dropdown.currentText())
         
-        # ## Start - set dummy data
+        ## Start - set dummy data
         # contact_list = ['447748347521',"923167815639","923476026649","923167815639","923167815639",][2:]
         # contact_list = [str(x) for x in contact_list]
         # self.home_page_message_title.setText("Stock Msg")
         # self.home_page_import_receivers_input_box.setText("\n".join(contact_list)) 
         # self.home_page_import_message_input_box.setText(f"hello ##macro3##") 
-        # ## END - set dummy data
+        ## END - set dummy data
         
 
         credentials = self.home_tab_available_service_credentials_dropdown.currentText()
@@ -463,6 +483,8 @@ class Main(QMainWindow):
         
         
         
+        request_mode = self.home_tab_request_mode_dropdown.currentText()
+        
         credentials = str(credentials).replace("\'", "\"")
         credentials = json.loads(credentials) 
         self.home_page_log_input_box.setText("")
@@ -474,7 +496,7 @@ class Main(QMainWindow):
         self.appedLogInoutBoxText(str(f"Receiver Phone number list = {contact_list}",  ))
         self.appedLogInoutBoxText(str("-"*50))
         self.appedLogInoutBoxText(str("SMS Sender is inintiating ..."))
-        self.longRunningTask(service,credentials,message_title,contact_list,message_body,timer_difference)
+        self.longRunningTask(service,credentials,request_mode,message_title,contact_list,message_body,timer_difference)
          
     
         
@@ -819,7 +841,7 @@ class Main(QMainWindow):
         self.activation_tab_layout.addWidget(self.activation_frame) 
         self.activation_tab_layout.addWidget(self.activation_tab_request_status)  
  
-        # Auto - Activation Checking  
+        ## Auto - Activation Checking  
         if  len(configHandler().getProductKey()) >10 :
             print("Auto connecting to server for key validation ... ")
             self.activation_save_btn.setEnabled(False)

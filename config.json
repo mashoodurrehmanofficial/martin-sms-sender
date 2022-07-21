@@ -22,10 +22,10 @@
         "tyntec.com": {
             "credentials": [
                 {
-                    "api_key": "xnEGizE53lVoavEplimtYmukO4lMWDRj"
+                    "api_key": ""
                 },
                 {
-                    "api_key": "sSvIwaS0gcYxvUaENVkOY9MTNkcJ35Kr"
+                    "api_key": "4dPUaa9gCy5nxMjf6FOBmEDcpuvqecxb"
                 }
             ],
             "config": {
@@ -56,8 +56,8 @@
         "twilio.com": {
             "credentials": [
                 {
-                    "account_sid": "AC08fa13cb834fc96435a00fc30f291b95",
-                    "auth_token": "e17d71411e5945e63a4a9bcc0f98a514"
+                    "account_sid": "",
+                    "auth_token": ""
                 },
                 {
                     "account_sid": "AC4f9d4d72adcf6e02322ec22055cc1d56",
@@ -88,8 +88,8 @@
         "sinch.com": {
             "credentials": [
                 {
-                    "service_plan_id": "e1ec53130cdc4de7a74267c8e8b21631",
-                    "api_token": "6cee3e8b6f6247c7bb57a37a5212dc55"
+                    "service_plan_id": "",
+                    "api_token": ""
                 },
                 {
                     "service_plan_id": "5847fcfa76194721a2b5064ca4c8b5bb",
@@ -139,7 +139,7 @@
         "telesign.com": {
             "credentials": [
                 {
-                    "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
+                    "key": ""
                 }
             ],
             "config": {
@@ -151,7 +151,7 @@
         "clickatell.com": {
             "credentials": [
                 {
-                    "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
+                    "key": ""
                 }
             ],
             "config": {

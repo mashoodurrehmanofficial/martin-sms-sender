@@ -1,4 +1,5 @@
  
+from statistics import mode
 from PyQt5.QtCore import QThread,pyqtSignal  
 # import uuid
 from concurrent.futures import ThreadPoolExecutor
@@ -67,7 +68,19 @@ def getMessagePrototypes(message,total_contacts):
     message_prototypes = message_prototypes[:total_contacts]
     return message_prototypes     
     
-    
+
+
+SERVICE_API_MAPPING = {
+    "cm.com": {
+        "singleton":  cmTextApiSMSGatewaySingleton,
+        "bulk":  cmTextApiSMSGatewayBulk,
+    },
+    "tyntec.com": {
+        "singleton":  tyntecApiSMSGatewaySingleton,
+    },
+}
+
+ 
     
     
 def senderGatewayContainer(log,data):  
@@ -75,6 +88,7 @@ def senderGatewayContainer(log,data):
     log.emit("-> data in raw form ")
     log.emit(str(data))
     log.emit("-"*50+"\n")
+    request_mode = data['request_mode'].lower()
     message_prototypes = getMessagePrototypes(data['message_body'], len(data['contact_list']) ) 
     service = data['service']
     contacts = data['contact_list']
@@ -87,38 +101,24 @@ def senderGatewayContainer(log,data):
             "message_title":data['message_title'],
             "message_body":message_text,
             "log":log,
+            "index":index+1,
+            "formatted_index": f"{index+1}/{len(data['contact_list'])}",
         }
-        for message_text,receiver in zip( message_prototypes ,data['contact_list'])
+        for index,(message_text,receiver) in enumerate(zip(message_prototypes ,data['contact_list']))
     ] 
+    
+    
+    singleton_data_packet =  data_packets
+    
     log.emit("-"*50+"\n")
     log.emit("-> Data Packets ")
     log.emit(str(data_packets))
     log.emit("-"*50+"\n") 
     
  
-    
-    targetSMSGateway = None
-    if service=='sinch.com':
-        targetSMSGateway = sinchApiSMSGateway
-    elif service=='clicksend.com':
-        targetSMSGateway = clickSendApiSMSGateway
-    elif service=='telnyx.com':
-        targetSMSGateway = telnyxApiSMSGateway
-    
-    elif service=='messagebird.com':
-        targetSMSGateway = messageBirdApiSMSGateway
-    elif service=='twilio.com': 
-        targetSMSGateway = twilioApiSMSGateway
-    elif service=='d7networks.com':
-        targetSMSGateway = d7networksApiSMSGateway
-        
-    elif service=='tyntec.com':
-        targetSMSGateway = tyntecApiSMSGateway
-    elif service=='vonage.co.uk':
-        targetSMSGateway = vonagecApiSMSGateway
-    elif service=='cm.com':
-        targetSMSGateway = cmTextApiSMSGateway
-        
+     
+      
+    targetSMSGateway  = SERVICE_API_MAPPING[service][request_mode]  
          
     log.emit("Initiating ThreadPoolExecutor ...")
     log.emit(f"Target SMS Gateway function name = {targetSMSGateway}")
@@ -144,87 +144,100 @@ def senderGatewayContainer(log,data):
     
     
     
-    message_prototypes = list(set(message_prototypes))
-    contacts = contacts
-    request_session_contacts_container = [contacts[x:x+request_load] for x in range(0, len(contacts), request_load)]
-    print("-"*100)
-    for request_session_index,request_session_contacts in enumerate(request_session_contacts_container):
-        # Checking if stop button is pressed
-        if sharedMemory.stop_btn_pressed:
-            return
-            
+    # Check if mode is Singleton
+    if request_mode=="singleton":
+        print("-> Singleton mode Started") 
+        # Allow stop 
+        log.emit("ENABLE_STOP_BUTTON") 
+        print("ThreadPoolExecutor")
+        # time.sleep(5)
+        with ThreadPoolExecutor(max_workers=max_workers) as exe: 
+            exe.map(targetSMSGateway,singleton_data_packet) 
+    
+        # Reset  stop to start
+        print("-> Singleton mode Ended")
+        log.emit("DISABLE_STOP_BUTTON")
+    elif request_mode=='bulk':
+        message_prototypes = list(set(message_prototypes))
+        contacts = contacts
+        request_session_contacts_container = [contacts[x:x+request_load] for x in range(0, len(contacts), request_load)]
+        print("-"*100)
+        print(request_mode)
+          
         
-        
-        cuurent_message = message_prototypes[ request_session_index%len(message_prototypes) ]
-        
-        log.emit(f"-"*200)
-        log.emit(f"Current Request Session Index =  {request_session_index+1}/{len(request_session_contacts_container)} ")
-        data_packet =   { 
-            "service":data['service'],
-            "credentials":data['credentials'],
-            "receiver":request_session_contacts,
-            "message_title":data['message_title'],
-            "message_body":cuurent_message,
-            "log":log,
-        }
-        
-        print("data_packets = ",data_packet)
-        
-        
-        print("request_session_index = ",request_session_index)
-        print("request_session_contact = ",request_session_contacts)
-        print("cuurent_message = ",cuurent_message)
-        print("api_service_configuration = ",eval(str(api_service_configuration)))
-        print("api_service_configuration = ",api_service_configuration['allow_bulk'] in [True,"True"] )
-        
-        
-        
-        # with ThreadPoolExecutor(max_workers=max_workers) as exe: 
-        #     exe.map(targetSMSGateway,data_packet) 
-        
-        if api_service_configuration['allow_bulk'] in [True,"True"] :  
-            # ->  Send Request t API
-            targetSMSGateway(data_packet=data_packet) 
-            # Checking if last request Session
-            # print("**--**")
-            # print(request_session_index !=len(request_session_contacts_container))
-            # print(request_session_index )
-            # print(len(request_session_contacts_container))
-            # print("**--**") 
-            if request_session_index !=len(request_session_contacts_container)-1:  
-                # ->  Enable Stop button
-                log.emit("ENABLE_STOP_BUTTON")
-                # ->  time.sleep(request_interval_wait)
-                for second in range(1,request_interval_wait+1):
-                    time.sleep(1)
-                    log.emit(f"[{datetime.datetime.today()}] | Seconds left = {request_interval_wait-second}")
-                    print(f"[{datetime.datetime.today()}] | Seconds left = {request_interval_wait-second}")
-                    print("sharedMemory.stop_btn_pressed = ", sharedMemory.stop_btn_pressed)
-                    if sharedMemory.stop_btn_pressed:
-                        log.emit("DISABLE_STOP_BUTTON")  
-                        break 
-                # ->  Dsiable Stop button
-                log.emit("DISABLE_STOP_BUTTON")
+        for request_session_index,request_session_contacts in enumerate(request_session_contacts_container):
+            # Checking if stop button is pressed
+            if sharedMemory.stop_btn_pressed:
+                return
                 
-             
             
             
-        
-        print("-"*50)
+            cuurent_message = message_prototypes[ request_session_index%len(message_prototypes) ]
+            
+            log.emit(f"-"*200)
+            log.emit(f"Current Request Session Index =  {request_session_index+1}/{len(request_session_contacts_container)} ")
+            data_packet =   { 
+                "service":data['service'],
+                "credentials":data['credentials'],
+                "receiver":request_session_contacts,
+                "message_title":data['message_title'],
+                "message_body":cuurent_message,
+                "log":log,
+            } 
+            print("data_packets = ",data_packet) 
+            print("request_session_index = ",request_session_index)
+            print("request_session_contact = ",request_session_contacts)
+            print("cuurent_message = ",cuurent_message)
+            print("api_service_configuration = ",eval(str(api_service_configuration)))
+            print("api_service_configuration = ",api_service_configuration['allow_bulk'] in [True,"True"] )
+            
+            
+            
+            
+            if api_service_configuration['allow_bulk'] in [True,"True"] :  
+                # ->  Send Request t API
+                targetSMSGateway(data_packet=data_packet) 
+                # Checking if last request Session
+                # print("**--**")
+                # print(request_session_index !=len(request_session_contacts_container))
+                # print(request_session_index )
+                # print(len(request_session_contacts_container))
+                # print("**--**") 
+                if request_session_index !=len(request_session_contacts_container)-1:  
+                    # ->  Enable Stop button
+                    log.emit("ENABLE_STOP_BUTTON")
+                    # ->  time.sleep(request_interval_wait)
+                    for second in range(1,request_interval_wait+1):
+                        time.sleep(1)
+                        log.emit(f"[{datetime.datetime.today()}] | Seconds left = {request_interval_wait-second}")
+                        print(f"[{datetime.datetime.today()}] | Seconds left = {request_interval_wait-second}")
+                        print("sharedMemory.stop_btn_pressed = ", sharedMemory.stop_btn_pressed)
+                        if sharedMemory.stop_btn_pressed:
+                            log.emit("DISABLE_STOP_BUTTON")  
+                            break 
+                    # ->  Dsiable Stop button
+                    log.emit("DISABLE_STOP_BUTTON")
+                    
+                
+                
+                
+            
+            print("-"*50)
     
     
     return 
-    with ThreadPoolExecutor(max_workers=max_workers) as exe: 
-        exe.map(targetSMSGateway,data_packets) 
+    # with ThreadPoolExecutor(max_workers=max_workers) as exe: 
+    #     exe.map(targetSMSGateway,data_packets) 
     
     
     
     
 class workerThread(QThread): 
-    def __init__(self,service,credentials,message_title,contact_list,message_body,timer_difference):
+    def __init__(self,service,credentials,request_mode,message_title,contact_list,message_body,timer_difference):
         super().__init__()
         self.service  = service
         self.credentials  = credentials
+        self.request_mode  = request_mode
         self.message_title  = message_title
         self.contact_list  = contact_list
         self.message_body  = message_body 
@@ -239,6 +252,7 @@ class workerThread(QThread):
         data = { 
             "service":self.service,
             "credentials":self.credentials,
+            "request_mode":self.request_mode,
             "contact_list":self.contact_list,
             "message_title":self.message_title,
             "message_body":self.message_body,

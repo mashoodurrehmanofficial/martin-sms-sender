@@ -1,11 +1,18 @@
 import requests,json,traceback
-import messagebird
+import messagebird,time
 import clicksend_client
 from clicksend_client import SmsMessage
 from CMText.TextClient import TextClient 
 from twilio.rest import Client 
 from clicksend_client.rest import ApiException
+try: 
+    from sharedMemory  import sharedMemory  
 
+except: 
+    try:
+        from sharedMemory  import sharedMemory  
+    except:
+        from .sharedMemory  import sharedMemory
 
 
 def generalSmsAPIExceptionHandler(smsAPIGatewayCaller):
@@ -118,7 +125,7 @@ def telnyxApiSMSGateway(data_packet):
  
  
 @generalSmsAPIExceptionHandler
-def tyntecApiSMSGateway(data_packet):
+def tyntecApiSMSGatewaySingleton(data_packet):
     headers = {
         'Content-Type': 'application/json',
         'apikey': data_packet['credentials']['api_key'],
@@ -128,6 +135,12 @@ def tyntecApiSMSGateway(data_packet):
         'to': data_packet['receiver'],
         'message': data_packet['message_body'],
     }
+
+    
+    # Check Stop button pressed before sending request
+    if sharedMemory.stop_btn_pressed:
+        return
+    
     response = requests.post('https://api.tyntec.com/messaging/v1/sms', headers=headers, json=json_data).json()
     data_packet['log'].emit(str(response))
     if response.get('requestId') is not None:
@@ -135,9 +148,22 @@ def tyntecApiSMSGateway(data_packet):
         print(f"-> Message sent to {data_packet['receiver']}")
         print(message_id)
         data_packet['log'].emit("-"*50+"\n")
-        data_packet['log'].emit(f"-> Message sent to {data_packet['receiver']}")
+        data_packet['log'].emit(f"-> Request Index =  {data_packet['formatted_index']}") 
+        data_packet['log'].emit(f"-> Sessional Receiver =  {data_packet['receiver']}")
+        data_packet['log'].emit(f"-> Message Sent For Current Request Session = 1 ") 
         data_packet['log'].emit(str(message_id))
+        data_packet['log'].emit(str(response))
         data_packet['log'].emit("-"*50+"\n")
+    else:
+        data_packet['log'].emit(f"-> Message Sent For Current Request Session = 0 ")
+        data_packet['log'].emit(f"-> {str(response)}")
+        
+ 
+        
+        
+        
+        
+        
         
         
 @generalSmsAPIExceptionHandler   
@@ -243,28 +269,23 @@ def vonagecApiSMSGateway(data_packet):
 # pip install CM_Text_sdk_python
 # receiver is a list of all receivers
 @generalSmsAPIExceptionHandler
-def cmTextApiSMSGateway(data_packet):
+def cmTextApiSMSGatewayBulk(data_packet):
     client = TextClient(apikey=data_packet['credentials']['api_key']) 
     receiver = data_packet['receiver']
     if type(receiver) is not list:
         receiver = [receiver] 
     # client.AddMessage(message=data_packet['message_body'],from_=data_packet['message_title'], to=receiver)  
     # response = client.send()
-    
-    
     response = client.SendSingleMessage(message=data_packet['message_body'],from_=data_packet['message_title'], to=receiver)  
     response = response.json()
     total_messages_sent = response.get("messages")
     data_packet['log'].emit("-"*50+"\n") 
-    
     if total_messages_sent:
         total_messages_sent = len(total_messages_sent)
         print(f"-> Message sent to {data_packet['receiver']}")
         data_packet['log'].emit(f"-> Sessional Receiver =  {data_packet['receiver']}")
         data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent} ") 
         data_packet['log'].emit("-"*50+"\n") 
-        
-        
     else:
         total_messages_sent = 0 
         data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
@@ -272,7 +293,53 @@ def cmTextApiSMSGateway(data_packet):
     
     data_packet['log'].emit(str(response)+"\n") 
     data_packet['log'].emit("-"*50+"\n") 
+    print(response)
     
+    
+    
+
+# pip install CM_Text_sdk_python
+# receiver is a list of all receivers
+# APPLY Stop button feature / Shared Memory inside 
+@generalSmsAPIExceptionHandler
+def cmTextApiSMSGatewaySingleton(data_packet):
+    client = TextClient(apikey=data_packet['credentials']['api_key']) 
+    receiver = data_packet['receiver']
+    if type(receiver) is not list:
+        receiver = [receiver] 
+    # client.AddMessage(message=data_packet['message_body'],from_=data_packet['message_title'], to=receiver)  
+    # response = client.send()
+    
+    # Start: Testing 
+    # print("|---> Start: Inner Wait")
+    # time.sleep(3)
+    # Emd: Testing 
+    # print("|---> End: Inner Wait")
+    
+    
+    # Check Stop button pressed before sending request
+    if sharedMemory.stop_btn_pressed:
+        return
+    
+    
+    response = client.SendSingleMessage(message=data_packet['message_body'],from_=data_packet['message_title'], to=receiver)  
+    response = response.json()
+    total_messages_sent = response.get("messages")
+    data_packet['log'].emit("-"*50+"\n") 
+    if total_messages_sent:
+        total_messages_sent = len(total_messages_sent)
+        print(f"-> Message sent to {data_packet['receiver']}")
+        data_packet['log'].emit(f"-> Request Index =  {data_packet['formatted_index']}")
+        data_packet['log'].emit(f"-> Sessional Receiver =  {data_packet['receiver']}")
+        data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent} ") 
+        data_packet['log'].emit("-"*50+"\n") 
+    else:
+        total_messages_sent = 0 
+        data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
+        data_packet['log'].emit(f"-> {str(response)}")
+    
+    data_packet['log'].emit(str(response)+"\n") 
+    data_packet['log'].emit("-"*50+"\n") 
     print(response)
     
     
