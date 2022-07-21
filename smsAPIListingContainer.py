@@ -2,8 +2,11 @@ import requests,json,traceback
 import messagebird
 import clicksend_client
 from clicksend_client import SmsMessage
+from CMText.TextClient import TextClient 
 from twilio.rest import Client 
 from clicksend_client.rest import ApiException
+
+
 
 def generalSmsAPIExceptionHandler(smsAPIGatewayCaller):
     def innerDecorator(data_packet):
@@ -237,6 +240,44 @@ def vonagecApiSMSGateway(data_packet):
         print(f"Message failed with error: {responseData['messages'][0]['error-text']}")
 
 
+# pip install CM_Text_sdk_python
+# receiver is a list of all receivers
+@generalSmsAPIExceptionHandler
+def cmTextApiSMSGateway(data_packet):
+    client = TextClient(apikey=data_packet['credentials']['api_key']) 
+    receiver = data_packet['receiver']
+    if type(receiver) is not list:
+        receiver = [receiver] 
+    # client.AddMessage(message=data_packet['message_body'],from_=data_packet['message_title'], to=receiver)  
+    # response = client.send()
+    
+    
+    response = client.SendSingleMessage(message=data_packet['message_body'],from_=data_packet['message_title'], to=receiver)  
+    response = response.json()
+    total_messages_sent = response.get("messages")
+    data_packet['log'].emit("-"*50+"\n") 
+    
+    if total_messages_sent:
+        total_messages_sent = len(total_messages_sent)
+        print(f"-> Message sent to {data_packet['receiver']}")
+        data_packet['log'].emit(f"-> Sessional Receiver =  {data_packet['receiver']}")
+        data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent} ") 
+        data_packet['log'].emit("-"*50+"\n") 
+        
+        
+    else:
+        total_messages_sent = 0 
+        data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
+        data_packet['log'].emit(f"-> {str(response)}")
+    
+    data_packet['log'].emit(str(response)+"\n") 
+    data_packet['log'].emit("-"*50+"\n") 
+    
+    print(response)
+    
+    
+    
+    
     
 if __name__=="__main__": 
     pass

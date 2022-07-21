@@ -62,12 +62,132 @@ done - messagebird.com - IYtZQQnrRGNcuK3jMqsnW7Dq8:580f6bc8-8d7c-4392-8285-5cf06
 
 
 
+------------------------------------------------------------------------------------------------------------------------------------------
+Clicksend  - MAX -> 1000
+sms_messages = clicksend_client.SmsMessageCollection(messages=[sms_message])
+sms_messages = clicksend_client.SmsMessageCollection(messages=[MESSAGE LIST ])
+
+  sms_message = SmsMessage(
+    source="php",
+    _from='Alert',
+    body=data_packet['message_body'],
+    to=data_packet['receiver'],
+    
+)
+------------------------------------------------------------------------------------------------------------------------------------------
+d7networks -- allow bulk with same syntaxt ... just make  {"to" : LIST[]}
+------------------------------------------------------------------------------------------------------------------------------------------
+https://www.twilio.com/blog/building-bulk-sms-service-python-flask-twilio-notify
+import os
+import json
+from twilio.rest import Client
+
+ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
+AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
+NOTIFY_SERVICE_SID = os.getenv('TWILIO_NOTIFY_SERVICE_SID')
+
+client = Client(ACCOUNT_SID, AUTH_TOKEN)
 
 
+def send_bulk_sms(numbers, body):
+    bindings = list(map(lambda number: json.dumps({'binding_type': 'sms', 'address': number}), numbers))
+    print("=====> To Bindings :>", bindings, "<: =====")
+    notification = client.notify.services(NOTIFY_SERVICE_SID).notifications.create(
+        to_binding=bindings,
+        body=body
+    )
+    print(notification.body)
 
+------------------------------------------------------------------------------------------------------------------------------------------
+MESSAGE BIRD
+    def message_create(self, originator, recipients, body, params=None):
+        """Create a new message."""
+        if params is None:
+            params = {}
+        if type(recipients) == list:
+            recipients = ','.join(recipients)
+
+        params.update({'originator': originator, 'body': body, 'recipients': recipients})
+        return Message().load(self.request('messages', 'POST', params))
+
+    def message_delete(self, id):
+        """Delete a message from the dashboard."""
+        self.request_plain_text('messages/' + str(id), 'DELETE')
+
+    def mms_create(self, originator, recipients, body, mediaUrls, subject=None, reference=None, scheduledDatetime=None):
+        """ Send bulk mms.
+
+        Args:
+            originator(str): name of the originator
+            recipients(str/list(str)): comma separated numbers or list of numbers in E164 format
+            body(str)       : text message body
+            mediaUrl(str)   : list of URL's of attachments of the MMS message.
+            subject(str)    : utf-encoded subject
+            reference(str)  : client reference text
+            scheduledDatetime(str) : scheduled date time in RFC3339 format
+        Raises:
+            ErrorException:  On api returning errors
+
+        Returns:
+            MMS: On success an MMS instance instantiated with success response
+        """
+        if isinstance(recipients, list):
+            recipients = ','.join(recipients)
+        if isinstance(mediaUrls, str):
+            mediaUrls = [mediaUrls]
+        params = locals()
+        del (params['self'])
+        return MMS().load(self.request('mms', 'POST', params)) 
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+-> SAME AS D7NETWORKS
+
+https://us.sms.api.sinch.com/xms/v1/{$service_plan_id}/batches
+
+SMPP with Sinch
+Achieve granular control and low latency of SMS messaging with the Sinch Enhanced SMPP service.
+Sinch offers a traditional telecoms protocol for submission of bulk SMS. This protocol is called the SMPP Protocol. More information about the general use and availability of the protocol can be found at smpp.org or around the web. This section will help you understand the Sinch-specific implementation of the SMPP Protocol.
+
+
+import requests
+
+headers = {
+    'Authorization': 'Bearer {token}',
+    # Already added when you pass json= but not when you pass data=
+    # 'Content-Type': 'application/json',
+}
+
+json_data = {
+    'from': '12345',
+    'to': [
+        '123456789',
+    ],
+    'body': 'Hi there! How are you?',
+}
+
+response = requests.post('https://eu.sms.api.sinch.com/xms/v1/{service_plan_id}/batches', headers=headers, json=json_data)
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+Tyntec - NOT 
+------------------------------------------------------------------------------------------------------------------------------------------
+VONAGE
+def batch(recipients, batch_size=1):
+    for i in range(0, len(recipients), batch_size):
+        yield recipients[i:min(i + batch_size, len(recipients))]
+------------------------------------------------------------------------------------------------------------------------------------------
 
 
 pyinstaller --onefile  .\main.py -p ./ --noconsole --windowed --i='./icon.png' --name="QuickSMS" --uac-admin
 pyinstaller scriptname.py --onefile --uac-admin
 
 pyinstaller --onefile  .\main.py -p ./  --windowed --i='./icon.png' --name="QuickSMS"  --uac-admin --noconsole
+
+
+
+
+[2:58 PM, 7/20/2022] Martin - UK: cm.com
+[2:58 PM, 7/20/2022] Martin - UK: 
+API: Account Identifier:031e23a9-4673-4fb4-993c-35082ecf4011 | Token: b43c8147-6df1-4d5e-9dc4-03df4cb0740b 
+| service URL:https://sgw01.cm.nl/gateway.ashx

@@ -3,26 +3,30 @@ from PyQt5.QtCore import QThread,pyqtSignal
 # import uuid
 from concurrent.futures import ThreadPoolExecutor
 try:
-    from configHandlerFile import configHandler
+    from configHandlerFile import configHandler 
     from smsAPIListingContainer import *
+    from sharedMemory  import sharedMemory  
+
 except:
-    try:
+    try: 
         from configHandlerFile import configHandler
-    except:
+    except: 
         from .configHandlerFile import configHandler
     try:
         from smsAPIListingContainer import *
     except:
         from .smsAPIListingContainer import * 
+    try:
+        from sharedMemory  import sharedMemory  
+    except:
+        from .sharedMemory  import sharedMemory
     
-    
-import time
+import time,json,datetime
     
 def getMessagePrototypes(message,total_contacts):
     message_prototypes = [] 
     if '##' not in message: 
-        message_prototypes.append(message) 
-        
+        message_prototypes.append(message)  
     else:
         detected_macros = [x for x in message.split() if "#" in str(x) ]
         # detected_macros = [x for x in message.split() if x.startswith("##") and x.endswith("##")]
@@ -73,10 +77,7 @@ def senderGatewayContainer(log,data):
     log.emit("-"*50+"\n")
     message_prototypes = getMessagePrototypes(data['message_body'], len(data['contact_list']) ) 
     service = data['service']
-    log.emit("Creating data packets for ThreadPoolExecutor")
-    print('--> ', data['contact_list'])
-    print('--> ',message_prototypes)
-    print('--> ',data['message_body'], len(data['contact_list']))
+    contacts = data['contact_list']
     
     data_packets = [
         { 
@@ -94,7 +95,7 @@ def senderGatewayContainer(log,data):
     log.emit(str(data_packets))
     log.emit("-"*50+"\n") 
     
-    # return
+ 
     
     targetSMSGateway = None
     if service=='sinch.com':
@@ -115,6 +116,8 @@ def senderGatewayContainer(log,data):
         targetSMSGateway = tyntecApiSMSGateway
     elif service=='vonage.co.uk':
         targetSMSGateway = vonagecApiSMSGateway
+    elif service=='cm.com':
+        targetSMSGateway = cmTextApiSMSGateway
         
          
     log.emit("Initiating ThreadPoolExecutor ...")
@@ -126,6 +129,91 @@ def senderGatewayContainer(log,data):
     except:pass
     
     log.emit(f"Max Workers for ThreadPoolExecutor = {max_workers}")
+    
+    log.emit("Creating data packets for ThreadPoolExecutor")
+    print('--> ', data['contact_list'])
+    print('--> message_prototypes = ',message_prototypes)
+    print('--> ',data['message_body'], len(data['contact_list']))
+    
+    api_service_configuration = configHandler().getServiceConfiguration(service)
+    api_service_configuration = eval(str(api_service_configuration))
+    print("api_service_configuration = ",api_service_configuration)
+    print("api_service_configuration = ",type(api_service_configuration))
+    request_load = int(api_service_configuration['request_load'])
+    request_interval_wait = int(api_service_configuration['request_interval_wait'])
+    
+    
+    
+    message_prototypes = list(set(message_prototypes))
+    contacts = contacts
+    request_session_contacts_container = [contacts[x:x+request_load] for x in range(0, len(contacts), request_load)]
+    print("-"*100)
+    for request_session_index,request_session_contacts in enumerate(request_session_contacts_container):
+        # Checking if stop button is pressed
+        if sharedMemory.stop_btn_pressed:
+            return
+            
+        
+        
+        cuurent_message = message_prototypes[ request_session_index%len(message_prototypes) ]
+        
+        log.emit(f"-"*200)
+        log.emit(f"Current Request Session Index =  {request_session_index+1}/{len(request_session_contacts_container)} ")
+        data_packet =   { 
+            "service":data['service'],
+            "credentials":data['credentials'],
+            "receiver":request_session_contacts,
+            "message_title":data['message_title'],
+            "message_body":cuurent_message,
+            "log":log,
+        }
+        
+        print("data_packets = ",data_packet)
+        
+        
+        print("request_session_index = ",request_session_index)
+        print("request_session_contact = ",request_session_contacts)
+        print("cuurent_message = ",cuurent_message)
+        print("api_service_configuration = ",eval(str(api_service_configuration)))
+        print("api_service_configuration = ",api_service_configuration['allow_bulk'] in [True,"True"] )
+        
+        
+        
+        # with ThreadPoolExecutor(max_workers=max_workers) as exe: 
+        #     exe.map(targetSMSGateway,data_packet) 
+        
+        if api_service_configuration['allow_bulk'] in [True,"True"] :  
+            # ->  Send Request t API
+            targetSMSGateway(data_packet=data_packet) 
+            # Checking if last request Session
+            # print("**--**")
+            # print(request_session_index !=len(request_session_contacts_container))
+            # print(request_session_index )
+            # print(len(request_session_contacts_container))
+            # print("**--**") 
+            if request_session_index !=len(request_session_contacts_container)-1:  
+                # ->  Enable Stop button
+                log.emit("ENABLE_STOP_BUTTON")
+                # ->  time.sleep(request_interval_wait)
+                for second in range(1,request_interval_wait+1):
+                    time.sleep(1)
+                    log.emit(f"[{datetime.datetime.today()}] | Seconds left = {request_interval_wait-second}")
+                    print(f"[{datetime.datetime.today()}] | Seconds left = {request_interval_wait-second}")
+                    print("sharedMemory.stop_btn_pressed = ", sharedMemory.stop_btn_pressed)
+                    if sharedMemory.stop_btn_pressed:
+                        log.emit("DISABLE_STOP_BUTTON")  
+                        break 
+                # ->  Dsiable Stop button
+                log.emit("DISABLE_STOP_BUTTON")
+                
+             
+            
+            
+        
+        print("-"*50)
+    
+    
+    return 
     with ThreadPoolExecutor(max_workers=max_workers) as exe: 
         exe.map(targetSMSGateway,data_packets) 
     

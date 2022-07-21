@@ -1,5 +1,5 @@
  
-import ctypes
+import ctypes,threading
 import os,json  
 import time
 from sys import argv as sys_argv,exit
@@ -20,11 +20,18 @@ try:
     from workerThreadFile import workerThread
     from workerActivationThread import serverThread
     from workerRemainingBalanceThread  import remainingBalanceThread
+    from sharedMemory  import sharedMemory
 except:
     try:
         from configHandlerFile import configHandler
+        
     except:
         from .configHandlerFile import configHandler
+    try:
+        from sharedMemory  import sharedMemory  
+    except:
+        from .sharedMemory  import sharedMemory
+
     try:
         from workerThreadFile import workerThread
         from workerActivationThread import serverThread
@@ -35,7 +42,30 @@ except:
     # from workerThreadFile import workerThread
     
     
-    
+class SharedMemory:
+    stop_clicked = False
+
+class contactFileReaderThreadClass(QThread): 
+    def __init__(self,file_name):
+        super().__init__()
+        self.file_name  = file_name 
+        
+    file_reader_signal_slot = pyqtSignal(str)
+    def run(self): 
+        try:
+            with open(self.file_name,'r',encoding="utf-8") as file:
+                contacts = [str(x).strip() for x in file.readlines()]
+                contacts = [x for x in contacts if len(str(x))>1]
+                contacts = "\n".join(contacts) 
+                self.file_reader_signal_slot.emit(f"{contacts}") 
+ 
+        except  UnicodeDecodeError:
+            self.file_reader_signal_slot.emit("error")
+             
+
+
+
+ 
 if hasattr(Qt, 'AA_EnableHighDpiScaling'):
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 if hasattr(Qt, 'AA_UseHighDpiPixmaps'):
@@ -56,7 +86,7 @@ class Main(QMainWindow):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)      
         self.setWindowIcon( QIcon(QApplication.style().standardIcon(QStyle.SP_DesktopIcon))  )
- 
+        self.IS_STOP_FUNCTIONALITY_ALLOWED = False
 
         # self.showMaximized()
         # Initialize tab screen
@@ -99,7 +129,7 @@ class Main(QMainWindow):
         # self.center()
         self.show() 
         self.prepareActivationTab()
-        self.tab_container.setCurrentIndex(0)
+        # self.tab_container.setCurrentIndex(3)
     
     def manageVisibleTabs(self):
         self.tab_container.removeTab(0)
@@ -125,18 +155,19 @@ class Main(QMainWindow):
             self.home_tab_available_service_credentials_dropdown.addItem(str(credentials))
        
 
+         
+    
+
+
     def onClickContactListImportButton(self):
         file_name = QFileDialog.getOpenFileNames(self, "Select File", "", "*.txt")
         if file_name[0]:
             file_name = file_name[0][0]
-            try:
-                with open(file_name,'r',encoding="utf-8") as file:
-                    contacts = [str(x).strip() for x in file.readlines()]
-                    contacts = [x for x in contacts if len(str(x))>1]
-                    self.home_page_import_receivers_input_box.setText("\n".join(contacts))
-                print(contacts) 
-            except  UnicodeDecodeError:
-                self.showWarningBox("Can't read text file due to UnicodeDecodeError")
+            print("file_name = ",file_name)
+            self.longRunningContactFileReaderTask(file_name) 
+
+
+
 
     def onClickMessageBodyLoadButton(self):
         self.home_page_import_message_input_box
@@ -189,7 +220,7 @@ class Main(QMainWindow):
                 
     def prepareHomeTab(self):
         pass
-        self.tab_container.setCurrentIndex(0)
+        # self.tab_container.setCurrentIndex(0)
         self.home_tab_layout.setAlignment(Qt.AlignTop)
         self.home_main_frame = QGroupBox("Main Panel")
         self.home_main_frame_layout = QVBoxLayout() 
@@ -272,7 +303,8 @@ class Main(QMainWindow):
         self.home_page_data_import_panel_layout.addWidget(self.home_page_import_receivers_panel,1)
         self.home_page_data_import_panel_layout.addWidget(self.home_page_import_message_panel,1) 
         self.home_main_frame_layout.addWidget(self.home_page_data_import_panel,1)
-        self.home_main_frame_start_btn  =QPushButton("Start sending Messages")
+        self.home_main_frame_start_btn  = QPushButton("Start sending Messages")
+        self.changeStartSendingMessagesButtonStatus()
         self.home_main_frame_start_btn.clicked.connect(self.onClickStartButton)
         self.home_main_frame_layout.addWidget(self.home_main_frame_start_btn,1)
         # Load message
@@ -287,7 +319,24 @@ class Main(QMainWindow):
         self.home_tab_layout.addWidget(self.home_main_frame,1) 
         self.home_main_frame_layout.addStretch()
         
-     
+    def changeStartSendingMessagesButtonStatus(self,stop=False):
+        if not stop:
+            # start
+            self.IS_STOP_FUNCTIONALITY_ALLOWED = False
+            self.home_main_frame_start_btn.setText("Start sending Messages")
+            self.home_main_frame_start_btn.setStyleSheet("background-color: ")
+        else:
+            self.IS_STOP_FUNCTIONALITY_ALLOWED = True
+            self.home_main_frame_start_btn.setText("Stop SMS Sender")
+            self.home_main_frame_start_btn.setStyleSheet("background-color: red")
+            
+            
+        
+        
+        pass
+    
+    
+    
     def longRunningTask(self,service,credentials,message_title,contact_list,message_body,timer_difference):     
         self.appedLogInoutBoxText(str("Starting Main Thread / Parent Thread ..."))
         self.worker = workerThread(service,credentials,message_title,contact_list,message_body,timer_difference)
@@ -295,13 +344,41 @@ class Main(QMainWindow):
         self.worker.finished.connect(self.threadFinishedSlot)
         self.worker.log_input_box_component.connect(self.logUpdateSlot)
      
+    
      
+    def longRunningContactFileReaderTask(self,file_name):      
+        self.file_reader_worker = contactFileReaderThreadClass(file_name)
+        self.file_reader_worker.start()
+        # self.file_reader_worker.finished.connect(self.threadFinishedSlot)
+        self.file_reader_worker.file_reader_signal_slot.connect(self.fileReaderResponseSlot)
+     
+    def fileReaderResponseSlot(self,val):  
+        is_error = "error" in str(val).lower()
+        if is_error:
+            return self.showWarningBox("Can't read text file due to UnicodeDecodeError") 
+        else:
+            contacts = val
+            self.home_page_import_receivers_input_box.setText(contacts)
+            
+            
+            
      
     def appedLogInoutBoxText(self,val):
         self.home_page_log_input_box.textCursor().insertText(str(val)+'\n')
         self.home_page_log_input_box.verticalScrollBar().setValue(self.home_page_log_input_box.verticalScrollBar().maximum())
         
     def logUpdateSlot(self,val):  
+        val = str(val)
+        if val == "ENABLE_STOP_BUTTON":
+            self.changeStartSendingMessagesButtonStatus(stop=True)
+            return
+        if val == "DISABLE_STOP_BUTTON":
+            self.changeStartSendingMessagesButtonStatus(stop=False)
+            return
+        
+        
+        
+        
         if 'Message sent to' in str(val):
             self.messages_sent_index = self.messages_sent_index + 1
             self.messages_sent_index 
@@ -311,22 +388,35 @@ class Main(QMainWindow):
         
         
     def threadFinishedSlot(self): 
-        log_plain_text = str(self.home_page_log_input_box.toPlainText()) 
-        total_messages_sent = max([int(x.split("->")[0].split("/")[0]) for x in log_plain_text.split('\n') if "Message sent to" in  str(x)]+[0])
+        log_plain_text = str(self.home_page_log_input_box.toPlainText())  
+        total_messages_sent = sum([int(str(x).split("=")[-1].strip()) for x in log_plain_text.split('\n') if  "Message Sent For Current Request Session" in  str(x)] )
         self.appedLogInoutBoxText(str("-"*50))
         self.appedLogInoutBoxText(f"\nTotal messages sent =  {total_messages_sent}")
-        self.showWarningBox(text=f"Total messages sent = {total_messages_sent}", title="Message")
+        self.showWarningBox(text=f"Total messages sent = {total_messages_sent}", title="Total Messages Sent")
     
-    def onClickStartButton(self):
+    def onClickStartButton(self): 
+        # Checking if Stop is enabled
+        if self.IS_STOP_FUNCTIONALITY_ALLOWED:
+            # write shared memory data
+            print("STOP ALLOWED")
+            print("-> Write Shared Memory Data")
+            sharedMemory.stop_btn_pressed = True
+            return 
+        else:
+            sharedMemory.stop_btn_pressed = False
+            
+        
+        
         service = str(self.home_tab_available_service_dropdown.currentText())
         
-        # Start - set dummy data
-        # contact_list = ['+44 7748347521',923167815639][:1]
+        # ## Start - set dummy data
+        # contact_list = ['447748347521',"923167815639","923476026649","923167815639","923167815639",][2:]
         # contact_list = [str(x) for x in contact_list]
         # self.home_page_message_title.setText("Stock Msg")
         # self.home_page_import_receivers_input_box.setText("\n".join(contact_list)) 
-        # self.home_page_import_message_input_box.setText(f"Hello from twilio") 
-        # END - set dummy data
+        # self.home_page_import_message_input_box.setText(f"hello ##macro3##") 
+        # ## END - set dummy data
+        
 
         credentials = self.home_tab_available_service_credentials_dropdown.currentText()
         try:
@@ -386,12 +476,7 @@ class Main(QMainWindow):
         self.appedLogInoutBoxText(str("SMS Sender is inintiating ..."))
         self.longRunningTask(service,credentials,message_title,contact_list,message_body,timer_difference)
          
-        
-        
-        
-        
-    def on_combobox_changed(self, value):
-        print("combobox changed", value)  
+    
         
     def onClickAddNewCredentialsButton(self):
         new_crendential_value = str(self.new_crendetials_insert_box.toPlainText())
@@ -530,8 +615,7 @@ class Main(QMainWindow):
         self.service_credentials_insertion_panel.setLayout(self.service_credentials_insertion_panel_layout)
         self.new_crendetials_insert_box = QPlainTextEdit()
         self.available_service_dropdown = QComboBox()
-        self.available_service_dropdown.currentTextChanged.connect(self.onChangeAvailableService) 
-        # self.available_service_dropdown.currentText.connect(self.on_combobox_changed) 
+        self.available_service_dropdown.currentTextChanged.connect(self.onChangeAvailableService)  
         for service in self.availavle_services_list:
             self.available_service_dropdown.addItem(str(service))
         self.service_credentials_insertion_panel_layout.addWidget(self.available_service_dropdown,1)
@@ -586,8 +670,7 @@ class Main(QMainWindow):
         self.template_vs_macros_dropdown = QComboBox()
         self.template_vs_macros_dropdown.addItem("Templates")
         self.template_vs_macros_dropdown.addItem("Macros")
-        self.template_vs_macros_dropdown.currentTextChanged.connect(self.onChangeTemplateMacrosDropdown) 
-        # self.available_service_dropdown.currentText.connect(self.on_combobox_changed) 
+        self.template_vs_macros_dropdown.currentTextChanged.connect(self.onChangeTemplateMacrosDropdown)  
         self.templates_macros_insertion_panel_layout.addWidget(self.template_vs_macros_dropdown,1)
         self.template_vs_macro_title_insert_box = QPlainTextEdit() 
         self.template_vs_macro_title_insert_box.setPlaceholderText(f"Insert Title / Key / Short Name for {self.getTemplateMacrosdDropdownText()}")
@@ -640,15 +723,84 @@ class Main(QMainWindow):
         self.configuration_tab_layout.setAlignment(Qt.AlignTop)
         self.configuration_frame = QGroupBox("Set Threads / sec")
         self.group_box_layout = QHBoxLayout()
-        self.configuration_save_btn = QPushButton("Save settings",)
+        self.configuration_save_btn = QPushButton("Save",)
         self.configuration_save_btn.clicked.connect(self.save_configuration_thread_threshold)
         self.configuration_thread_input = QLineEdit()
         self.configuration_thread_input.setText(str(configHandler().getThreadsThreshold()))
         self.group_box_layout.addWidget(self.configuration_thread_input,11)
         self.group_box_layout.addWidget(self.configuration_save_btn,1)
         self.configuration_frame.setLayout(self.group_box_layout)
-        self.configuration_frame.setAlignment(Qt.AlignTop)
-        self.configuration_tab_layout.addWidget(self.configuration_frame) 
+        self.configuration_frame.setAlignment(Qt.AlignTop) 
+        
+ 
+        self.configuration_frame.setAlignment(Qt.AlignTop) 
+        self.configuration_tab_request_load_waitpanel = QGroupBox("Manage Request Load / Wait")
+        self.configuration_tab_request_load_waitpanel_layout = QVBoxLayout()
+        self.configuration_tab_request_load_waitpanel_layout.setAlignment(Qt.AlignTop)
+        self.configuration_tab_request_load_waitpanel.setLayout(self.configuration_tab_request_load_waitpanel_layout)
+        self.configuration_tab_available_service_dropdown = QComboBox()
+        
+
+        
+        
+        
+        for service in self.availavle_services_list:
+            self.configuration_tab_available_service_dropdown.addItem(str(service))  
+        self.request_load_insert_box = QLineEdit() 
+        self.request_load_insert_box.setPlaceholderText(f"Set Messages per Request")
+        self.configuration_tab_available_service_dropdown.currentTextChanged.connect(self.onConfigurationTabAvailableServiveChange)
+        self.request_interval_wait_insert_box = QLineEdit()
+        self.request_interval_wait_insert_box.setPlaceholderText(f"Set wait between Requests")
+        self.configuration_tab_request_load_wait_panel = QLabel()
+        self.configuration_tab_request_load_wait_panel_layout = QHBoxLayout()
+        self.configuration_tab_request_load_wait_panel_layout.setAlignment(Qt.AlignTop)
+        self.configuration_tab_request_load_wait_panel_layout.setContentsMargins(0,0,0,0)
+        self.configuration_tab_request_load_wait_panel.setLayout(self.configuration_tab_request_load_wait_panel_layout)
+        self.configuration_tab_request_load_wait_panel_layout.addWidget(self.configuration_tab_available_service_dropdown,2)
+        self.configuration_tab_request_load_wait_panel_layout.addWidget(self.request_load_insert_box,3)
+        self.configuration_tab_request_load_wait_panel_layout.addWidget(self.request_interval_wait_insert_box,3) 
+        self.configuration_tab_request_load_waitpanel_layout.addWidget(self.configuration_tab_request_load_wait_panel,5)   
+        self.new_configuration_tab_request_load_wait_save_btn = QPushButton(f"Save") 
+        self.new_configuration_tab_request_load_wait_save_btn.clicked.connect(self.onClickSaveRequestLoadWaitButton) 
+        self.configuration_tab_request_load_wait_panel_layout.addWidget(self.new_configuration_tab_request_load_wait_save_btn,1)  
+        self.configuration_tab_layout.addWidget(self.configuration_frame)  
+        self.configuration_tab_layout.addWidget(self.configuration_tab_request_load_waitpanel)  
+        
+        selected_service = self.configuration_tab_available_service_dropdown.currentText()
+        selected_service_configuration = configHandler().getServiceConfiguration(selected_service) 
+        self.request_load_insert_box.setText(str(selected_service_configuration['request_load']))
+        self.request_interval_wait_insert_box.setText(str(selected_service_configuration['request_interval_wait']))
+        
+     
+     
+     
+    def onConfigurationTabAvailableServiveChange(self):
+        selected_service = self.configuration_tab_available_service_dropdown.currentText()
+        selected_service_configuration = configHandler().getServiceConfiguration(selected_service)
+        self.request_load_insert_box.setText(str(selected_service_configuration['request_load']))
+        self.request_interval_wait_insert_box.setText(str(selected_service_configuration['request_interval_wait']))
+        
+
+    def onClickSaveRequestLoadWaitButton(self):
+        load = str(self.request_load_insert_box.text())
+        wait = str(self.request_interval_wait_insert_box.text())
+        service = self.configuration_tab_available_service_dropdown.currentText()
+        try:
+            load = int(load)
+            wait = int(wait)
+            if load<1:
+                return self.showWarningBox(text="Request Load can't be less than 1 ")     
+            configHandler().setServiceConfiguration(service,load,wait)
+            return self.showWarningBox(title="Message", text="Configuration Saved", )
+ 
+        except:
+            return self.showWarningBox(text="Request Load and Request Wait must be number ")
+        
+
+
+
+
+
 
     def prepareActivationTab(self):
         self.activation_tab_layout.setAlignment(Qt.AlignTop)
@@ -665,10 +817,9 @@ class Main(QMainWindow):
         self.activation_frame.setAlignment(Qt.AlignTop)
         self.activation_tab_request_status = QLabel("")
         self.activation_tab_layout.addWidget(self.activation_frame) 
-        self.activation_tab_layout.addWidget(self.activation_tab_request_status) 
-
-        # Auto - Activation Checking 
-        
+        self.activation_tab_layout.addWidget(self.activation_tab_request_status)  
+ 
+        # Auto - Activation Checking  
         if  len(configHandler().getProductKey()) >10 :
             print("Auto connecting to server for key validation ... ")
             self.activation_save_btn.setEnabled(False)

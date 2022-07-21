@@ -14,7 +14,8 @@ config_prototype = {
         "messagebird.com":[ {   "access_key": ""   }  ],
         "sinch.com": [ {  "service_plan_id": "",  "api_token": ""  }],
         "clicksend.com": [  { "username": "", "api_key": "" }  ],
-        "telnyx.com": [ { "api_key": "",  "messaging_profile_id": ""  }  ] 
+        "telnyx.com": [ { "api_key": "",  "messaging_profile_id": ""  } ] ,
+        "cm.com": [ { "api_key": "",  } ] ,
     },
     "templates": [],
     "macros": []
@@ -37,6 +38,12 @@ class  configHandler():
         self.config_file_path = config_file_path 
         self.data = self.readDataFile(file_name=self.config_file_path) 
         self.icon_file_path = icon_file_path 
+        # self.rePopulate()
+        
+
+
+
+        
         
     def makeSureConfigFileExists(self):
         if not os.path.exists(self.config_file_path):
@@ -59,7 +66,7 @@ class  configHandler():
      
      
     def getCredentialsPrototype(self,service):
-        return self.data['services'][service][0]
+        return self.data['services'][service]['credentials'][0]
     
     def getProductKey(self):
         return str(self.data['prodcut_key'])
@@ -90,26 +97,46 @@ class  configHandler():
             
             
     def getAllServices(self):
-        return sorted(list(self.data['services'].keys())[:len(config_prototype['services'])])
+        res =  sorted(list(self.data['services'].keys()) )
+        res = [x for x in res if x in list(config_prototype['services'].keys())]
+        print(res)
+        
+        return res
+        # [:len(config_prototype['services'])])
 
         
     def getServiceCredentialsList(self,service):
-        return list(self.data['services'][service][1:])
+        return list(self.data['services'][service]['credentials'][1:])
     
     def addServiceCredentials(self,service,creds):
-        if len(self.data['services'][service])>0:
-            cred_prototype = self.data['services'][service][0]
+        if len(self.data['services'][service]['credentials'])>0:
+            cred_prototype = self.data['services'][service]['credentials'][0]
             if sorted(list(cred_prototype.keys())) != sorted(list(creds.keys())):
                 return cred_prototype
             
-        self.data['services'][service].append(creds)
+        self.data['services'][service]['credentials'].append(creds)
         self.updateDataFile()
         return True
+    
+    def getServiceConfiguration(self,service):
+        return self.data['services'][service]['config']
+    
+    
+    def setServiceConfiguration(self,service,load,wait):
+        config  = self.data['services'][service]['config'] 
+        config["request_interval_wait"] =  int(wait)
+        config["request_load"] =  int(load)
+        
+        self.data['services'][service]['config'] =  config
+        
+        self.updateDataFile()
+    
+    
     
     
     def removeServiceCredentials(self,service,credential_index):
         try:
-            del self.data['services'][service][credential_index]
+            del self.data['services'][service]['credentials'][int(credential_index)+1]
             self.updateDataFile()
         except:
             pass
@@ -162,8 +189,11 @@ class  configHandler():
             
         self.updateDataFile()
             
-            
+    
+    
+    def populateMacros(self):pass
+    
 
 if __name__ == '__main__':        
     config = configHandler()
-    print(config.getTemplatesBody(key='Body2'))
+    
