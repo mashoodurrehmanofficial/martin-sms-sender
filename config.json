@@ -195,13 +195,6 @@
     ],
     "macros": [
         {
-            "macro3": [
-                "pk",
-                "uk",
-                "usa"
-            ]
-        },
-        {
             "NHS": [
                 "NHS",
                 "HSN",
@@ -213,6 +206,12 @@
                 "Google.com",
                 "facebook.com",
                 "amazon.com"
+            ]
+        },
+        {
+            "TestAlert": [
+                "Stock Alert",
+                " Trade Alert"
             ]
         }
     ]

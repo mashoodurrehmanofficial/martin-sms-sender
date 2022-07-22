@@ -429,13 +429,13 @@ class Main(QMainWindow):
         
         service = str(self.home_tab_available_service_dropdown.currentText())
         
-        ## Start - set dummy data
+        # # Start - set dummy data
         # contact_list = ['447748347521',"923167815639","923476026649","923167815639","923167815639",][2:]
         # contact_list = [str(x) for x in contact_list]
         # self.home_page_message_title.setText("Stock Msg")
         # self.home_page_import_receivers_input_box.setText("\n".join(contact_list)) 
-        # self.home_page_import_message_input_box.setText(f"hello ##macro3##") 
-        ## END - set dummy data
+        # self.home_page_import_message_input_box.setText(f"##TestAlert##. Go to ##LINK## ") 
+        # # END - set dummy data
         
 
         credentials = self.home_tab_available_service_credentials_dropdown.currentText()

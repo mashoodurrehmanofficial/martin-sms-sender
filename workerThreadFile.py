@@ -29,9 +29,12 @@ def getMessagePrototypes(message,total_contacts):
     if '##' not in message: 
         message_prototypes.append(message)  
     else:
-        detected_macros = [x for x in message.split() if "#" in str(x) ]
+        # detected_macros = [x for x in message.split() if "#" in str(x) ]
         # detected_macros = [x for x in message.split() if x.startswith("##") and x.endswith("##")]
-        detected_macros = ["##"+x.split("##")[1]+"##" for x in detected_macros]
+        
+        
+        detected_macros = [max(x.split("##"),key=len) for x in message.split() if str(x).count("#")==4]
+        detected_macros = ["##"+x+"##" for x in detected_macros]
         # print("detected_macros = ",detected_macros)
         detected_macros = [x for x in detected_macros if x.replace("#","") in configHandler().getAvailableMacros()]
         iterable_macros = [x for x in detected_macros  if type(configHandler().getMacroBody(key=str(x).replace("#",""))) is list]
@@ -47,18 +50,27 @@ def getMessagePrototypes(message,total_contacts):
             temp_iterable_macros_dict = [{x: configHandler().getMacroBody(key=str(x).replace("#",""))  } for x in iterable_macros]
             iterable_macros_dict = {}
             [iterable_macros_dict.update(x) for x in temp_iterable_macros_dict]
+            # print("-"*10)
             # print("iterable_macros_dict = ", iterable_macros_dict)
+            
+            
             max_counter = max([len(x) for x in list(iterable_macros_dict.values())]) 
             
-            # print("max_counter = ", max_counter)
+            print("max_counter = ", max_counter)
             
             for counter in range(max_counter):
-                temp_message = message
+                temp_message = message 
                 for iterable_macro in iterable_macros: 
                     current_macro_value = iterable_macros_dict[iterable_macro][counter%len(iterable_macros_dict[iterable_macro])]
-                    temp_message = temp_message.replace(iterable_macro,current_macro_value)     
-                    message_prototypes.append(temp_message)
-                    print(temp_message)
+                    # print("iterable_macro = ", iterable_macro)
+                    # print("current_macro_value = ", current_macro_value)
+                    temp_message = str(temp_message).replace(str(iterable_macro),str(current_macro_value))     
+                    # print("temp_message = ", temp_message)
+                    # print("temp_message = ", temp_message)
+                print("-"*5)
+                message_prototypes.append(temp_message)
+                # temp_message = message
+                
         else:
             message_prototypes.append(message)
             
@@ -67,8 +79,6 @@ def getMessagePrototypes(message,total_contacts):
         message_prototypes = message_prototypes * (total_contacts - len(message_prototypes) + 1)
     message_prototypes = message_prototypes[:total_contacts]
     return message_prototypes     
-    
-
 
 SERVICE_API_MAPPING = {
     "cm.com": {
@@ -90,6 +100,10 @@ def senderGatewayContainer(log,data):
     log.emit("-"*50+"\n")
     request_mode = data['request_mode'].lower()
     message_prototypes = getMessagePrototypes(data['message_body'], len(data['contact_list']) ) 
+    
+    
+     
+    
     service = data['service']
     contacts = data['contact_list']
     
