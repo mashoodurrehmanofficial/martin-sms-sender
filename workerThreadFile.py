@@ -1,7 +1,5 @@
  
-from statistics import mode
-from PyQt5.QtCore import QThread,pyqtSignal  
-# import uuid
+from PyQt5.QtCore import QThread,pyqtSignal   
 from concurrent.futures import ThreadPoolExecutor
 try:
     from configHandlerFile import configHandler 
@@ -22,7 +20,7 @@ except:
     except:
         from .sharedMemory  import sharedMemory
     
-import time,json,datetime
+import time,os,datetime,subprocess
     
 def getMessagePrototypes(message,total_contacts):
     message_prototypes = [] 
@@ -275,3 +273,33 @@ class workerThread(QThread):
         senderGatewayContainer(log=self.log_input_box_component,data=data)
         self.log_input_box_component.emit("Operation Completed !")
         print("->   ended")
+    
+    
+    
+    
+    
+class launchNewInstanceThread(QThread): 
+    def __init__(self,exe_file_path):
+        super().__init__()
+        self.exe_file_path  = exe_file_path 
+    
+        
+    log_input_box_component = pyqtSignal(str)
+    def run(self):   
+        symbols = ['|', '/', '--', '\\']
+        print("exe_file_path = ", self.exe_file_path)
+        # os.startfile(self.exe_file_path + " --ask_product_key=False")
+        subprocess.Popen([self.exe_file_path, "--ask_product_key=False"],shell=True)
+         
+        
+        wait = 0
+        while wait <10:
+            for symbol in symbols:
+                self.log_input_box_component.emit(f"Launching {symbol}")
+                time.sleep(0.30) 
+           
+            wait+=1
+        
+        self.log_input_box_component.emit("Launch New Instance ➕")
+        
+        print("->Ended launchNewInstanceThread")

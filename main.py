@@ -1,9 +1,9 @@
  
 import ctypes,threading
-import os,json  
+import os,json ,sys,subprocess
 import time
-from sys import argv as sys_argv,exit
-from os import environ as os_environ
+# from sys import argv as sys_argv,exit
+# from os import environ as os_environ
 # from PyQt5.QtCore import  Qt,QDateTime
 # from PyQt5.QtWidgets import QMainWindow,QApplication,QWidget,QVBoxLayout,QHBoxLayout,QTabWidget,QLabel,QMessageBox,QFileDialog,QGroupBox,QComboBox,QDateTimeEdit,QLineEdit,QTextEdit,QPushButton,QHeaderView,QTableWidget,QTableWidgetItem,QPlainTextEdit                                                                                      
 # sys.path.insert(0, os.getcwd())
@@ -17,7 +17,7 @@ from grpc import services
 
 try:
     from configHandlerFile import configHandler
-    from workerThreadFile import workerThread
+    from workerThreadFile import workerThread,launchNewInstanceThread
     from workerActivationThread import serverThread
     from workerRemainingBalanceThread  import remainingBalanceThread
     from sharedMemory  import sharedMemory
@@ -33,17 +33,22 @@ except:
         from .sharedMemory  import sharedMemory
 
     try:
-        from workerThreadFile import workerThread
+        from workerThreadFile import workerThread,launchNewInstanceThread
         from workerActivationThread import serverThread
         from workerRemainingBalanceThread  import remainingBalanceThread
     except:
         from .workerActivationThread import serverThread
         from .workerRemainingBalanceThread  import remainingBalanceThread
     # from workerThreadFile import workerThread
-    
-    
-class SharedMemory:
-    stop_clicked = False
+
+def getArgumentValue(key):
+    args = sys.argv 
+    parameter = [x for x in args if key in x]
+    if parameter:
+        parameter = parameter[0]
+        return str(parameter).split(key)[-1]
+    return None
+     
 
 class contactFileReaderThreadClass(QThread): 
     def __init__(self,file_name):
@@ -70,7 +75,7 @@ if hasattr(Qt, 'AA_EnableHighDpiScaling'):
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 if hasattr(Qt, 'AA_UseHighDpiPixmaps'):
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
-os_environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "2"
+os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "2"
 myappid = 'mycompany.myproduct.subproduct.version' # arbitrary string
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
@@ -91,6 +96,8 @@ class Main(QMainWindow):
         # self.showMaximized()
         # Initialize tab screen
         self.tab_container = QTabWidget()
+        self.tab_container.setContentsMargins(0,0,0,0)
+        
         
         self.home_tab = QWidget()
         self.credentails_tab = QWidget()
@@ -122,10 +129,24 @@ class Main(QMainWindow):
         self.configuration_tab_layout.addWidget(self.templates_macros_tab_label)
         self.activation_tab_layout.addWidget(self.configuration_tab_label)
 
+
+
+
+        self.toolbar = QToolBar("Toolbar")
+        self.addToolBar(self.toolbar) 
+        self.toolbar.setContentsMargins(0,0,0,0)
+        self.setCentralWidget(self.tab_container)
+        self.button_action = QAction("Launch New Instance ➕", self)
+        self.button_action.setStatusTip("Launch New Instance Button")
+        self.toolbar.setMovable(False)
+        self.button_action.triggered.connect(self.onClickLaunchNewInstanceButton)
+        self.toolbar.addAction(self.button_action)
+
+
         # Add tabs 
         self.tab_container.addTab(self.activation_tab,"Activation")     
  
-        self.setCentralWidget(self.tab_container)
+          
         # self.center()
         self.show() 
         self.prepareActivationTab()
@@ -143,7 +164,24 @@ class Main(QMainWindow):
         self.prepareTemplatesMacrosTabe()
     
 
-            
+    def updateNewInstanceButtonText(self,val):
+        val = str(val)
+        self.button_action.setText(val)
+
+
+    def onClickLaunchNewInstanceButton(self):
+        file_path = os.path.abspath(__file__)
+        file_path = os.path.join(os.getcwd(),"dist","QuickSMS.exe") 
+        if not os.path.exists(file_path):
+            file_path = os.path.join(os.getcwd(),"QuickSMS.exe") 
+             
+        
+        self.newInstanceWorker = launchNewInstanceThread(file_path)
+        self.newInstanceWorker.start()
+        # self.newInstanceWorker.finished.connect(self.threadFinishedSlot)
+        self.newInstanceWorker.log_input_box_component.connect(self.updateNewInstanceButtonText)
+    
+        
       
     def showWarningBox(self,text,title='Error'):
         QMessageBox.about(self, title,str(text))
@@ -842,12 +880,14 @@ class Main(QMainWindow):
         self.activation_tab_layout.addWidget(self.activation_tab_request_status)  
  
         ## Auto - Activation Checking  
-        if  len(configHandler().getProductKey()) >10 :
-            print("Auto connecting to server for key validation ... ")
-            self.activation_save_btn.setEnabled(False)
-            self.verifyProductKeyFromServer() 
-        
-        # self.manageVisibleTabs()
+        print("getArgumentValue")
+        if getArgumentValue("--ask_product_key=") in ['True', True, None]: 
+            if  len(configHandler().getProductKey()) >10 :
+                print("Auto connecting to server for key validation ... ")
+                self.activation_save_btn.setEnabled(False)
+                self.verifyProductKeyFromServer() 
+        else:
+            self.manageVisibleTabs()
         
         
 
@@ -903,6 +943,6 @@ class Main(QMainWindow):
         self.move(frameGm.topLeft())
 
 if __name__ == "__main__":
-    app = QApplication(sys_argv)
+    app = QApplication(sys.argv)
     main = Main()
-    exit(app.exec_()) 
+    sys.exit(app.exec_()) 
