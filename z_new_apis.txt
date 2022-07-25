@@ -1,0 +1,67 @@
+1.
+smsup.es - API: Key - aed73423e8e745b1bca751681d9008dd 
+
+2.
+plivo.com - API: Auth ID - MAMGNIN2E1MDLIM2Q0YJ | Auth Token:  NzIyM2Y5NDk5YzZiMzVjYjBmMjdiNzU1Y2E0Mzg3  
+
+3. 
+voodoosms.com - API: rest - hps2cJEizqQebavvGmOm182JQHj12igZOOSrYWQNDhse9c 
+ 
+4.
+dotdigital.com - API: email - apiuser-e85f6ce92957@apiconnector.com | Endpoint - https://r1-api.dotdigital.com 
+
+5.
+textmagic.com - API: username -  jasonwilliams7 | key - mcTabkx1huVwflsJUjT5bmheaTF1aA 
+
+6.
+burstsms.co.uk (transmitsms.com) - API: Key - 83d83007d7c88679a7f1f97d6bacaf7a | secret - 1036815206184693 
+
+7.
+smsbroadcast.co.uk - API: Username - JasonW22 | Pass - Stealth017???  
+- API credentials are username and password 
+- Example - https://api.smsbroadcast.co.uk/apiadv.php?username=myuser&password=mypass&to=07000111222,07000222333&from=MyCompan 
+y& message=Hello%20World&ref=112233&maxsplit=5&delay=15 
+ 
+8.
+octopush.com - API: login - jason.williams@greenhousepeople.co.uk | key - EG0eYNVFnMHq69fvkXIuxJDdpTZ27BwQ 
+
+9.
+melroselabs.com - API: enfTOrAHC1851V34Nn4kY3HTxX1JihXX6XDtbXzV (expires 45 days) 
+ 
+10.
+bulkgate.com - API: Application ID - 27605 | HTTP simple - ajrYOTN4wscifqa88d2qGh6IPAAHdQgop6fh3gRqYZOieCZ5Lv 
+ 
+11.
+messagebird.com - key: qN8FXLdOALD3QCswzXs6kc1wz ID:18b2bf0e-6a20-46b2-b03e-0f8b20d5516b  
+
+12.
+infobip.com - API: 23c7a956498ccb3bb68bd40b1180b58d-114c0e72-a36c-40d9-9e41-d90415417a61 
+ 
+13.
+spryng.nl - API: Andrew - 3623527287780b8c83085eec0a6272e2a13e9dcb7980a1c82e 
+
+14.
+esendex.com - Token: New Token  +TpEI0tOPQiccVruJgYQcOw3LI+bvxsWGab4+/c2njw=
+
+15.
+1s2u.com - Username: qiv3jason.wi022 | Password: web12093 
+- API credentials are username and password 
+- API: https://api.1s2u.io/bulksms? 
+- Example: https://api.1s2u.io/bulksms?username=Your Username&password=Your Password&mt=Message Type&fl=Flash/None Flash Message &sid=Sender Name&mno=Mobile Number&msg=Message 
+ 
+16.
+d7networks.com - rest: eml0bjk3NjA6Rmc0cUhvNkI= Token: 19ee910d841529b733347a71719c316d9cafadc7 
+ 
+17.
+bsg.world - live_fmUXxusYDiufPlwoZjLJ:5uCqJIml 
+ 
+
+18.
+skebby.it - API: token - b0eleTUSqJYc5eejm3e7DqTg 
+ 
+19.
+massenversand.de - authToken= AA801F91FD67040A20DFAFD6135EE03A33C5EAC5 
+ 
+20.
+sms.studio - API: cd200ef8e689f089117d22e13a91efcc
+[10:31 PM, 7/24/2022] Martin - UK: Add all those
