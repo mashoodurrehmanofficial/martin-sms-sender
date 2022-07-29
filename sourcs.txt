@@ -191,3 +191,6 @@ pyinstaller --onefile  .\main.py -p ./  --windowed --i='./icon.png' --name="Quic
 [2:58 PM, 7/20/2022] Martin - UK: 
 API: Account Identifier:031e23a9-4673-4fb4-993c-35082ecf4011 | Token: b43c8147-6df1-4d5e-9dc4-03df4cb0740b 
 | service URL:https://sgw01.cm.nl/gateway.ashx
+
+
+py '.\jupyter-to-pytohn converter.py' .\z_test_sms_api.ipynb .\z_test_sms_api.py     

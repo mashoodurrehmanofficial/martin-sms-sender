@@ -65,3 +65,8 @@ massenversand.de - authToken= AA801F91FD67040A20DFAFD6135EE03A33C5EAC5
 20.
 sms.studio - API: cd200ef8e689f089117d22e13a91efcc
 [10:31 PM, 7/24/2022] Martin - UK: Add all those
+
+
+
+
+https://developer.vonage.com/messaging/sms/code-snippets/send-an-sms
