@@ -22,7 +22,8 @@ def cmTextApiSMSGatewaySingleton(data_packet):
     
     if sharedMemory.stop_btn_pressed:return
     response = client.SendSingleMessage(message=data_packet['message_body'],from_=data_packet['message_title'], to=receiver)  
-    response = response.json()
+    if type(response) is not dict:
+        response = response.json()
     
     total_messages_sent = response.get("messages")
     data_packet['log'].emit("-"*50+"\n") 
@@ -55,7 +56,8 @@ def cmTextApiSMSGatewayBulk(data_packet):
     
     if sharedMemory.stop_btn_pressed:return
     response = client.SendSingleMessage(message=data_packet['message_body'],from_=data_packet['message_title'], to=receiver)  
-    response = response.json()
+    if type(response) is not dict:
+        response = response.json()
     total_messages_sent = response.get("messages")
     data_packet['log'].emit("-"*50+"\n") 
     if total_messages_sent:

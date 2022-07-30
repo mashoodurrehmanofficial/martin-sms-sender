@@ -35,6 +35,15 @@ def api_1s2uApiSMSGatewaySingleton(data_packet):
         data_packet['log'].emit(f"-> Sessional Receiver =  {data_packet['receiver']}")
         data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent} ") 
         data_packet['log'].emit("-"*50+"\n") 
+    
+    elif str(response).lower() in ['0020','0']:
+        total_messages_sent = 0 
+        data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
+        data_packet['log'].emit(f"-> Insufficient Credits") 
+    elif str(response).lower() in ['00']:
+        total_messages_sent = 0 
+        data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
+        data_packet['log'].emit(f"-> Invalid username/password.") 
     else:
         total_messages_sent = 0 
         data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
@@ -68,6 +77,15 @@ def api_1s2uApiSMSGatewayBulk(data_packet):
         data_packet['log'].emit(f"-> Sessional Receiver =  {data_packet['receiver']}")
         data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent} ") 
         data_packet['log'].emit("-"*50+"\n") 
+        
+    elif str(response).lower() in ['0020','0']:
+        total_messages_sent = 0 
+        data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
+        data_packet['log'].emit(f"-> Insufficient Credits") 
+    elif str(response).lower() in ['00']:
+        total_messages_sent = 0 
+        data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
+        data_packet['log'].emit(f"-> Invalid username/password.") 
     else:
         total_messages_sent = 0 
         data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
