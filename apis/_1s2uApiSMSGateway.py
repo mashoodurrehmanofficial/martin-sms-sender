@@ -44,6 +44,10 @@ def api_1s2uApiSMSGatewaySingleton(data_packet):
         total_messages_sent = 0 
         data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
         data_packet['log'].emit(f"-> Invalid username/password.") 
+    elif str(response).lower() in ['0042']:
+        total_messages_sent = 0 
+        data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
+        data_packet['log'].emit(f"-> Network not supported.") 
     else:
         total_messages_sent = 0 
         data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
@@ -86,6 +90,10 @@ def api_1s2uApiSMSGatewayBulk(data_packet):
         total_messages_sent = 0 
         data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
         data_packet['log'].emit(f"-> Invalid username/password.") 
+    elif str(response).lower() in ['0042']:
+        total_messages_sent = 0 
+        data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
+        data_packet['log'].emit(f"-> Network not supported.") 
     else:
         total_messages_sent = 0 
         data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
