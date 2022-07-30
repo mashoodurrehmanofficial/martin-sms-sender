@@ -7,7 +7,7 @@ try:
     from bsgWorld import bsg_restapi as api
 except:
     from .bsgWorld  import bsg_restapi as api
-
+from helpers.sharedMemory  import sharedMemory  
 
 @generalSmsAPIExceptionHandler
 def bsgWorldApiSMSGatewaySingleton(data_packet):
@@ -15,6 +15,7 @@ def bsgWorldApiSMSGatewaySingleton(data_packet):
     data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']
     # recipients = [(api.Recipient) for x in data_packet['receiver']]
     
+    if sharedMemory.stop_btn_pressed:return
     client = api.SMSAPI(config={'api_key': api_key})
     response = client.send(message=api.SMSMessage(originator=data_packet["message_title"],body=data_packet["message_body"]), recipients=api.Recipient("447920498448"))
     if response.get("result") and response['result'].get("id"):

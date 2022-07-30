@@ -1,29 +1,36 @@
 {
     "threads_threshold": 5,
     "prodcut_key": "7689c474-0275-4a68-94f4-ac0f4652f7fd",
-    "services":{
+    "services": {
         "1s2u": {
             "credentials": [
                 {
                     "username": "",
                     "password": ""
-                } 
+                },
+                {
+                    "username": "qiv3jason.wi022",
+                    "password": "web12093"
+                }
             ],
             "config": {
                 "allow_bulk": "True",
-                "request_load": 0,
-                "request_interval_wait": 0
+                "request_load": 1,
+                "request_interval_wait": 5
             }
         },
-        "bsgWorld": {
+        "bsgworld": {
             "credentials": [
                 {
                     "api_key": ""
-                } 
+                },
+                {
+                    "api_key": "live_fmUXxusYDiufPlwoZjLJ"
+                }
             ],
             "config": {
                 "allow_bulk": "False",
-                "request_load": 0,
+                "request_load": 2,
                 "request_interval_wait": 0
             }
         },
@@ -31,12 +38,16 @@
             "credentials": [
                 {
                     "application_id": "",
-                    "application_token": "" 
-                } 
+                    "application_token": ""
+                },
+                {
+                    "application_id": "27605",
+                    "application_token": "ajrYOTN4wscifqa88d2qGh6IPAAHdQgop6fh3gRqYZOieCZ5Lv"
+                }
             ],
             "config": {
                 "allow_bulk": "False",
-                "request_load": 0,
+                "request_load": 1,
                 "request_interval_wait": 0
             }
         },
@@ -44,37 +55,48 @@
             "credentials": [
                 {
                     "api_key": "",
-                    "api_secret": "" 
-                } 
+                    "api_secret": ""
+                },
+                {
+                    "api_key": "83d83007d7c88679a7f1f97d6bacaf7a",
+                    "api_secret": "1036815206184693"
+                }
             ],
             "config": {
                 "allow_bulk": "True",
-                "request_load": 0,
+                "request_load": 2,
                 "request_interval_wait": 0
             }
         },
-        "clickSend": {
+        "clicksend": {
             "credentials": [
                 {
                     "username": "",
-                    "api_key": "" 
-                } 
+                    "api_key": ""
+                },
+                {
+                    "username": "andrew@uniteflooringltd.com",
+                    "api_key": "D349CEC9-EDEE-133A-CAC8-76AD726D66CE"
+                }
             ],
             "config": {
                 "allow_bulk": "False",
-                "request_load": 0,
+                "request_load": 1,
                 "request_interval_wait": 0
             }
         },
-        "cmText": {
+        "cmtext": {
             "credentials": [
                 {
                     "api_key": ""
-                } 
+                },
+                {
+                    "api_key": "b43c8147-6df1-4d5e-9dc4-03df4cb0740b"
+                }
             ],
             "config": {
                 "allow_bulk": "True",
-                "request_load": 0,
+                "request_load": 1,
                 "request_interval_wait": 0
             }
         },
@@ -82,11 +104,14 @@
             "credentials": [
                 {
                     "auth_token": ""
-                } 
+                },
+                {
+                    "auth_token": "eml0bjk3NjA6Rmc0cUhvNkI="
+                }
             ],
             "config": {
                 "allow_bulk": "True",
-                "request_load": 0,
+                "request_load": 1,
                 "request_interval_wait": 0
             }
         },
@@ -95,158 +120,201 @@
                 {
                     "base_url": "",
                     "auth_token": ""
-                } 
+                },
+                {
+                    "base_url": "pwv2xl.api.infobip.com",
+                    "auth_token": "23c7a956498ccb3bb68bd40b1180b58d-114c0e72-a36c-40d9-9e41-d90415417a61"
+                }
             ],
             "config": {
                 "allow_bulk": "True",
-                "request_load": 0,
+                "request_load": 1,
                 "request_interval_wait": 0
             }
         },
-        "messageBird": {
+        "messagebird": {
             "credentials": [
                 {
-                    "access_key": "" 
-                } 
+                    "access_key": ""
+                },
+                {
+                    "access_key": "qN8FXLdOALD3QCswzXs6kc1wz"
+                }
             ],
             "config": {
                 "allow_bulk": "True",
-                "request_load": 0,
+                "request_load": 1,
                 "request_interval_wait": 0
             }
         },
         "octopush": {
             "credentials": [
                 {
-                    "user_login": "" ,
-                    "api_key": "" 
-                } 
+                    "user_login": "",
+                    "api_key": ""
+                },
+                {
+                    "user_login": "jason.williams@greenhousepeople.co.uk",
+                    "api_key": "EG0eYNVFnMHq69fvkXIuxJDdpTZ27BwQ"
+                }
             ],
             "config": {
                 "allow_bulk": "True",
-                "request_load": 0,
+                "request_load": 1,
                 "request_interval_wait": 0
             }
         },
         "plivo": {
             "credentials": [
                 {
-                    "auth_id": "" ,
-                    "auth_token": "" 
-                } 
+                    "auth_id": "",
+                    "auth_token": ""
+                },
+                {
+                    "auth_id": "MAMGNIN2E1MDLIM2Q0YJ",
+                    "auth_token": "NzIyM2Y5NDk5YzZiMzVjYjBmMjdiNzU1Y2E0Mzg3"
+                }
             ],
             "config": {
                 "allow_bulk": "True",
-                "request_load": 0,
+                "request_load": 1,
                 "request_interval_wait": 0
             }
         },
         "sinch": {
             "credentials": [
                 {
-                    "service_plan_id": "" ,
-                    "api_token": "" 
-                } 
+                    "service_plan_id": "",
+                    "api_token": ""
+                },
+                {
+                    "service_plan_id": "5449e283364046c78bd6d06a20df7d63",
+                    "api_token": "27c643f006b74f8fb5139cfae9bc2900"
+                }
             ],
             "config": {
                 "allow_bulk": "True",
-                "request_load": 0,
+                "request_load": 1,
                 "request_interval_wait": 0
             }
         },
         "smsbroadcast": {
             "credentials": [
                 {
-                    "username": "" ,
-                    "password": "" 
-                } 
+                    "username": "",
+                    "password": ""
+                },
+                {
+                    "username": "JasonW22",
+                    "password": "JasonW22"
+                }
             ],
             "config": {
                 "allow_bulk": "True",
-                "request_load": 0,
+                "request_load": 1,
                 "request_interval_wait": 0
             }
         },
         "smsup": {
             "credentials": [
                 {
-                    "api_key": "" 
-                } 
+                    "api_key": ""
+                },
+                {
+                    "api_key": "aed73423e8e745b1bca751681d9008dd"
+                }
             ],
             "config": {
                 "allow_bulk": "True",
-                "request_load": 0,
+                "request_load": 3,
                 "request_interval_wait": 0
             }
         },
         "spryng": {
             "credentials": [
                 {
-                    "auth_token": "" 
-                } 
+                    "auth_token": ""
+                },
+                {
+                    "auth_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiNzFiZDM5ZWM1NzY0ODYzYmRkYTU4MTNkY2E3ZmZkYTY3ZTM4ZmE5NzgwNmI5ZGE3YzYzNTA4MzIyYWNmNWI0YTk0YjYwNjhjMTYyMmQyZDAiLCJpYXQiOiIxNjU5MDA5MTAwLjEyNjUxMiIsIm5iZiI6IjE2NTkwMDkxMDAuMTI2NTE0IiwiZXhwIjoiNDgxNDY4NjMwMC4xMTc2NjciLCJzdWIiOiI5MDc3NyIsInNjb3BlcyI6W119.v36y2Meoo3YFEeKae1Cd91FN7rfpaC2dZiM4601YTi1Z09qHhuXeFpXYENNA9MXp1DBg_Wh8aNmx9qhhQBzAj80dmNrnZ85WklRtlsaJqorKhfmWDpC1xzyuqAtSnrHNu014Gk3louExa1c7ggwwaNxy8e7BtIVzWQpL6YXVXU1SXsDc021Fi39pbHnsBIs9B-v-ujPnXa2obCJyXWfFSsTEHOuV-N9ze18ZnR9mSl4ENa22FpbWpLEcZhczpkEsjqeuOH1lJiCJICmz48iHfT-rbBus5RqD8fLdPqI1ofPP8FJfyMWf2sA9yySjr90YwYwOQ6_YqerkA8O4SsFJizcKR3nGBs_NhEiic7u-eI_UAOBsmh2qr7OrM1jphkk68vjRTlQ5_KxmkP_eMdJKFLUJjj6gY2HHVmEpax3ftz045OttAZj5L-blhxNr2i72MOpYbfoKuDSMD_eqQueCcstwwYwgo5DYhvuH9d58XxzCyWe8pdPNZWMYRp6hhE3or55IBBrSRzkfF7_RiV6gGHyqOp9Ak760zfMM7JF-zHFzG9puvkCz2tE3q4Kr7iU8iwtbAmLGe20mcUt5qvz4Ng7PWTpCR-2pc2ucK8XbjGVdff3l0_AMSXYebo4oaMkhQMtJFU-6eAbC7f67fbpW61vS3uy4VFDZN1qyHE-xsJg"
+                }
             ],
             "config": {
                 "allow_bulk": "True",
-                "request_load": 0,
+                "request_load": 1,
                 "request_interval_wait": 0
             }
         },
         "telnyx": {
             "credentials": [
                 {
-                    "api_key": "" ,
-                    "messaging_profile_id": "" 
-                } 
+                    "api_key": "",
+                    "messaging_profile_id": ""
+                },
+                {
+                    "api_key": "KEY018244F436B5B23A2ED96A99D0C3352A_LPUWEskstcw4BndkPJeHAE",
+                    "messaging_profile_id": "40017e52-9978-4264-80d3-0e5f7db0e24c"
+                }
             ],
             "config": {
                 "allow_bulk": "False",
-                "request_load": 0,
+                "request_load": 1,
                 "request_interval_wait": 0
             }
         },
         "textmagic": {
             "credentials": [
                 {
-                    "username": "" ,
-                    "token": "" 
-                } 
+                    "username": "",
+                    "token": ""
+                },
+                {
+                    "username": "jasonwilliams7",
+                    "token": "mcTabkx1huVwflsJUjT5bmheaTF1aA"
+                }
             ],
             "config": {
                 "allow_bulk": "True",
-                "request_load": 0,
+                "request_load": 1,
                 "request_interval_wait": 0
             }
         },
         "tyntec": {
             "credentials": [
                 {
-                    "api_key": "" 
-                } 
+                    "api_key": ""
+                },
+                {
+                    "api_key": "4dPUaa9gCy5nxMjf6FOBmEDcpuvqecxb"
+                }
             ],
             "config": {
                 "allow_bulk": "False",
-                "request_load": 0,
+                "request_load": 1,
                 "request_interval_wait": 0
             }
         },
         "vonage.co.uk": {
             "credentials": [
                 {
-                    "api_key": "" ,
-                    "api_secret": ""  
-                } 
+                    "api_key": "",
+                    "api_secret": ""
+                },
+                {
+                    "api_key": "c86bf623",
+                    "api_secret": "AzA7ybwtHYYK0ztZ"
+                }
             ],
             "config": {
                 "allow_bulk": "False",
-                "request_load": 0,
+                "request_load": 1,
                 "request_interval_wait": 0
             }
-        }  
-
+        }
     },
     "templates": [
         {
-            "martinTemplate": "this is template designed by martin"
+            "DemoTemplate": "this is a template"
         }
     ],
     "macros": [

@@ -11,8 +11,8 @@ except:
 
 
 def generalSmsAPIExceptionHandler(smsAPIGatewayCaller):
-    if sharedMemory.stop_btn_pressed:
-        return
+    # if sharedMemory.stop_btn_pressed:return
+    
     def innerDecorator(data_packet):
         try:
             smsAPIGatewayCaller(data_packet)

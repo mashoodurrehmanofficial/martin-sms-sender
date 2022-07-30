@@ -1,3 +1,5 @@
+from helpers.sharedMemory  import sharedMemory  
+
 try:
     from _sharedFuncsVaribales import *
 except:
@@ -9,6 +11,9 @@ import vonage
 
 @generalSmsAPIExceptionHandler
 def vonagecApiSMSGatewaySingleton(data_packet):
+    
+    
+    if sharedMemory.stop_btn_pressed:return
     client = vonage.Client(key=data_packet['credentials']['api_key'], secret=data_packet['credentials']['api_secret'])
     sms = vonage.Sms(client)
     response = sms.send_message(
@@ -17,7 +22,7 @@ def vonagecApiSMSGatewaySingleton(data_packet):
             "to": data_packet['receiver'],
             "text": data_packet['message_body'],
         }
-    )
+    ) 
  
     if response["messages"][0]["status"] == "0":
         total_messages_sent = 1

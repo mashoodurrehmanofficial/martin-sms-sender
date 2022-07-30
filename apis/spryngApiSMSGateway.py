@@ -1,3 +1,5 @@
+from helpers.sharedMemory  import sharedMemory  
+
 try:
     from _sharedFuncsVaribales import *
 except:
@@ -7,7 +9,7 @@ except:
 # https://docs.spryngsms.com/#39c42dee-53ea-4a4f-8f68-74ac844ecd57
 
 
-
+ 
 
 @generalSmsAPIExceptionHandler
 def spryngApiSMSGatewaySingleton(data_packet):    
@@ -27,6 +29,9 @@ def spryngApiSMSGatewaySingleton(data_packet):
         'Content-Type': 'application/json'
     }
 
+
+
+    if sharedMemory.stop_btn_pressed:return
     response = requests.request("POST", url, headers=headers, data=payload)
     response = response.json()
     if response.get("id"):
@@ -65,6 +70,8 @@ def spryngApiSMSGatewayBulk(data_packet):
         'Content-Type': 'application/json'
     }
 
+
+    if sharedMemory.stop_btn_pressed:return
     response = requests.request("POST", url, headers=headers, data=payload)
     response = response.json()
     if response.get("id"):

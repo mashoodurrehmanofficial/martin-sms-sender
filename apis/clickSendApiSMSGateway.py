@@ -1,3 +1,4 @@
+from helpers.sharedMemory  import sharedMemory  
 try:
     from _sharedFuncsVaribales import *
 except:
@@ -5,7 +6,7 @@ except:
 from clicksend_client.rest import ApiException
 import clicksend_client
 from clicksend_client import SmsMessage
- 
+  
 # allow bulk if we use HTTP API 
 # https://developers.clicksend.com/docs/http/v2/#ClickSend-v2-API-SMS
 @generalSmsAPIExceptionHandler
@@ -21,6 +22,8 @@ def clickSendApiSMSGatewaySingleton(data_packet):
         to=data_packet['receiver'],
     )
     response = None
+    
+    if sharedMemory.stop_btn_pressed:return
     sms_messages = clicksend_client.SmsMessageCollection(messages=[sms_message])
     try: 
         response = api_instance.sms_send_post(sms_messages)

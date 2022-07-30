@@ -1,3 +1,5 @@
+from helpers.sharedMemory  import sharedMemory  
+
 try:
     from _sharedFuncsVaribales import *
 except:
@@ -5,22 +7,25 @@ except:
     
 @generalSmsAPIExceptionHandler
 def d7networksApiSMSGatewaySingleton(data_packet):   
+    receiver = data_packet['receiver'] 
+    data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']
     headers = {
         'Authorization': f'Basic {data_packet["credentials"]["auth_token"]}',
         'Content-Type': 'application/x-www-form-urlencoded',
     }
-    receiver = data_packet['receiver'] 
-    data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']
-    
+
     data = {
-        "to":receiver,
+        "to":data_packet['receiver'],
         "from": data_packet['message_title'],
         "content": data_packet['message_body'] ,
       	"dlr":"yes",
         "dlr-method":"POST", 
         "dlr-level":3, 
     }  
-    response = requests.post('https://rest-api.d7networks.com/secure/sendbatch', headers=headers, data=json.dumps(data))
+    
+    
+    if sharedMemory.stop_btn_pressed:return
+    response = requests.post('https://rest-api.d7networks.com/secure/send', headers=headers, data=json.dumps(data))
     response = response.json()
     if response.get("data"):
         total_messages_sent = 1
@@ -42,23 +47,26 @@ def d7networksApiSMSGatewaySingleton(data_packet):
     
 @generalSmsAPIExceptionHandler 
 def d7networksApiSMSGatewayBulk(data_packet):   
+    receiver = data_packet['receiver']
+    data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']
     
     headers = {
         'Authorization': f'Basic {data_packet["credentials"]["auth_token"]}',
         'Content-Type': 'application/x-www-form-urlencoded',
     }
-    receiver = data_packet['receiver']
-    data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']
 
     data = {
-        "to":receiver,
+        "to":data_packet['receiver'],
         "from": data_packet['message_title'],
         "content": data_packet['message_body'] ,
       	"dlr":"yes",
         "dlr-method":"POST", 
         "dlr-level":3, 
     }  
-    response = requests.post('https://rest-api.d7networks.com/secure/sendbatch', headers=headers, data=json.dumps(data))
+    
+    
+    if sharedMemory.stop_btn_pressed:return
+    response = requests.post('https://rest-api.d7networks.com/secure/send', headers=headers, data=json.dumps(data))
     response = response.json()
 
     if response.get("data"):

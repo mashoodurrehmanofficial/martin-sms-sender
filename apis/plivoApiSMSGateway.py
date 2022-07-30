@@ -1,8 +1,10 @@
+
+from helpers.sharedMemory  import sharedMemory  
 try:
     from _sharedFuncsVaribales import *
 except:
     from ._sharedFuncsVaribales import *
-    
+     
 import plivo
 # 9 - plivo.com
 # https://www.plivo.com/docs/sms/api/message#send-a-message
@@ -15,6 +17,8 @@ def plivoApiSMSGatewaySingleton(data_packet):
     
     auth_id = data_packet['credentials']['auth_id']
     auth_token = data_packet['credentials']['auth_token']
+    
+    if sharedMemory.stop_btn_pressed:return
     client = plivo.RestClient(auth_id,auth_token)
     response = client.messages.create(
         src=data_packet['message_title'],
@@ -47,6 +51,8 @@ def plivoApiSMSGatewayBulk(data_packet):
     
     auth_id = data_packet['credentials']['auth_id']
     auth_token = data_packet['credentials']['auth_token']
+    
+    if sharedMemory.stop_btn_pressed:return
     client = plivo.RestClient(auth_id,auth_token)
     response = client.messages.create(
         src=data_packet['message_title'],

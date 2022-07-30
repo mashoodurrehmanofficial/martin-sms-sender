@@ -1,3 +1,5 @@
+
+from helpers.sharedMemory  import sharedMemory  
 try:
     from _sharedFuncsVaribales import *
 except:
@@ -35,6 +37,9 @@ def infobipApiSMSGatewaySingleton(data_packet):
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
+    
+    
+    if sharedMemory.stop_btn_pressed:return
     response = requests.post(url, data=payload, headers=headers)
     response = response.json()
     if response.get("messages"):
@@ -78,6 +83,9 @@ def infobipApiSMSGatewayBulk(data_packet):
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
+    
+    
+    if sharedMemory.stop_btn_pressed:return
     response = requests.post(url, data=payload, headers=headers)
     response = response.json()
     if response.get("messages"):
@@ -95,3 +103,4 @@ def infobipApiSMSGatewayBulk(data_packet):
     data_packet['log'].emit("-"*50+"\n")  
     print(str(response))
     
+ 

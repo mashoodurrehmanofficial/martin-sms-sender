@@ -1,3 +1,5 @@
+
+from helpers.sharedMemory  import sharedMemory  
 try:
     from _sharedFuncsVaribales import *
 except:
@@ -20,7 +22,9 @@ def telnyxApiSMSGatewaySingleton(data_packet):
         'to': data_packet['receiver'],
         'text': data_packet['message_body'], 
     } 
-
+ 
+ 
+    if sharedMemory.stop_btn_pressed:return
     response = requests.post('https://api.telnyx.com/v2/messages', headers=headers, json=json_data,timeout=60) 
     response = response.json() 
     data_packet['log'].emit("-"*50+"\n")

@@ -1,3 +1,5 @@
+
+from helpers.sharedMemory  import sharedMemory  
 try:
     from _sharedFuncsVaribales import *
 except:
@@ -10,7 +12,7 @@ except:
 
 import octopush
 from octopush import SMS 
-
+ 
 
 @generalSmsAPIExceptionHandler
 def octopushApiSMSGatewaySingleton(data_packet):     
@@ -20,6 +22,8 @@ def octopushApiSMSGatewaySingleton(data_packet):
     sms.set_sms_recipients(data_packet['receiver'])
     sms.set_sms_type(octopush.SMS_WORLD)
     sms.set_sms_sender(data_packet['message_title']) 
+    
+    if sharedMemory.stop_btn_pressed:return
     try:
         response = sms.send()
         total_messages_sent = 1
@@ -46,6 +50,8 @@ def octopushApiSMSGatewayBulk(data_packet):
     sms.set_sms_recipients(data_packet['receiver'])
     sms.set_sms_type(octopush.SMS_WORLD)
     sms.set_sms_sender(data_packet['message_title']) 
+    
+    if sharedMemory.stop_btn_pressed:return
     try:
         response = sms.send()
         total_messages_sent = len(data_packet['receiver'])

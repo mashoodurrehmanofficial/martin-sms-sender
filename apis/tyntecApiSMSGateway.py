@@ -1,3 +1,5 @@
+from helpers.sharedMemory  import sharedMemory  
+
 try:
     from _sharedFuncsVaribales import *
 except:
@@ -14,8 +16,10 @@ def tyntecApiSMSGatewaySingleton(data_packet):
         'to': data_packet['receiver'],
         'message': data_packet['message_body'],
     }
- 
+  
     
+    
+    if sharedMemory.stop_btn_pressed:return
     response = requests.post('https://api.tyntec.com/messaging/v1/sms', headers=headers, json=json_data)
     response = response.json()
     data_packet['log'].emit(str(response))

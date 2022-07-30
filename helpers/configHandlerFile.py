@@ -20,7 +20,7 @@ config_prototype = {
                 "request_interval_wait": 0
             }
         },
-        "bsgWorld": {
+        "bsgworld": {
             "credentials": [
                 {
                     "api_key": ""
@@ -58,7 +58,7 @@ config_prototype = {
                 "request_interval_wait": 0
             }
         },
-        "clickSend": {
+        "clicksend": {
             "credentials": [
                 {
                     "username": "",
@@ -71,7 +71,7 @@ config_prototype = {
                 "request_interval_wait": 0
             }
         },
-        "cmText": {
+        "cmtext": {
             "credentials": [
                 {
                     "api_key": ""
@@ -108,7 +108,7 @@ config_prototype = {
                 "request_interval_wait": 0
             }
         },
-        "messageBird": {
+        "messagebird": {
             "credentials": [
                 {
                     "access_key": "" 

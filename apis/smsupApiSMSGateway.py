@@ -1,3 +1,5 @@
+from helpers.sharedMemory  import sharedMemory  
+
 try:
     from _sharedFuncsVaribales import *
 except:
@@ -22,9 +24,12 @@ def smsupApiSMSGatewaySingleton(data_packet):
         }
  
     headers = {"Content-Type": "application/json",'accept': "application/json"}
+    
+    
+    if sharedMemory.stop_btn_pressed:return
     response = requests.post("https://api.gateway360.com/api/3.0/sms/send",json.dumps( payload), headers=headers)
     response = response.json()
-    if type(response.get("result") is list):
+    if type(response.get("result") is list)  and response.get("result")[0]['status']!='error':
         total_messages_sent = len(response.get("result"))
         print(f"-> Message sent to {data_packet['receiver']}")
         data_packet['log'].emit(f"-> Request Index =  {data_packet['formatted_index']}")
@@ -57,9 +62,13 @@ def smsupApiSMSGatewayBulk(data_packet):
         }
  
     headers = {"Content-Type": "application/json",'accept': "application/json"}
+    
+    
+    
+    if sharedMemory.stop_btn_pressed:return
     response = requests.post("https://api.gateway360.com/api/3.0/sms/send",json.dumps( payload), headers=headers)
     response = response.json()
-    if type(response.get("result") is list):
+    if type(response.get("result") is list) and response.get("result")[0]['status']!='error':
         total_messages_sent = len(response.get("result"))
         print(f"-> Message sent to {data_packet['receiver']}")
         data_packet['log'].emit(f"-> Sessional Receiver =  {data_packet['receiver']}")

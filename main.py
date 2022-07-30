@@ -86,7 +86,7 @@ class Main(QMainWindow):
         self.title = 'QuickSMS'
         self.left = 0
         self.top = 0
-        self.width = 800
+        self.width = 1000
         self.height = 600
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)      
@@ -456,24 +456,28 @@ class Main(QMainWindow):
         # Checking if Stop is enabled
         if self.IS_STOP_FUNCTIONALITY_ALLOWED:
             # write shared memory data
-            print("STOP ALLOWED")
+            print("-> STOP ALLOWED")
             print("-> Write Shared Memory Data")
             sharedMemory.stop_btn_pressed = True
             return 
         else:
+            print("-> STOP NOT ALLOWED")
             sharedMemory.stop_btn_pressed = False
             
         
         
+        
+        
         service = str(self.home_tab_available_service_dropdown.currentText())
         
-        # # Start - set dummy data
-        # contact_list = ['447748347521',"923167815639","923476026649","923167815639","923167815639",][2:]
-        # contact_list = [str(x) for x in contact_list]
-        # self.home_page_message_title.setText("Stock Msg")
-        # self.home_page_import_receivers_input_box.setText("\n".join(contact_list)) 
-        # self.home_page_import_message_input_box.setText(f"##TestAlert##. Go to ##LINK## ") 
-        # # END - set dummy data
+        # Start - set dummy data
+        contact_list = ['447748347521',"923167815639","923476026649","923167815639","923167815639",][2:]
+        contact_list = ['447777347521',"447748347577"][:]
+        contact_list = [str(x) for x in contact_list]
+        self.home_page_message_title.setText("Stock Msg")
+        self.home_page_import_receivers_input_box.setText("\n".join(contact_list)) 
+        self.home_page_import_message_input_box.setText("Test") 
+        # END - set dummy data
         
 
         credentials = self.home_tab_available_service_credentials_dropdown.currentText()
@@ -850,8 +854,9 @@ class Main(QMainWindow):
             wait = int(wait)
             if load<1:
                 return self.showWarningBox(text="Request Load can't be less than 1 ")     
-            configHandler().setServiceConfiguration(service,load,wait)
-            return self.showWarningBox(title="Message", text="Configuration Saved", )
+            else:
+                configHandler().setServiceConfiguration(service,load,wait)
+                return self.showWarningBox(title="Message", text="Configuration Saved", )
  
         except:
             return self.showWarningBox(text="Request Load and Request Wait must be number ")

@@ -1,3 +1,6 @@
+
+from helpers.sharedMemory  import sharedMemory  
+
 try:
     from _sharedFuncsVaribales import *
 except:
@@ -17,9 +20,13 @@ def textmagicApiSMSGatewaySingleton(data_packet):
     
     username = data_packet["credentials"]['username']
     token =  data_packet["credentials"]['token']
+    
+    
+    if sharedMemory.stop_btn_pressed:return
     client = TextmagicRestClient(username, token)
     # client.messages.create(phones="comma-separated list of phone numbers", text="message text")
-    response = client.messages.create(from_=data_packet['message_title'],phones=data_packet['receiver'], text=data_packet['message_body'])
+    response = client.messages.create(phones=data_packet['receiver'], text=data_packet['message_body'])
+    # response = client.messages.create(from_=data_packet['message_title'],phones=data_packet['receiver'], text=data_packet['message_body'])
     # message.send()
     try:
         response = response.__dict__
@@ -53,9 +60,14 @@ def textmagicApiSMSGatewayBulk(data_packet):
     data_packet['receiver'] = ",".join(data_packet['receiver'])
     username = data_packet["credentials"]['username']
     token =  data_packet["credentials"]['token']
+    
+    
+    
+    if sharedMemory.stop_btn_pressed:return
     client = TextmagicRestClient(username, token)
     # client.messages.create(phones="comma-separated list of phone numbers", text="message text")
-    response = client.messages.create(from_=data_packet['message_title'],phones=data_packet['receiver'], text=data_packet['message_body'])
+    response = client.messages.create(phones=data_packet['receiver'], text=data_packet['message_body'])
+    # response = client.messages.create(from_=data_packet['message_title'],phones=data_packet['receiver'], text=data_packet['message_body'])
     # message.send()
     try:
         response = response.__dict__

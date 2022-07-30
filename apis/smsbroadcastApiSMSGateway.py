@@ -1,3 +1,5 @@
+
+from helpers.sharedMemory  import sharedMemory  
 try:
     from _sharedFuncsVaribales import *
 except:
@@ -18,6 +20,9 @@ def smsbroadcastApiSMSGatewaySingleton(data_packet):
     url = f"https://api.smsbroadcast.co.uk/api-adv.php?username={username}&password={password}&to={to}&from={from_}&message={message}"
     # url = "https://api.smsbroadcast.co.uk/api-adv.php?username=JasonW22&password=Stealth017???&to=447920498128&from=MyCompany& message=Hello%20World"
 
+
+
+    if sharedMemory.stop_btn_pressed:return
     response = requests.get(url)
     response = str(response.text).lower()
     if "ok" in response:
@@ -52,6 +57,8 @@ def smsbroadcastApiSMSGatewayBulk(data_packet):
     url = f"https://api.smsbroadcast.co.uk/api-adv.php?username={username}&password={password}&to={to}&from={from_}&message={message}"
     # url = "https://api.smsbroadcast.co.uk/api-adv.php?username=JasonW22&password=Stealth017???&to=447920498128&from=MyCompany& message=Hello%20World"
 
+
+    if sharedMemory.stop_btn_pressed:return
     response = requests.get(url)
     response = str(response.text).lower()
     if "ok" in response:
@@ -68,4 +75,4 @@ def smsbroadcastApiSMSGatewayBulk(data_packet):
     
     data_packet['log'].emit(str(response)+"\n") 
     data_packet['log'].emit("-"*50+"\n")  
-    print(str(response))
+    print(str(response)) 

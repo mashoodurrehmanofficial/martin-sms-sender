@@ -8,7 +8,7 @@ except:
 # https://help.bulkgate.com/docs/en/http-simple-transactional.html
 # https://help.bulkgate.com/docs/en/http-advanced-transactional.html
 
-
+from helpers.sharedMemory  import sharedMemory  
 # POST /bulkgate/api/2.0/advanced/transactional HTTP/1.1 
 @generalSmsAPIExceptionHandler
 def bulkgateApiSMSGatewaySingleton(data_packet):       
@@ -25,7 +25,7 @@ def bulkgateApiSMSGatewaySingleton(data_packet):
         "country":"gb",  
     }
     
-    
+    if sharedMemory.stop_btn_pressed:return
     response = requests.post(url,data=params)
     response = response.json()
     
@@ -45,3 +45,4 @@ def bulkgateApiSMSGatewaySingleton(data_packet):
     data_packet['log'].emit(str(response)+"\n") 
     data_packet['log'].emit("-"*50+"\n")  
     print(str(response))
+ 

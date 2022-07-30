@@ -1,3 +1,5 @@
+from helpers.sharedMemory  import sharedMemory  
+
 try:
     from _sharedFuncsVaribales import *
 except:
@@ -8,12 +10,12 @@ def sinchApiSMSGatewaySingleton(data_packet):
     
     service_plan_id = data_packet['credentials']['service_plan_id']
     url = "https://us.sms.api.sinch.com/xms/v1/" + service_plan_id + "/batches"
-    receiver = data_packet['receiver']
-    if type(receiver) is not list:
-        receiver = [receiver] 
+    data_packet['receiver'] = data_packet['receiver']
+    if type(data_packet['receiver']) is not list:
+        data_packet['receiver'] = [data_packet['receiver']] 
     payload = {
         "from": data_packet['message_title'],
-        "to": receiver,
+        "to": data_packet['receiver'],
         "body": data_packet['message_body']
     } 
     headers = {
@@ -21,6 +23,8 @@ def sinchApiSMSGatewaySingleton(data_packet):
         "Authorization": f"Bearer {data_packet['credentials']['api_token']}"
     } 
     
+    
+    if sharedMemory.stop_btn_pressed:return
     response = requests.post(url, json=payload, headers=headers,timeout=60)
     response = response.json()
     data_packet['log'].emit("-"*50+"\n"+str(response))
@@ -51,12 +55,12 @@ def sinchApiSMSGatewaySingleton(data_packet):
 def sinchApiSMSGatewayBulk(data_packet): 
     service_plan_id = data_packet['credentials']['service_plan_id']
     url = "https://us.sms.api.sinch.com/xms/v1/" + service_plan_id + "/batches"
-    receiver = data_packet['receiver']
-    if type(receiver) is not list:
-        receiver = [receiver] 
+ 
+    if type(data_packet['receiver']) is not list:
+        data_packet['receiver'] = [data_packet['receiver']] 
     payload = {
         "from": data_packet['message_title'],
-        "to": receiver,
+        "to": data_packet['receiver'],
         "body": data_packet['message_body']
     } 
     headers = {
@@ -64,6 +68,8 @@ def sinchApiSMSGatewayBulk(data_packet):
         "Authorization": f"Bearer {data_packet['credentials']['api_token']}"
     } 
     
+    
+    if sharedMemory.stop_btn_pressed:return
     response = requests.post(url, json=payload, headers=headers,timeout=60)
     response = response.json()
     data_packet['log'].emit("-"*50+"\n"+str(response))

@@ -1,7 +1,10 @@
+
 try:
     from _sharedFuncsVaribales import *
 except:
     from ._sharedFuncsVaribales import *
+
+from helpers.sharedMemory  import sharedMemory  
  
 # 1s2u.com - Username: qiv3jason.wi022 | Password: web12093 
 # - API credentials are username and password 
@@ -19,8 +22,10 @@ def api_1s2uApiSMSGatewaySingleton(data_packet):
     sid = data_packet['message_title']
     mno = data_packet['receiver']
     msg = data_packet['message_body']
-    
     url = f"https://api.1s2u.io/bulksms?username={username}&password={password}&mt=Message Type&fl=Flash/None Flash Message &sid={sid}&mno={mno}&msg={msg}"
+    
+    
+    if sharedMemory.stop_btn_pressed:return
     response = requests.get(url)
     response = str(response.text)
     if "ok" in str(response).lower():
@@ -53,6 +58,8 @@ def api_1s2uApiSMSGatewayBulk(data_packet):
     msg = data_packet['message_body']
     
     url = f"https://api.1s2u.io/bulksms?username={username}&password={password}&mt=Message Type&fl=Flash/None Flash Message &sid={sid}&mno={mno}&msg={msg}"
+    
+    if sharedMemory.stop_btn_pressed:return
     response = requests.get(url)
     response = str(response.text)
     if "ok" in str(response).lower():
@@ -72,4 +79,4 @@ def api_1s2uApiSMSGatewayBulk(data_packet):
     
     
 if __name__ == '__main__':
-    pass
+    pass 

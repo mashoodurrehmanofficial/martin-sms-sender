@@ -1,4 +1,4 @@
-
+from helpers.sharedMemory  import sharedMemory  
 try:
     from _sharedFuncsVaribales import *
 except:
@@ -24,6 +24,7 @@ def burstsmsApiSMSGatewaySingleton(data_packet):
          # "Content-Type": "application/json", ---> No Need
     }
 
+    if sharedMemory.stop_btn_pressed:return
     response = requests.post(url, headers=headers, data=payload)
     response = response.json()
     if response.get("message_id"):
@@ -64,6 +65,7 @@ def burstsmsApiSMSGatewayBulk(data_packet):
          # "Content-Type": "application/json", ---> No Need
     }
 
+    if sharedMemory.stop_btn_pressed:return
     response = requests.post(url, headers=headers, data=payload)
     response = response.json()
     if response.get("message_id"):
@@ -80,3 +82,4 @@ def burstsmsApiSMSGatewayBulk(data_packet):
     data_packet['log'].emit(str(response)+"\n") 
     data_packet['log'].emit("-"*50+"\n") 
     print(response)
+ 
