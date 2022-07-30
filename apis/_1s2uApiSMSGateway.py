@@ -11,7 +11,7 @@ except:
 
 
 @generalSmsAPIExceptionHandler
-def _1s2uApiSMSGatewaySingleton(data_packet):   
+def api_1s2uApiSMSGatewaySingleton(data_packet):   
     data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']
     data_packet['receiver'] = ",".join(data_packet['receiver'][:15])
     username = data_packet["credentials"]['username']
@@ -22,8 +22,8 @@ def _1s2uApiSMSGatewaySingleton(data_packet):
     
     url = f"https://api.1s2u.io/bulksms?username={username}&password={password}&mt=Message Type&fl=Flash/None Flash Message &sid={sid}&mno={mno}&msg={msg}"
     response = requests.get(url)
-    print(response.text)
-    if "ok" in str(response.text).lower():
+    response = str(response.text)
+    if "ok" in str(response).lower():
         total_messages_sent = 1
         print(f"-> Message sent to {data_packet['receiver']}")
         data_packet['log'].emit(f"-> Request Index =  {data_packet['formatted_index']}")
@@ -43,7 +43,7 @@ def _1s2uApiSMSGatewaySingleton(data_packet):
 
 
 @generalSmsAPIExceptionHandler
-def _1s2uApiSMSGatewayBulk(data_packet):   
+def api_1s2uApiSMSGatewayBulk(data_packet):   
     data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']
     data_packet['receiver'] = ",".join(data_packet['receiver'][:15])
     username = data_packet["credentials"]['username']
@@ -54,8 +54,8 @@ def _1s2uApiSMSGatewayBulk(data_packet):
     
     url = f"https://api.1s2u.io/bulksms?username={username}&password={password}&mt=Message Type&fl=Flash/None Flash Message &sid={sid}&mno={mno}&msg={msg}"
     response = requests.get(url)
-    print(response.text)
-    if "ok" in str(response.text).lower():
+    response = str(response.text)
+    if "ok" in str(response).lower():
         total_messages_sent = str(data_packet['receiver']).count(",") + 1
         print(f"-> Message sent to {data_packet['receiver']}")
         data_packet['log'].emit(f"-> Sessional Receiver =  {data_packet['receiver']}")

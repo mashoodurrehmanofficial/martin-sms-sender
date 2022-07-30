@@ -6,6 +6,10 @@ except:
 # spryng.nl - API: Andrew - 3623527287780b8c83085eec0a6272e2a13e9dcb7980a1c82e 
 # https://docs.spryngsms.com/#39c42dee-53ea-4a4f-8f68-74ac844ecd57
 
+
+
+
+@generalSmsAPIExceptionHandler
 def spryngApiSMSGatewaySingleton(data_packet):    
     url = "https://rest.spryngsms.com/v1/messages"
     data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']
@@ -43,7 +47,7 @@ def spryngApiSMSGatewaySingleton(data_packet):
     
     
     
-
+@generalSmsAPIExceptionHandler
 def spryngApiSMSGatewayBulk(data_packet):    
     url = "https://rest.spryngsms.com/v1/messages"
     data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']

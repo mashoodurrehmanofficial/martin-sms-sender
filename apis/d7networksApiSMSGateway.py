@@ -5,16 +5,13 @@ except:
     
 @generalSmsAPIExceptionHandler
 def d7networksApiSMSGatewaySingleton(data_packet):   
-    if sharedMemory.stop_btn_pressed:
-        return
-    
     headers = {
         'Authorization': f'Basic {data_packet["credentials"]["auth_token"]}',
         'Content-Type': 'application/x-www-form-urlencoded',
     }
-    receiver = data_packet['receiver']
-    if type(receiver) is not list:
-        receiver = [receiver] 
+    receiver = data_packet['receiver'] 
+    data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']
+    
     data = {
         "to":receiver,
         "from": data_packet['message_title'],
@@ -24,9 +21,9 @@ def d7networksApiSMSGatewaySingleton(data_packet):
         "dlr-level":3, 
     }  
     response = requests.post('https://rest-api.d7networks.com/secure/sendbatch', headers=headers, data=json.dumps(data))
-    data_packet['log'].emit(str(response.json())) 
-    if response:
-        total_messages_sent = len(total_messages_sent)
+    response = response.json()
+    if response.get("data"):
+        total_messages_sent = 1
         print(f"-> Message sent to {data_packet['receiver']}")
         data_packet['log'].emit(f"-> Request Index =  {data_packet['formatted_index']}")
         data_packet['log'].emit(f"-> Sessional Receiver =  {data_packet['receiver']}")
@@ -45,16 +42,14 @@ def d7networksApiSMSGatewaySingleton(data_packet):
     
 @generalSmsAPIExceptionHandler 
 def d7networksApiSMSGatewayBulk(data_packet):   
-    if sharedMemory.stop_btn_pressed:
-        return
     
     headers = {
         'Authorization': f'Basic {data_packet["credentials"]["auth_token"]}',
         'Content-Type': 'application/x-www-form-urlencoded',
     }
     receiver = data_packet['receiver']
-    if type(receiver) is not list:
-        receiver = [receiver] 
+    data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']
+
     data = {
         "to":receiver,
         "from": data_packet['message_title'],
@@ -64,9 +59,11 @@ def d7networksApiSMSGatewayBulk(data_packet):
         "dlr-level":3, 
     }  
     response = requests.post('https://rest-api.d7networks.com/secure/sendbatch', headers=headers, data=json.dumps(data))
-    data_packet['log'].emit(str(response.json())) 
-    if response:
-        total_messages_sent = len(total_messages_sent)
+    response = response.json()
+
+    if response.get("data"):
+        total_messages_sent = len(data_packet['receiver'])
+
         print(f"-> Message sent to {data_packet['receiver']}")
         data_packet['log'].emit(f"-> Sessional Receiver =  {data_packet['receiver']}")
         data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent} ") 

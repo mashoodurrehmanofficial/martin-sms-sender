@@ -20,27 +20,40 @@ def clickSendApiSMSGatewaySingleton(data_packet):
         body=data_packet['message_body'],
         to=data_packet['receiver'],
     )
+    response = None
     sms_messages = clicksend_client.SmsMessageCollection(messages=[sms_message])
     try: 
-        api_response = api_instance.sms_send_post(sms_messages)
-        print(api_response) 
-        data_packet['log'].emit("-"*50+"\n"+str(api_response))
+        response = api_instance.sms_send_post(sms_messages)
+        print(response) 
+        data_packet['log'].emit("-"*50+"\n"+str(response))
         try:
-            api_response = eval(api_response)
-            if str(api_response.get('http_code')) == str(200) and str(api_response.get('response_code')) == 'SUCCESS' :
+            response = eval(response)
+            if str(response.get('http_code')) == str(200) and str(response.get('response_code')) == 'SUCCESS' :
+                total_messages_sent = 1
                 print(f"-> Message sent to {data_packet['receiver']}")
-                data_packet['log'].emit("-"*50+"\n")
-                data_packet['log'].emit(f"-> Message sent to {data_packet['receiver']}")
+                data_packet['log'].emit(f"-> Request Index =  {data_packet['formatted_index']}")
+                data_packet['log'].emit(f"-> Sessional Receiver =  {data_packet['receiver']}")
+                data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent} ") 
+                data_packet['log'].emit("-"*50+"\n") 
+          
         except:
-            print("Exception when while evaluating eval(api_response) from clicksend API")
+            total_messages_sent = 0 
+            data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
+            data_packet['log'].emit(f"-> {str(response)}") 
+
+            print("Exception when while evaluating eval(response) from clicksend API")
             data_packet['log'].emit("-"*50+"\n")
-            data_packet['log'].emit("Exception when while evaluating eval(api_response) from clicksend API"  )
+            data_packet['log'].emit("Exception when while evaluating eval(response) from clicksend API"  )
                 
             
     except ApiException as e:
         print("Exception when calling SMSApi->sms_send_post: %s\n" % e)
         data_packet['log'].emit("-"*50+"\n")
         data_packet['log'].emit("Exception when calling SMSApi->sms_send_post: %s\n" % e)
- 
+    
+    
+    data_packet['log'].emit(str(response)+"\n") 
+    data_packet['log'].emit("-"*50+"\n")  
+    print(str(response))
     
     

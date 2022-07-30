@@ -20,7 +20,7 @@ def vonagecApiSMSGatewaySingleton(data_packet):
     )
  
     if response["messages"][0]["status"] == "0":
-        total_messages_sent = len(total_messages_sent)
+        total_messages_sent = 1
         print(f"-> Message sent to {data_packet['receiver']}")
         data_packet['log'].emit(f"-> Request Index =  {data_packet['formatted_index']}")
         data_packet['log'].emit(f"-> Sessional Receiver =  {data_packet['receiver']}")

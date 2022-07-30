@@ -7,16 +7,11 @@ import messagebird
     
 @generalSmsAPIExceptionHandler
 def messageBirdApiSMSGatewaySingleton(data_packet):
-    if sharedMemory.stop_btn_pressed:
-        return
-    
-    
     client = messagebird.Client(data_packet['credentials']['access_key'])
-    
     receiver = data_packet['receiver']
     if type(receiver) is not list:
         receiver = [receiver] 
-        
+
     message = client.message_create(data_packet['message_title'], receiver,data_packet["message_body"],{ 'reference' : 'Foobar' })
     try: 
         message_id = message.id
@@ -26,8 +21,7 @@ def messageBirdApiSMSGatewaySingleton(data_packet):
         data_packet['log'].emit(f"-> Sessional Receiver =  {data_packet['receiver']}")
         data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent} ") 
         data_packet['log'].emit("-"*50+"\n") 
- 
-    
+
     except Exception as e:
         total_messages_sent = 0 
         data_packet['log'].emit(f"-> Message Sent For Current Request Session = {total_messages_sent } ")
@@ -42,12 +36,8 @@ def messageBirdApiSMSGatewaySingleton(data_packet):
     
     
 @generalSmsAPIExceptionHandler
-def messageBirdApiSMSGatewayBulk(data_packet):
-    if sharedMemory.stop_btn_pressed:
-        return
-    
+def messageBirdApiSMSGatewayBulk(data_packet):    
     client = messagebird.Client(data_packet['credentials']['access_key'])
-    
     receiver = data_packet['receiver']
     if type(receiver) is not list:
         receiver = [receiver] 

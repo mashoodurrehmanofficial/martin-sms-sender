@@ -9,21 +9,9 @@ except:
 # https://help.bulkgate.com/docs/en/http-advanced-transactional.html
 
 
-# POST /bulkgate/api/2.0/advanced/transactional HTTP/1.1
-# Host: portal.bulkgate.com
-# Content-Type: application/json
-# Cache-Control: no-cache
-
-def bulkgateApiSMSGatewaySingleton(data_packet):      
-    # url = """https://portal.bulkgate.com/api/1.0/simple/transactional
-    # ?application_id=27605
-    # &application_token=ajrYOTN4wscifqa88d2qGh6IPAAHdQgop6fh3gRqYZOieCZ5Lv
-    # &number=447700900000
-    # &text=test_sms 
-    # &country=gb"""
-    # data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']
-    # data_packet['receiver'] = ",".join(data_packet['receiver'][:15])
-   
+# POST /bulkgate/api/2.0/advanced/transactional HTTP/1.1 
+@generalSmsAPIExceptionHandler
+def bulkgateApiSMSGatewaySingleton(data_packet):       
     url = """https://portal.bulkgate.com/api/1.0/simple/transactional"""
     
     params = {

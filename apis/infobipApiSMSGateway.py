@@ -12,7 +12,7 @@ except:
 # # Configuration
 # # Let's first set the configuration. For that you will need your specific URL. To see your base URL, log in to the Infobip API Resource hub with your Infobip credentials.
 # https://www.infobip.com/docs/api/channels/sms/sms-messaging/outbound-sms/send-sms-message
-
+@generalSmsAPIExceptionHandler
 def infobipApiSMSGatewaySingleton(data_packet):
     data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']
     url = f'https://{data_packet["credentials"]["base_url"]}/sms/2/text/advanced'
@@ -53,6 +53,9 @@ def infobipApiSMSGatewaySingleton(data_packet):
     data_packet['log'].emit("-"*50+"\n")  
     print(str(response))
 
+
+
+@generalSmsAPIExceptionHandler
 def infobipApiSMSGatewayBulk(data_packet):
     data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']
     url = f'https://{data_packet["credentials"]["base_url"]}/sms/2/text/advanced'

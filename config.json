@@ -2,183 +2,238 @@
     "threads_threshold": 5,
     "prodcut_key": "7689c474-0275-4a68-94f4-ac0f4652f7fd",
     "services": {
+        "1s2u": {
+            "credentials": [
+                {
+                    "username": "",
+                    "password": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "bsgWorld": {
+            "credentials": [
+                {
+                    "api_key": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "False",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "bulkgate": {
+            "credentials": [
+                {
+                    "application_id": "",
+                    "application_token": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "False",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "burstsms": {
+            "credentials": [
+                {
+                    "api_key": "",
+                    "api_secret": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "clickSend": {
+            "credentials": [
+                {
+                    "username": "",
+                    "api_key": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "False",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "cmText": {
+            "credentials": [
+                {
+                    "api_key": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "d7networks": {
+            "credentials": [
+                {
+                    "auth_token": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "infobip": {
+            "credentials": [
+                {
+                    "base_url": "",
+                    "auth_token": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "messageBird": {
+            "credentials": [
+                {
+                    "access_key": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "octopush": {
+            "credentials": [
+                {
+                    "user_login": "",
+                    "api_key": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "plivo": {
+            "credentials": [
+                {
+                    "auth_id": "",
+                    "auth_token": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "sinch": {
+            "credentials": [
+                {
+                    "service_plan_id": "",
+                    "api_token": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "smsbroadcast": {
+            "credentials": [
+                {
+                    "username": "",
+                    "password": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "smsup": {
+            "credentials": [
+                {
+                    "api_key": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "spryng": {
+            "credentials": [
+                {
+                    "auth_token": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "telnyx": {
+            "credentials": [
+                {
+                    "api_key": "",
+                    "messaging_profile_id": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "False",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "textmagic": {
+            "credentials": [
+                {
+                    "username": "",
+                    "token": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "tyntec": {
+            "credentials": [
+                {
+                    "api_key": ""
+                }
+            ],
+            "config": {
+                "allow_bulk": "False",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
         "vonage.co.uk": {
             "credentials": [
                 {
                     "api_key": "",
                     "api_secret": ""
-                },
-                {
-                    "api_key": "c86bf623",
-                    "api_secret": "AzA7ybwtHYYK0ztZ"
-                }
-            ],
-            "config": {
-                "allow_bulk": "False",
-                "request_load": 0,
-                "request_interval_wait": 0
-            }
-        },
-        "tyntec.com": {
-            "credentials": [
-                {
-                    "api_key": ""
-                },
-                {
-                    "api_key": "4dPUaa9gCy5nxMjf6FOBmEDcpuvqecxb"
-                }
-            ],
-            "config": {
-                "allow_bulk": "False",
-                "request_load": 0,
-                "request_interval_wait": 0
-            }
-        },
-        "d7networks.com": {
-            "credentials": [
-                {
-                    "username": "",
-                    "password": "",
-                    "auth_token": ""
-                },
-                {
-                    "username": "zitn9760",
-                    "password": "Fg4qHo6B",
-                    "auth_token": "eml0bjk3NjA6Rmc0cUhvNkI="
-                }
-            ],
-            "config": {
-                "allow_bulk": "False",
-                "request_load": 0,
-                "request_interval_wait": 0
-            }
-        },
-        "twilio.com": {
-            "credentials": [
-                {
-                    "account_sid": "",
-                    "auth_token": ""
-                },
-                {
-                    "account_sid": "AC4f9d4d72adcf6e02322ec22055cc1d56",
-                    "auth_token": "fd5113756e490c792578a70fe4b7d3e5"
-                }
-            ],
-            "config": {
-                "allow_bulk": "False",
-                "request_load": 500,
-                "request_interval_wait": 0
-            }
-        },
-        "messagebird.com": {
-            "credentials": [
-                {
-                    "access_key": ""
-                },
-                {
-                    "access_key": "IYtZQQnrRGNcuK3jMqsnW7Dq8"
-                }
-            ],
-            "config": {
-                "allow_bulk": "False",
-                "request_load": 0,
-                "request_interval_wait": 0
-            }
-        },
-        "sinch.com": {
-            "credentials": [
-                {
-                    "service_plan_id": "",
-                    "api_token": ""
-                },
-                {
-                    "service_plan_id": "5847fcfa76194721a2b5064ca4c8b5bb",
-                    "api_token": "7f2ad26b388440d3982ee9ddce6f56b1"
-                }
-            ],
-            "config": {
-                "allow_bulk": "False",
-                "request_load": 0,
-                "request_interval_wait": 0
-            }
-        },
-        "clicksend.com": {
-            "credentials": [
-                {
-                    "username": "",
-                    "api_key": ""
-                },
-                {
-                    "username": "Roussisphoto@gmail.com",
-                    "api_key": "BB4A01B2-4642-C68E-B665-011955262FD5"
-                }
-            ],
-            "config": {
-                "allow_bulk": "False",
-                "request_load": 2,
-                "request_interval_wait": 0
-            }
-        },
-        "telnyx.com": {
-            "credentials": [
-                {
-                    "api_key": "",
-                    "messaging_profile_id": ""
-                },
-                {
-                    "api_key": "KEY0180852AF869A127E29B39149467E0B2_l5RS68ODYZtpzwuAQnbl8G",
-                    "messaging_profile_id": "40018085-20e2-45bd-9a75-e78a912c93bb"
-                }
-            ],
-            "config": {
-                "allow_bulk": "False",
-                "request_load": 32,
-                "request_interval_wait": 32
-            }
-        },
-        "telesign.com": {
-            "credentials": [
-                {
-                    "key": ""
-                }
-            ],
-            "config": {
-                "allow_bulk": "False",
-                "request_load": 0,
-                "request_interval_wait": 0
-            }
-        },
-        "clickatell.com": {
-            "credentials": [
-                {
-                    "key": ""
-                }
-            ],
-            "config": {
-                "allow_bulk": "False",
-                "request_load": 0,
-                "request_interval_wait": 0
-            }
-        },
-        "cm.com": {
-            "credentials": [
-                {
-                    "api_key": ""
-                },
-                {
-                    "api_key": "b43c8147-6df1-4d5e-9dc4-03df4cb0740b"
-                }
-            ],
-            "config": {
-                "allow_bulk": "True",
-                "request_load": 2,
-                "request_interval_wait": 10
-            }
-        },
-        "plivo.com": {
-            "credentials": [
-                {
-                    "key": "U540JFIH438Q9RHIWEURHF398P439HR23"
                 }
             ],
             "config": {
@@ -188,11 +243,7 @@
             }
         }
     },
-    "templates": [
-        {
-            "martinTemplate": "this is template designed by martin"
-        }
-    ],
+    "templates": [],
     "macros": [
         {
             "NHS": [

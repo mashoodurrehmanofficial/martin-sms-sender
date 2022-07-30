@@ -2,44 +2,44 @@
 import ctypes,threading
 import os,json ,sys,subprocess
 import time
-# from sys import argv as sys_argv,exit
-# from os import environ as os_environ
-# from PyQt5.QtCore import  Qt,QDateTime
-# from PyQt5.QtWidgets import QMainWindow,QApplication,QWidget,QVBoxLayout,QHBoxLayout,QTabWidget,QLabel,QMessageBox,QFileDialog,QGroupBox,QComboBox,QDateTimeEdit,QLineEdit,QTextEdit,QPushButton,QHeaderView,QTableWidget,QTableWidgetItem,QPlainTextEdit                                                                                      
-# sys.path.insert(0, os.getcwd())
+
+sys.path.append(os.getcwd()) 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-
+from PyQt5.QtWidgets import * 
 from datetime import datetime,timedelta
-
-from grpc import services
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 try:
-    from configHandlerFile import configHandler
-    from workerThreadFile import workerThread,launchNewInstanceThread
-    from workerActivationThread import serverThread
-    from workerRemainingBalanceThread  import remainingBalanceThread
-    from sharedMemory  import sharedMemory
+    from helpers.configHandlerFile import configHandler
+    from helpers.workerThreadFile import workerThread,launchNewInstanceThread
+    from helpers.workerActivationThread import serverThread
+    from helpers.workerRemainingBalanceThread  import remainingBalanceThread
+    from helpers.sharedMemory  import sharedMemory
 except:
     try:
-        from configHandlerFile import configHandler
+        from helpers.configHandlerFile import configHandler
         
     except:
-        from .configHandlerFile import configHandler
+        from helpers.configHandlerFile import configHandler
     try:
-        from sharedMemory  import sharedMemory  
+        from helpers.sharedMemory  import sharedMemory  
     except:
-        from .sharedMemory  import sharedMemory
+        from helpers.sharedMemory  import sharedMemory
 
     try:
-        from workerThreadFile import workerThread,launchNewInstanceThread
-        from workerActivationThread import serverThread
-        from workerRemainingBalanceThread  import remainingBalanceThread
+        from helpers.workerThreadFile import workerThread,launchNewInstanceThread
+        from helpers.workerActivationThread import serverThread
+        from helpers.workerRemainingBalanceThread  import remainingBalanceThread
     except:
-        from .workerActivationThread import serverThread
-        from .workerRemainingBalanceThread  import remainingBalanceThread
+        from helpers.workerActivationThread import serverThread
+        from helpers.workerRemainingBalanceThread  import remainingBalanceThread
+        ...
     # from workerThreadFile import workerThread
+
+
+
 
 def getArgumentValue(key):
     args = sys.argv 

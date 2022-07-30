@@ -6,8 +6,10 @@ except:
 
 # https://www.voodoosms.com/api/http/send-sms#single-textual-message-to-multiple-destinations
 # https://www.voodoosms.com/api/rest/introduction#getting-started
+
+
 @generalSmsAPIExceptionHandler
-def voodoosmsApiSMSGateway(data_packet): 
+def voodoosmsApiSMSGatewaySingleton(data_packet): 
     
     headers = {
         'Authorization': f'Bearer {data_packet["credentials"]["key"]}',

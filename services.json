@@ -1,0 +1,249 @@
+{
+    "services":{
+        "1s2u": {
+            "credentials": [
+                {
+                    "username": "",
+                    "password": ""
+                } 
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "bsgWorld": {
+            "credentials": [
+                {
+                    "api_key": ""
+                } 
+            ],
+            "config": {
+                "allow_bulk": "False",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "bulkgate": {
+            "credentials": [
+                {
+                    "application_id": "",
+                    "application_token": "" 
+                } 
+            ],
+            "config": {
+                "allow_bulk": "False",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "burstsms": {
+            "credentials": [
+                {
+                    "api_key": "",
+                    "api_secret": "" 
+                } 
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "clickSend": {
+            "credentials": [
+                {
+                    "username": "",
+                    "api_key": "" 
+                } 
+            ],
+            "config": {
+                "allow_bulk": "False",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "cmText": {
+            "credentials": [
+                {
+                    "api_key": ""
+                } 
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "d7networks": {
+            "credentials": [
+                {
+                    "auth_token": ""
+                } 
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "infobip": {
+            "credentials": [
+                {
+                    "base_url": "",
+                    "auth_token": ""
+                } 
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "messageBird": {
+            "credentials": [
+                {
+                    "access_key": "" 
+                } 
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "octopush": {
+            "credentials": [
+                {
+                    "user_login": "" ,
+                    "api_key": "" 
+                } 
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "plivo": {
+            "credentials": [
+                {
+                    "auth_id": "" ,
+                    "auth_token": "" 
+                } 
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "sinch": {
+            "credentials": [
+                {
+                    "service_plan_id": "" ,
+                    "api_token": "" 
+                } 
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "smsbroadcast": {
+            "credentials": [
+                {
+                    "username": "" ,
+                    "password": "" 
+                } 
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "smsup": {
+            "credentials": [
+                {
+                    "api_key": "" 
+                } 
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "spryng": {
+            "credentials": [
+                {
+                    "auth_token": "" 
+                } 
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "telnyx": {
+            "credentials": [
+                {
+                    "api_key": "" ,
+                    "messaging_profile_id": "" 
+                } 
+            ],
+            "config": {
+                "allow_bulk": "False",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "textmagic": {
+            "credentials": [
+                {
+                    "username": "" ,
+                    "token": "" 
+                } 
+            ],
+            "config": {
+                "allow_bulk": "True",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "tyntec": {
+            "credentials": [
+                {
+                    "api_key": "" 
+                } 
+            ],
+            "config": {
+                "allow_bulk": "False",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        },
+        "vonage.co.uk": {
+            "credentials": [
+                {
+                    "api_key": "" ,
+                    "api_secret": ""  
+                } 
+            ],
+            "config": {
+                "allow_bulk": "False",
+                "request_load": 0,
+                "request_interval_wait": 0
+            }
+        }  
+
+    }
+}
+
+
+
+  

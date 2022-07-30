@@ -11,6 +11,8 @@ except:
 import octopush
 from octopush import SMS 
 
+
+@generalSmsAPIExceptionHandler
 def octopushApiSMSGatewaySingleton(data_packet):     
     data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']
     sms = SMS(data_packet["credentials"]['user_login'], data_packet["credentials"]['api_key'])
@@ -36,7 +38,7 @@ def octopushApiSMSGatewaySingleton(data_packet):
     data_packet['log'].emit("-"*50+"\n")  
     print(str(response))
 
-
+@generalSmsAPIExceptionHandler
 def octopushApiSMSGatewayBulk(data_packet):     
     data_packet['receiver'] = [data_packet['receiver']] if type(data_packet['receiver']) is not list else data_packet['receiver']
     sms = SMS(data_packet["credentials"]['user_login'], data_packet["credentials"]['api_key'])

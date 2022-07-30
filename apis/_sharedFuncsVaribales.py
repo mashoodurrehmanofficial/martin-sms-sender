@@ -4,9 +4,9 @@ currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir) 
 try: 
-    from sharedMemory  import sharedMemory  
+    from helpers.sharedMemory  import sharedMemory  
 except:
-    from ..sharedMemory  import sharedMemory
+    from helpers.sharedMemory  import sharedMemory
 
 
 
